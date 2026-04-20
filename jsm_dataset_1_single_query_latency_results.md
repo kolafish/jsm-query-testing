@@ -101,6 +101,26 @@ offset 0;
 - Row count: `9`
 - Notes: the original nested predicate was normalized after the `MATCH AGAINST` rewrite to fix parenthesis imbalance and preserve semantics.
 
+#### Slow Analysis
+- `EXPLAIN ANALYZE` showed the query was slow because `match(text_value_22) against('"Requirements"' in boolean mode)` on `idx_obj_new_text_value_22_ngram_v2` produced a very large candidate set before the other predicates were applied.
+- The `IndexRangeScan` on the FULLTEXT index returned `500,264` candidate rows for this workspace, and TiFlash spent about `1.48s` in this stage.
+- The plan then performed an `IndexLookUp` back to TiKV for all `500,264` row IDs. The root `IndexLookUp` took about `2.33s`, and the probe-side TiKV selection scanned about `3.99 GB` of row data before reducing the result to `9` rows.
+- Top-level plan highlights:
+  - `TopN_11`: `2.33s`
+  - `IndexLookUp_22`: `2.33s`
+  - `IndexRangeScan_17` on `idx_obj_new_text_value_22_ngram_v2`: `500,264` rows
+  - `Selection_20(Probe)` on TiKV: still processed `500,264` keys, final output `9` rows
+- Predicate selectivity on the `MATCH` candidate set:
+  - `MATCH(text_value_22="Requirements")`: `500,264`
+  - plus `text_value_23='KitchenAid'`: `21,424`
+  - plus `text_value_9='Electrolux'`: `21,529`
+  - plus `obj_type_id in (...)`: `200,157`
+  - plus `(numeric_value_3=22 or numeric_value_1=720)`: `9,240`
+  - plus `text_value_23='KitchenAid' and text_value_9='Electrolux'`: `930`
+  - plus `text_value_23='KitchenAid' and text_value_9='Electrolux' and obj_type_id in (...)`: `381`
+  - all filters together: `9`
+- Conclusion: the bottleneck was not `ORDER BY`, but the low selectivity of the `Requirements` FULLTEXT predicate. A better shape for this query is to first use the existing BTREE predicates on `text_value_23`, `text_value_9`, `obj_type_id`, and numeric columns to shrink the candidate set, then evaluate `text_value_22` on that small set.
+
 ### Query 3
 
 #### Original Query
