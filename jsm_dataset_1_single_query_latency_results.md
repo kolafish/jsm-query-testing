@@ -717,7 +717,7 @@ where `o`.`workspace_id` = '9963b35f-9397-48ec-9403-adab57aef265' and (`o`.`obj_
   unhex(replace('fbf1f5ec-17a1-4645-8d33-b9e09ce76b32','-','')),
   unhex(replace('b57a7edf-4412-4810-9e52-eaaa8bebd9a4','-','')),
   unhex(replace('743641da-c08d-4bdf-be89-63d44a1d2250','-',''))
-) and (`o`.`text_value_1` != '􏿿' and match(`o`.`text_value_1`) against('"Admiral-100000"' in boolean mode)))
+) and (`o`.`text_value_1` != '􏿿' and match(`o`.`text_value_1`) against('"admiral-100000"' in boolean mode)))
 order by `o`.`label` asc
 limit 1000
 offset 0;
@@ -726,7 +726,7 @@ offset 0;
 #### Result
 - Latency: `26ms`, `21ms`, `20ms`, `22ms`, `21ms`
 - Row count: `1`
-- Notes: the original literal `admiral-1000048` did not produce a useful hit set after the rewrite, so a real `text_value_1` sample was used to validate the same single-column contains-search shape.
+- Notes: actual returning query uses `match(text_value_1) against('"admiral-100000"' in boolean mode)`.
 
 ### Query 3
 
