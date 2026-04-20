@@ -625,32 +625,75 @@ limit 1000
 offset 0
 ```
 
-#### Actual Query Run
+#### Compatibility Notes
+- This query shape is not safely equivalent to a FULLTEXT rewrite in the current build when the prefix contains token boundary characters such as `-`, whitespace, email punctuation, or URL punctuation.
+- For a single analyzer token without token boundaries, the MySQL-compatible prefix form is:
+  - `match(col) against('prefix*' in boolean mode)`
+- A quick validation on `obj_new.text_value_7` showed:
+  - `lower(text_value_7) like 'sam%'` -> `129,077`
+  - `match(text_value_7) against('sam*' in boolean mode)` -> `129,077`
+  - `match(text_value_7) against('"sam*"' in boolean mode)` -> `0`
+- So, for a single token prefix, the correct rewrite is the unquoted form. Quoting the token changes the semantics.
+- The original predicate in this query, `lower(text_value_1) like 'admiral-100008%'`, crosses a token boundary at `-`, so the rewrite is not semantically stable.
+
+#### Token Boundary Behavior
+- When the search literal contains a token boundary, the FTS layer no longer behaves like a plain string prefix match.
+- For `admiral-100008*` without double quotes, the execution plan widened the search internally and did not preserve the original prefix semantics.
+- For `"admiral-100008*"` with double quotes, the execution plan treated the whole literal as a phrase and did not produce the expected prefix behavior either.
+- Conclusion: for this specific query, neither tested `MATCH ... AGAINST` form is equivalent to the original MySQL `LIKE 'prefix%'` predicate.
+
+#### Tested Form 1
 ```sql
-select `o`.`sequential_id`, `o`.`label`
-from `obj_new` `o`
-where `o`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221' and (`o`.`obj_type_id` in (
-  unhex(replace('0dfb9fc6-e7c9-4115-bc56-b5baf679b071','-','')),
-  unhex(replace('5734a061-b698-4c2a-94ec-700792c86400','-','')),
-  unhex(replace('8af8cdb7-1a8b-4932-a466-0f60a68227f4','-','')),
-  unhex(replace('bfc6489a-3cb1-43e6-9180-9367e7254edf','-','')),
-  unhex(replace('e60ef1f1-dfdb-40b9-a0ac-77d0e4d9d69c','-',''))
-) and (`o`.`text_value_1` != '􏿿' and match(`o`.`text_value_1`) against('admiral-100008*' in boolean mode) and `o`.`obj_type_id` in (
-  unhex(replace('0dfb9fc6-e7c9-4115-bc56-b5baf679b071','-','')),
-  unhex(replace('5734a061-b698-4c2a-94ec-700792c86400','-','')),
-  unhex(replace('8af8cdb7-1a8b-4932-a466-0f60a68227f4','-','')),
-  unhex(replace('bfc6489a-3cb1-43e6-9180-9367e7254edf','-','')),
-  unhex(replace('e60ef1f1-dfdb-40b9-a0ac-77d0e4d9d69c','-',''))
-)))
-order by `o`.`label` asc
-limit 1000
-offset 0;
+match(`o`.`text_value_1`) against('admiral-100008*' in boolean mode)
 ```
 
-#### Result
+#### Tested Form 1 Observed Result
 - Latency: `1028ms`, `1025ms`, `1027ms`, `965ms`, `976ms`
 - Row count: `1000`
-- Notes: tested after `idx_obj_new_text_value_1_ngram` was added and synced.
+- Candidate rows before final output: `214,334`
+
+#### Tested Form 1 EXPLAIN ANALYZE
+```text
+TopN_11    1000.00    1000    root    time:1.02s
+└─Projection_23    3003067.36    214334    root    time:1.01s
+  └─IndexLookUp_22    3003067.36    214334    root    time:1.02s, index_task: {total_time: 920.7ms, fetch_handle: 920.6ms}, table_task: {total_time: 823.9ms, num: 14, concurrency: 5}
+    ├─ExchangeSender_21(Build)    0.00    214334    mpp[tiflash]    time:799.7ms
+    │ └─Selection_19    0.00    214334    mpp[tiflash]
+    │   └─IndexRangeScan_17    1000.00    214334    mpp[tiflash]    table:o, index:idx_obj_new_text_value_1_ngram(text_value_1)
+    │       range:["8a6526e6-cd57-4216-bac6-358a6177d221","8a6526e6-cd57-4216-bac6-358a6177d221"], search func:or(istrue_with_null(fts_match_phrase("admiral", jsm_testcase2.obj_new.text_value_1)), istrue_with_null(fts_match_prefix("100008", jsm_testcase2.obj_new.text_value_1))), keep order:false
+    └─Selection_20(Probe)    3003067.36    214334    cop[tikv]    total_time:722.9ms
+      └─TableRowIDScan_18    0.00    214334    cop[tikv]    table:o
+```
+
+#### Tested Form 2
+```sql
+match(`o`.`text_value_1`) against('"admiral-100008*"' in boolean mode)
+```
+
+#### Tested Form 2 Observed Result
+- Latency: `6.71ms` from `EXPLAIN ANALYZE`
+- Row count: `0`
+
+#### Tested Form 2 EXPLAIN ANALYZE
+```text
+TopN_11    1000.00    0    root    time:6.71ms
+└─Projection_23    3003067.36    0    root    time:6.68ms
+  └─IndexLookUp_22    3003067.36    0    root    time:6.63ms
+    ├─ExchangeSender_21(Build)    0.00    0    mpp[tiflash]    time:6.2ms
+    │ └─Selection_19    0.00    0    mpp[tiflash]
+    │   └─IndexRangeScan_17    1000.00    0    mpp[tiflash]    table:o, index:idx_obj_new_text_value_1_ngram(text_value_1)
+    │       range:["8a6526e6-cd57-4216-bac6-358a6177d221","8a6526e6-cd57-4216-bac6-358a6177d221"], search func:fts_match_phrase("admiral 100008*", jsm_testcase2.obj_new.text_value_1), keep order:false
+    └─Selection_20(Probe)    3003067.36    0    cop[tikv]
+      └─TableRowIDScan_18    0.00    0    cop[tikv]    table:o
+```
+
+#### Final Conclusion
+- If the query string is a single token without token boundaries, use:
+  - `match(col) against('prefix*' in boolean mode)`
+- If the query string contains `-`, whitespace, or punctuation, do not assume a `MATCH ... AGAINST` rewrite is semantically equivalent to `LIKE 'prefix%'`.
+- For this query, both tested rewrites are incorrect relative to the original SQL:
+  - unquoted form: too broad
+  - quoted form: too narrow
 
 ### Query 2
 
