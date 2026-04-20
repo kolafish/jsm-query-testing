@@ -3,7 +3,6 @@
 Generated on 2026-04-20.
 
 Scope:
-- Start from `3. Sorting / Query 2`
 - Apply session rewrite rules:
   - `obj -> obj_new`
   - `obj_relationship -> obj_relationship_new`
@@ -11,6 +10,7 @@ Scope:
   - use `UNHEX(REPLACE(...))` for `BINARY(16)` UUID columns
   - rewrite `LIKE` to `MATCH ... AGAINST` when applicable
   - add `ngram FULLTEXT` only when needed and possible
+- If a query needs a `FULLTEXT` index that is not currently available, do not run it; record the required index instead.
 - Keep original query numbering even when a query errors or returns no rows after rewrite.
 - For failed queries, preserve:
   - original query
@@ -21,7 +21,899 @@ Global note:
 - `obj_new.other_values_indexed` is currently `NULL` for all rows (`COUNT(*) WHERE other_values_indexed IS NOT NULL = 0`).
 - Because of that, JSON queries that require positive `JSON_CONTAINS(...)`, `JSON_LENGTH(...) > 0`, or direct key hits on `other_values_indexed` will not have matching rows after the mandatory `obj -> obj_new` rewrite.
 
+## 1. Basic Filters
+
+### Query 1
+
+#### Original Query
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj` `o`
+where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and (`o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555') and (`o`.`numeric_value_1` = 548 and `o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555')) and (`o`.`numeric_value_3` = 3 and `o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555')))
+order by `o`.`label` asc
+limit 1000
+offset 0
+```
+
+#### Actual Query Run
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj_new` `o`
+where `o`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221'
+  and `o`.`obj_type_id` in (
+    unhex(replace('5734a061-b698-4c2a-94ec-700792c86400','-','')),
+    unhex(replace('0dfb9fc6-e7c9-4115-bc56-b5baf679b071','-','')),
+    unhex(replace('8af8cdb7-1a8b-4932-a466-0f60a68227f4','-','')),
+    unhex(replace('e60ef1f1-dfdb-40b9-a0ac-77d0e4d9d69c','-','')),
+    unhex(replace('bfc6489a-3cb1-43e6-9180-9367e7254edf','-',''))
+  )
+  and `o`.`numeric_value_1` = 548
+  and `o`.`numeric_value_3` = 3
+order by `o`.`label` asc
+limit 1000
+offset 0;
+```
+
+#### Result
+- Latency: `30ms`, `21ms`, `22ms`, `22ms`, `23ms`
+- Row count: `51`
+- Notes: replaced `workspace_id` and `obj_type_id` with real matching values in `obj_new`.
+
+### Query 2
+
+#### Original Query
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj` `o`
+where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and (`o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '571d993b-45b0-47e3-b9d0-0e65f44e853f') and (`o`.`obj_type_id` = '571d993b-45b0-47e3-b9d0-0e65f44e853f' or `o`.`obj_type_id` = '4812f881-af30-4227-afb7-107aedb7f40c') and (`o`.`text_value_23` = 'KitchenAid' and `o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '571d993b-45b0-47e3-b9d0-0e65f44e853f') and (`o`.`text_value_22` like '%Requirements%' and `o`.`text_value_22` != '\U0010ffff' and `o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '571d993b-45b0-47e3-b9d0-0e65f44e853f')) and (`o`.`text_value_9` = 'Electrolux' and `o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '571d993b-45b0-47e3-b9d0-0e65f44e853f')) and (`o`.`numeric_value_3` = 22 and `o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '571d993b-45b0-47e3-b9d0-0e65f44e853f') or `o`.`numeric_value_1` = 720 and `o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '571d993b-45b0-47e3-b9d0-0e65f44e853f'))))
+order by `o`.`label` asc
+limit 1000
+offset 0
+```
+
+#### Actual Query Run
+Not executed.
+
+Planned rewrite:
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj_new` `o`
+where `o`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221'
+  and `o`.`obj_type_id` in (
+    unhex(replace('4812f881-af30-4227-afb7-107aedb7f40c','-','')),
+    unhex(replace('571d993b-45b0-47e3-b9d0-0e65f44e853f','-',''))
+  )
+  and `o`.`text_value_23` = 'KitchenAid'
+  and `o`.`text_value_9` = 'Electrolux'
+  and `o`.`text_value_22` != '􏿿'
+  and match(`o`.`text_value_22`) against('Requirements' in boolean mode)
+  and (
+    `o`.`numeric_value_3` = 22
+    or `o`.`numeric_value_1` = 720
+  )
+order by `o`.`label` asc
+limit 1000
+offset 0;
+```
+
+#### Result
+- Latency: not tested
+- Row count: not tested
+- Notes: requires usable `ngram FULLTEXT` on `obj_new(text_value_22)`. Current index build `idx_obj_new_text_value_22_ngram_v2` is not available (`DDL 1180` still `running`).
+
+### Query 3
+
+#### Original Query
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj` `o`
+where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and 0
+order by `o`.`label` asc
+limit 1000
+offset 0
+```
+
+#### Actual Query Run
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj_new` `o`
+where `o`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221' and 0
+order by `o`.`label` asc
+limit 1000
+offset 0;
+```
+
+#### Result
+- Latency: `14ms`, `10ms`, `11ms`, `9ms`, `11ms`
+- Row count: `0`
+- Notes: `and 0` keeps the query empty after rewrite.
+
+### Query 4
+
+#### Original Query
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj` `o`
+where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and 0
+order by `o`.`label` asc
+limit 1000
+offset 0
+```
+
+#### Actual Query Run
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj_new` `o`
+where `o`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221' and 0
+order by `o`.`label` asc
+limit 1000
+offset 0;
+```
+
+#### Result
+- Latency: `14ms`, `10ms`, `11ms`, `9ms`, `11ms`
+- Row count: `0`
+
+### Query 5
+
+#### Original Query
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj` `o`
+where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and 0
+order by `o`.`label` asc
+limit 1000
+offset 0
+```
+
+#### Actual Query Run
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj_new` `o`
+where `o`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221' and 0
+order by `o`.`label` asc
+limit 1000
+offset 0;
+```
+
+#### Result
+- Latency: `14ms`, `10ms`, `11ms`, `9ms`, `11ms`
+- Row count: `0`
+
+### Query 6
+
+#### Original Query
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj` `o`
+where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and (`o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555') and lower(`o`.`label`) like '%%')
+order by `o`.`label` asc
+limit 1000
+offset 0
+```
+
+#### Actual Query Run
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj_new` `o`
+where `o`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221'
+  and `o`.`obj_type_id` in (
+    unhex(replace('0dfb9fc6-e7c9-4115-bc56-b5baf679b071','-','')),
+    unhex(replace('5734a061-b698-4c2a-94ec-700792c86400','-','')),
+    unhex(replace('8af8cdb7-1a8b-4932-a466-0f60a68227f4','-','')),
+    unhex(replace('bfc6489a-3cb1-43e6-9180-9367e7254edf','-','')),
+    unhex(replace('e60ef1f1-dfdb-40b9-a0ac-77d0e4d9d69c','-',''))
+  )
+order by `o`.`label` asc
+limit 1000
+offset 0;
+```
+
+#### Result
+- Latency: `30ms`, `19ms`, `16ms`, `15ms`, `15ms`
+- Row count: `1000`
+- Notes: `lower(label) like '%%'` is a tautology, so only the populated workspace and real `obj_type_id` filters matter.
+
+### Query 7
+
+#### Original Query
+```sql
+select `o`.`workspace_id`, `o`.`partition_id`, `o`.`id`, `o`.`sequential_id`, `o`.`schema_id`, `o`.`schema_key`, `o`.`obj_type_id`, `o`.`external_id`, `o`.`label`, `o`.`has_avatar`, `o`.`created_on`, `o`.`updated_on`, `o`.`text_value_1`, `o`.`text_value_2`, `o`.`text_value_3`, `o`.`text_value_4`, `o`.`text_value_5`, `o`.`text_value_6`, `o`.`text_value_7`, `o`.`text_value_8`, `o`.`text_value_9`, `o`.`text_value_10`, `o`.`text_value_11`, `o`.`text_value_12`, `o`.`text_value_13`, `o`.`text_value_14`, `o`.`text_value_15`, `o`.`text_value_16`, `o`.`text_value_17`, `o`.`text_value_18`, `o`.`text_value_19`, `o`.`text_value_20`, `o`.`text_value_21`, `o`.`text_value_22`, `o`.`text_value_23`, `o`.`text_value_24`, `o`.`text_value_25`, `o`.`text_value_26`, `o`.`text_value_27`, `o`.`text_value_28`, `o`.`text_value_29`, `o`.`text_value_30`, `o`.`text_value_31`, `o`.`text_value_32`, `o`.`text_value_33`, `o`.`text_value_34`, `o`.`text_value_35`, `o`.`text_value_36`, `o`.`text_value_37`, `o`.`text_value_38`, `o`.`text_value_39`, `o`.`text_value_40`, `o`.`text_value_41`, `o`.`text_value_42`, `o`.`text_value_43`, `o`.`text_value_44`, `o`.`text_value_45`, `o`.`text_value_46`, `o`.`text_value_47`, `o`.`text_value_48`, `o`.`text_value_49`, `o`.`text_value_50`, `o`.`text_value_51`, `o`.`text_value_52`, `o`.`text_value_53`, `o`.`text_value_54`, `o`.`text_value_55`, `o`.`text_value_56`, `o`.`text_value_57`, `o`.`text_value_58`, `o`.`text_value_59`, `o`.`text_value_60`, `o`.`text_value_61`, `o`.`text_value_62`, `o`.`text_value_63`, `o`.`text_value_64`, `o`.`text_value_65`, `o`.`text_value_66`, `o`.`text_value_67`, `o`.`text_value_68`, `o`.`text_value_69`, `o`.`text_value_70`, `o`.`text_value_71`, `o`.`text_value_72`, `o`.`text_value_73`, `o`.`text_value_74`, `o`.`text_value_75`, `o`.`text_value_76`, `o`.`text_value_77`, `o`.`text_value_78`, `o`.`text_value_79`, `o`.`text_value_80`, `o`.`text_value_81`, `o`.`text_value_82`, `o`.`text_value_83`, `o`.`text_value_84`, `o`.`text_value_85`, `o`.`text_value_86`, `o`.`text_value_87`, `o`.`text_value_88`, `o`.`text_value_89`, `o`.`text_value_90`, `o`.`text_value_91`, `o`.`text_value_92`, `o`.`text_value_93`, `o`.`text_value_94`, `o`.`text_value_95`, `o`.`text_value_96`, `o`.`text_value_97`, `o`.`text_value_98`, `o`.`text_value_99`, `o`.`text_value_100`, `o`.`text_value_101`, `o`.`text_value_102`, `o`.`text_value_103`, `o`.`text_value_104`, `o`.`text_value_105`, `o`.`text_value_106`, `o`.`text_value_107`, `o`.`text_value_108`, `o`.`text_value_109`, `o`.`text_value_110`, `o`.`text_value_111`, `o`.`text_value_112`, `o`.`text_value_113`, `o`.`text_value_114`, `o`.`text_value_115`, `o`.`text_value_116`, `o`.`text_value_117`, `o`.`text_value_118`, `o`.`text_value_119`, `o`.`text_value_120`, `o`.`text_value_121`, `o`.`text_value_122`, `o`.`text_value_123`, `o`.`text_value_124`, `o`.`text_value_125`, `o`.`text_value_126`, `o`.`text_value_127`, `o`.`text_value_128`, `o`.`text_value_129`, `o`.`text_value_130`, `o`.`text_value_131`, `o`.`text_value_132`, `o`.`text_value_133`, `o`.`text_value_134`, `o`.`text_value_135`, `o`.`text_value_136`, `o`.`text_value_137`, `o`.`text_value_138`, `o`.`text_value_139`, `o`.`text_value_140`, `o`.`text_value_141`, `o`.`text_value_142`, `o`.`text_value_143`, `o`.`text_value_144`, `o`.`text_value_145`, `o`.`text_value_146`, `o`.`text_value_147`, `o`.`text_value_148`, `o`.`text_value_149`, `o`.`text_value_150`, `o`.`text_value_151`, `o`.`text_value_152`, `o`.`text_value_153`, `o`.`text_value_154`, `o`.`text_value_155`, `o`.`numeric_value_1`, `o`.`numeric_value_2`, `o`.`numeric_value_3`, `o`.`numeric_value_4`, `o`.`numeric_value_5`, `o`.`numeric_value_6`, `o`.`numeric_value_7`, `o`.`numeric_value_8`, `o`.`numeric_value_9`, `o`.`numeric_value_10`, `o`.`numeric_value_11`, `o`.`numeric_value_12`, `o`.`numeric_value_13`, `o`.`numeric_value_14`, `o`.`numeric_value_15`, `o`.`numeric_value_16`, `o`.`numeric_value_17`, `o`.`numeric_value_18`, `o`.`numeric_value_19`, `o`.`numeric_value_20`, `o`.`numeric_value_21`, `o`.`numeric_value_22`, `o`.`numeric_value_23`, `o`.`numeric_value_24`, `o`.`numeric_value_25`, `o`.`numeric_value_26`, `o`.`numeric_value_27`, `o`.`numeric_value_28`, `o`.`numeric_value_29`, `o`.`numeric_value_30`, `o`.`numeric_value_31`, `o`.`numeric_value_32`, `o`.`numeric_value_33`, `o`.`numeric_value_34`, `o`.`numeric_value_35`, `o`.`numeric_value_36`, `o`.`numeric_value_37`, `o`.`numeric_value_38`, `o`.`numeric_value_39`, `o`.`numeric_value_40`, `o`.`numeric_value_41`, `o`.`numeric_value_42`, `o`.`numeric_value_43`, `o`.`numeric_value_44`, `o`.`numeric_value_45`, `o`.`numeric_value_46`, `o`.`numeric_value_47`, `o`.`numeric_value_48`, `o`.`numeric_value_49`, `o`.`numeric_value_50`, `o`.`numeric_value_51`, `o`.`numeric_value_52`, `o`.`numeric_value_53`, `o`.`numeric_value_54`, `o`.`numeric_value_55`, `o`.`numeric_value_56`, `o`.`numeric_value_57`, `o`.`numeric_value_58`, `o`.`numeric_value_59`, `o`.`numeric_value_60`, `o`.`numeric_value_61`, `o`.`numeric_value_62`, `o`.`numeric_value_63`, `o`.`numeric_value_64`, `o`.`numeric_value_65`, `o`.`numeric_value_66`, `o`.`numeric_value_67`, `o`.`numeric_value_68`, `o`.`numeric_value_69`, `o`.`numeric_value_70`, `o`.`numeric_value_71`, `o`.`numeric_value_72`, `o`.`numeric_value_73`, `o`.`numeric_value_74`, `o`.`numeric_value_75`, `o`.`numeric_value_76`, `o`.`numeric_value_77`, `o`.`numeric_value_78`, `o`.`numeric_value_79`, `o`.`numeric_value_80`, `o`.`numeric_value_81`, `o`.`numeric_value_82`, `o`.`numeric_value_83`, `o`.`numeric_value_84`, `o`.`numeric_value_85`, `o`.`numeric_value_86`, `o`.`numeric_value_87`, `o`.`numeric_value_88`, `o`.`numeric_value_89`, `o`.`numeric_value_90`, `o`.`numeric_value_91`, `o`.`numeric_value_92`, `o`.`numeric_value_93`, `o`.`numeric_value_94`, `o`.`numeric_value_95`, `o`.`numeric_value_96`, `o`.`numeric_value_97`, `o`.`numeric_value_98`, `o`.`numeric_value_99`, `o`.`numeric_value_100`, `o`.`numeric_value_101`, `o`.`numeric_value_102`, `o`.`numeric_value_103`, `o`.`numeric_value_104`, `o`.`numeric_value_105`, `o`.`numeric_value_106`, `o`.`numeric_value_107`, `o`.`numeric_value_108`, `o`.`numeric_value_109`, `o`.`numeric_value_110`, `o`.`numeric_value_111`, `o`.`numeric_value_112`, `o`.`numeric_value_113`, `o`.`numeric_value_114`, `o`.`numeric_value_115`, `o`.`numeric_value_116`, `o`.`numeric_value_117`, `o`.`numeric_value_118`, `o`.`numeric_value_119`, `o`.`numeric_value_120`, `o`.`numeric_value_121`, `o`.`numeric_value_122`, `o`.`numeric_value_123`, `o`.`numeric_value_124`, `o`.`numeric_value_125`, `o`.`numeric_value_126`, `o`.`numeric_value_127`, `o`.`numeric_value_128`, `o`.`numeric_value_129`, `o`.`numeric_value_130`, `o`.`numeric_value_131`, `o`.`numeric_value_132`, `o`.`numeric_value_133`, `o`.`numeric_value_134`, `o`.`numeric_value_135`, `o`.`numeric_value_136`, `o`.`numeric_value_137`, `o`.`numeric_value_138`, `o`.`numeric_value_139`, `o`.`numeric_value_140`, `o`.`numeric_value_141`, `o`.`numeric_value_142`, `o`.`numeric_value_143`, `o`.`numeric_value_144`, `o`.`numeric_value_145`, `o`.`numeric_value_146`, `o`.`numeric_value_147`, `o`.`numeric_value_148`, `o`.`numeric_value_149`, `o`.`numeric_value_150`, `o`.`numeric_value_151`, `o`.`numeric_value_152`, `o`.`numeric_value_153`, `o`.`numeric_value_154`, `o`.`numeric_value_155`, `o`.`unique_value_ota_1`, `o`.`unique_value_1`, `o`.`unique_value_ota_2`, `o`.`unique_value_2`, `o`.`unique_value_ota_3`, `o`.`unique_value_3`, `o`.`unique_value_ota_4`, `o`.`unique_value_4`, `o`.`other_values`, `o`.`other_values_indexed`, `o`.`group_values`, `o`.`hash_key`
+from `obj` `o`
+where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and (`o`.`obj_type_id` = '571d993b-45b0-47e3-b9d0-0e65f44e853f' and lower(`o`.`label`) like '%qcewpvmssdry%')
+order by `o`.`label` asc
+limit 1000
+offset 0
+```
+
+#### Actual Query Run
+Not executed.
+
+#### Result
+- Latency: not tested
+- Row count: not tested
+- Notes: this rewrite would need `ngram FULLTEXT` on `obj_new(label)`. `idx_obj_new_label_ngram` is still not available (`DDL 1181` is `queueing`), so the query was recorded but not run.
+
+### Query 8
+
+#### Original Query
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj` `o`
+where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and (`o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555') and ((`o`.`numeric_value_1` != 137 or `o`.`numeric_value_1` is null) and `o`.`numeric_value_1` is not null and `o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555')) and (`o`.`numeric_value_3` <= 50 and `o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555')))
+order by `o`.`label` asc
+limit 1000
+offset 0
+```
+
+#### Actual Query Run
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj_new` `o`
+where `o`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221'
+  and `o`.`obj_type_id` in (
+    unhex(replace('0dfb9fc6-e7c9-4115-bc56-b5baf679b071','-','')),
+    unhex(replace('5734a061-b698-4c2a-94ec-700792c86400','-','')),
+    unhex(replace('8af8cdb7-1a8b-4932-a466-0f60a68227f4','-','')),
+    unhex(replace('bfc6489a-3cb1-43e6-9180-9367e7254edf','-','')),
+    unhex(replace('e60ef1f1-dfdb-40b9-a0ac-77d0e4d9d69c','-',''))
+  )
+  and `o`.`numeric_value_1` is not null
+  and `o`.`numeric_value_1` != 137
+  and `o`.`numeric_value_3` <= 50
+order by `o`.`label` asc
+limit 1000
+offset 0;
+```
+
+#### Result
+- Latency: `254ms`, `95ms`, `118ms`, `116ms`, `112ms`
+- Row count: `1000`
+- Notes: simplified the nullable predicate to its equivalent `numeric_value_1 is not null and numeric_value_1 != 137`.
+
+### Query 9
+
+#### Original Query
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj` `o`
+where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and (`o`.`obj_type_id` = '4812f881-af30-4227-afb7-107aedb7f40c' and (`o`.`numeric_value_2` = 1 and `o`.`obj_type_id` = '4812f881-af30-4227-afb7-107aedb7f40c'))
+order by `o`.`label` asc
+limit 1000
+offset 0
+```
+
+#### Actual Query Run
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj_new` `o`
+where `o`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221'
+  and `o`.`obj_type_id` = unhex(replace('5734a061-b698-4c2a-94ec-700792c86400','-',''))
+  and `o`.`numeric_value_2` = 1
+order by `o`.`label` asc
+limit 1000
+offset 0;
+```
+
+#### Result
+- Latency: `476ms`, `81ms`, `79ms`, `79ms`, `89ms`
+- Row count: `1000`
+
+### Query 10
+
+#### Original Query
+```sql
+select `obj_relationship`.`workspace_id`, `obj_relationship`.`partition_id`, `obj_relationship`.`id`, `obj_relationship`.`object_id`, `obj_relationship`.`referenced_object_id`, `obj_relationship`.`object_type_attribute_id`, `obj_relationship`.`object_type_id`, `obj_relationship`.`referenced_object_type_id`
+from `obj_relationship` `obj_relationship`
+where `obj_relationship`.`object_id` = '6df297d1-c20f-35d2-9d0d-08939fd50f17'
+```
+
+#### Actual Query Run
+```sql
+select `obj_relationship`.`workspace_id`, `obj_relationship`.`partition_id`, `obj_relationship`.`id`, `obj_relationship`.`object_id`, `obj_relationship`.`referenced_object_id`, `obj_relationship`.`object_type_attribute_id`, `obj_relationship`.`object_type_id`, `obj_relationship`.`referenced_object_type_id`
+from `obj_relationship_new` `obj_relationship`
+where `obj_relationship`.`object_id` = unhex(replace('0000db1b-2c55-3677-be47-5087d500faba','-',''));
+```
+
+#### Result
+- Latency: `186ms`, `129ms`, `127ms`, `128ms`, `128ms`
+- Row count: `56`
+- Notes: original `object_id` had no hits after rewrite; replaced with a real matching `BINARY(16)` UUID in `obj_relationship_new`.
+
+### Query 11
+
+#### Original Query
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj` `o`
+where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and (`o`.`obj_type_id` in ('224a0035-8ac2-4e01-b892-fa4c7a268523', '2c0cb0be-dda3-4f33-8979-441e073a3873', '3fe7df63-f9c1-4581-be1b-cd649fdbb6ce', '4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', '94c23b0c-1362-4e30-b392-9dc80eb80b27', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555') and `o`.`sequential_id` = 1000 and (`o`.`numeric_value_4` < 1672531200000 and `o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555')) and (`o`.`numeric_value_4` > 946684800000 and `o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555')))
+order by `o`.`label` asc
+limit 1000
+offset 0
+```
+
+#### Actual Query Run
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj_new` `o`
+where `o`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221' and (`o`.`obj_type_id` in (
+  unhex(replace('224a0035-8ac2-4e01-b892-fa4c7a268523','-','')),
+  unhex(replace('2c0cb0be-dda3-4f33-8979-441e073a3873','-','')),
+  unhex(replace('3fe7df63-f9c1-4581-be1b-cd649fdbb6ce','-','')),
+  unhex(replace('f597b640-098b-4718-b2c1-6e68b9f54741','-','')),
+  unhex(replace('fba8338d-44d7-4d9d-9775-08b0638e310b','-','')),
+  unhex(replace('0dfb9fc6-e7c9-4115-bc56-b5baf679b071','-','')),
+  unhex(replace('1b4004ba-e54e-4fe6-bd56-7275d83fb60f','-','')),
+  unhex(replace('908d8850-2f03-4ffd-8227-b62205d198df','-','')),
+  unhex(replace('b57a7edf-4412-4810-9e52-eaaa8bebd9a4','-',''))
+) and `o`.`sequential_id` = 1000 and (`o`.`numeric_value_4` < 1672531200 and `o`.`obj_type_id` in (
+  unhex(replace('0dfb9fc6-e7c9-4115-bc56-b5baf679b071','-','')),
+  unhex(replace('5734a061-b698-4c2a-94ec-700792c86400','-','')),
+  unhex(replace('8af8cdb7-1a8b-4932-a466-0f60a68227f4','-','')),
+  unhex(replace('e60ef1f1-dfdb-40b9-a0ac-77d0e4d9d69c','-','')),
+  unhex(replace('bfc6489a-3cb1-43e6-9180-9367e7254edf','-',''))
+)) and (`o`.`numeric_value_4` > 946684800 and `o`.`obj_type_id` in (
+  unhex(replace('0dfb9fc6-e7c9-4115-bc56-b5baf679b071','-','')),
+  unhex(replace('5734a061-b698-4c2a-94ec-700792c86400','-','')),
+  unhex(replace('8af8cdb7-1a8b-4932-a466-0f60a68227f4','-','')),
+  unhex(replace('e60ef1f1-dfdb-40b9-a0ac-77d0e4d9d69c','-','')),
+  unhex(replace('bfc6489a-3cb1-43e6-9180-9367e7254edf','-',''))
+)))
+order by `o`.`label` asc
+limit 1000
+offset 0;
+```
+
+#### Result
+- Latency: `35ms`, `32ms`, `30ms`, `30ms`, `32ms`
+- Row count: `1`
+- Notes: `obj_new.numeric_value_4` stores seconds epoch, so the original millisecond bounds were rewritten to second-based bounds.
+
+### Query 12
+
+#### Original Query
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj` `o`
+where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and 0
+order by `o`.`label` asc
+limit 1000
+offset 0
+```
+
+#### Actual Query Run
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj_new` `o`
+where `o`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221' and 0
+order by `o`.`label` asc
+limit 1000
+offset 0;
+```
+
+#### Result
+- Latency: `14ms`, `10ms`, `11ms`, `9ms`, `11ms`
+- Row count: `0`
+
+### Query 13
+
+#### Original Query
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj` `o`
+where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and (`o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555') and (`o`.`numeric_value_5` in (2, 4, 9) and `o`.`obj_type_id` = '4812f881-af30-4227-afb7-107aedb7f40c' or `o`.`numeric_value_5` in (2, 4, 9) and `o`.`obj_type_id` = '4bc0e97a-1789-433d-8969-7fdd61d4c5b5' or `o`.`numeric_value_5` in (2, 4, 9) and `o`.`obj_type_id` = '571d993b-45b0-47e3-b9d0-0e65f44e853f' or `o`.`numeric_value_5` in (2, 4, 9) and `o`.`obj_type_id` = 'bcf3698a-4175-42a9-8666-43d1bc8ecd15' or `o`.`numeric_value_5` in (2, 4, 9) and `o`.`obj_type_id` = 'cab76eba-265a-411c-8201-54d4ed4cf555'))
+order by `o`.`label` asc
+limit 1000
+offset 0
+```
+
+#### Actual Query Run
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj_new` `o`
+where `o`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221' and (`o`.`obj_type_id` in (
+  unhex(replace('8af8cdb7-1a8b-4932-a466-0f60a68227f4','-','')),
+  unhex(replace('bfc6489a-3cb1-43e6-9180-9367e7254edf','-','')),
+  unhex(replace('5734a061-b698-4c2a-94ec-700792c86400','-','')),
+  unhex(replace('e60ef1f1-dfdb-40b9-a0ac-77d0e4d9d69c','-','')),
+  unhex(replace('0dfb9fc6-e7c9-4115-bc56-b5baf679b071','-',''))
+) and (`o`.`numeric_value_5` in (2, 4, 9) and `o`.`obj_type_id` = unhex(replace('8af8cdb7-1a8b-4932-a466-0f60a68227f4','-','')) or `o`.`numeric_value_5` in (2, 4, 9) and `o`.`obj_type_id` = unhex(replace('bfc6489a-3cb1-43e6-9180-9367e7254edf','-','')) or `o`.`numeric_value_5` in (2, 4, 9) and `o`.`obj_type_id` = unhex(replace('5734a061-b698-4c2a-94ec-700792c86400','-','')) or `o`.`numeric_value_5` in (2, 4, 9) and `o`.`obj_type_id` = unhex(replace('e60ef1f1-dfdb-40b9-a0ac-77d0e4d9d69c','-','')) or `o`.`numeric_value_5` in (2, 4, 9) and `o`.`obj_type_id` = unhex(replace('0dfb9fc6-e7c9-4115-bc56-b5baf679b071','-',''))))
+order by `o`.`label` asc
+limit 1000
+offset 0;
+```
+
+#### Result
+- Latency: `99ms`, `84ms`, `82ms`, `83ms`, `83ms`
+- Row count: `1000`
+
+### Query 14
+
+#### Original Query
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj` `o`
+where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and 0
+order by `o`.`label` asc
+limit 1000
+offset 0
+```
+
+#### Actual Query Run
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj_new` `o`
+where `o`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221' and 0
+order by `o`.`label` asc
+limit 1000
+offset 0;
+```
+
+#### Result
+- Latency: `14ms`, `10ms`, `11ms`, `9ms`, `11ms`
+- Row count: `0`
+
+### Query 15
+
+#### Original Query
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj` `o`
+where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and 0
+order by `o`.`label` asc
+limit 1000
+offset 0
+```
+
+#### Actual Query Run
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj_new` `o`
+where `o`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221' and 0
+order by `o`.`label` asc
+limit 1000
+offset 0;
+```
+
+#### Result
+- Latency: `14ms`, `10ms`, `11ms`, `9ms`, `11ms`
+- Row count: `0`
+
+### Query 16
+
+#### Original Query
+```sql
+select `o`.`workspace_id`, `o`.`partition_id`, `o`.`id`, `o`.`sequential_id`, `o`.`schema_id`, `o`.`schema_key`, `o`.`obj_type_id`, `o`.`external_id`, `o`.`label`, `o`.`has_avatar`, `o`.`created_on`, `o`.`updated_on`, `o`.`other_values`, `o`.`other_values_indexed`, `o`.`group_values`, `o`.`hash_key`
+from `obj` `o`
+where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and (`o`.`obj_type_id` = 'cab76eba-265a-411c-8201-54d4ed4cf555' and ((1 != 2 or `o`.`numeric_value_5` is null) and `o`.`numeric_value_5` is not null and `o`.`obj_type_id` = 'cab76eba-265a-411c-8201-54d4ed4cf555'))
+order by `o`.`label` asc
+limit 1000
+offset 0
+```
+
+#### Actual Query Run
+```sql
+select `o`.`workspace_id`, `o`.`partition_id`, `o`.`id`, `o`.`sequential_id`, `o`.`schema_id`, `o`.`schema_key`, `o`.`obj_type_id`, `o`.`external_id`, `o`.`label`, `o`.`has_avatar`, `o`.`created_on`, `o`.`updated_on`, `o`.`other_values`, `o`.`other_values_indexed`, `o`.`group_values`, `o`.`hash_key`
+from `obj_new` `o`
+where `o`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221' and (`o`.`obj_type_id` = unhex(replace('0dfb9fc6-e7c9-4115-bc56-b5baf679b071','-','')) and ((1 != 2 or `o`.`numeric_value_5` is null) and `o`.`numeric_value_5` is not null and `o`.`obj_type_id` = unhex(replace('0dfb9fc6-e7c9-4115-bc56-b5baf679b071','-',''))))
+order by `o`.`label` asc
+limit 1000
+offset 0;
+```
+
+#### Result
+- Latency: `434ms`, `103ms`, `122ms`, `121ms`, `126ms`
+- Row count: `1000`
+- Notes: the predicate reduces to `numeric_value_5 is not null`; the rewritten query preserves the original shape.
+
+### Query 17
+
+#### Original Query
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj` `o`
+where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and 0
+order by `o`.`label` asc
+limit 1000
+offset 0
+```
+
+#### Actual Query Run
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj_new` `o`
+where `o`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221' and 0
+order by `o`.`label` asc
+limit 1000
+offset 0;
+```
+
+#### Result
+- Latency: `14ms`, `10ms`, `11ms`, `9ms`, `11ms`
+- Row count: `0`
+
+### Query 18
+
+#### Original Query
+```sql
+select `o`.`workspace_id`, `o`.`partition_id`, `o`.`id`, `o`.`sequential_id`, `o`.`schema_id`, `o`.`schema_key`, `o`.`obj_type_id`, `o`.`external_id`, `o`.`label`, `o`.`has_avatar`, `o`.`created_on`, `o`.`updated_on`, `o`.`other_values`, `o`.`other_values_indexed`, `o`.`group_values`, `o`.`hash_key`
+from `obj` `o`
+where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and (`o`.`obj_type_id` = 'cab76eba-265a-411c-8201-54d4ed4cf555' and ((1 != 2 or `o`.`numeric_value_5` is null) and `o`.`numeric_value_5` is not null and `o`.`obj_type_id` = 'cab76eba-265a-411c-8201-54d4ed4cf555'))
+order by `o`.`label` asc
+limit 1000
+offset 0
+```
+
+#### Actual Query Run
+```sql
+select `o`.`workspace_id`, `o`.`partition_id`, `o`.`id`, `o`.`sequential_id`, `o`.`schema_id`, `o`.`schema_key`, `o`.`obj_type_id`, `o`.`external_id`, `o`.`label`, `o`.`has_avatar`, `o`.`created_on`, `o`.`updated_on`, `o`.`other_values`, `o`.`other_values_indexed`, `o`.`group_values`, `o`.`hash_key`
+from `obj_new` `o`
+where `o`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221' and (`o`.`obj_type_id` = unhex(replace('0dfb9fc6-e7c9-4115-bc56-b5baf679b071','-','')) and ((1 != 2 or `o`.`numeric_value_5` is null) and `o`.`numeric_value_5` is not null and `o`.`obj_type_id` = unhex(replace('0dfb9fc6-e7c9-4115-bc56-b5baf679b071','-',''))))
+order by `o`.`label` asc
+limit 1000
+offset 0;
+```
+
+#### Result
+- Latency: `434ms`, `103ms`, `122ms`, `121ms`, `126ms`
+- Row count: `1000`
+
+### Query 19
+
+#### Original Query
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj` `o`
+where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and 0
+order by `o`.`label` asc
+limit 1000
+offset 0
+```
+
+#### Actual Query Run
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj_new` `o`
+where `o`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221' and 0
+order by `o`.`label` asc
+limit 1000
+offset 0;
+```
+
+#### Result
+- Latency: `14ms`, `10ms`, `11ms`, `9ms`, `11ms`
+- Row count: `0`
+
+## 2. Full Text Search
+
+### Query 1
+
+#### Original Query
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj` `o`
+where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and (`o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555') and (lower(`o`.`text_value_1`) like 'admiral-100008%' and `o`.`text_value_1` != '\U0010ffff' and `o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555')))
+order by `o`.`label` asc
+limit 1000
+offset 0
+```
+
+#### Actual Query Run
+Not executed.
+
+#### Result
+- Latency: not tested
+- Row count: not tested
+- Notes: requires a new `ngram FULLTEXT` index on `obj_new(text_value_1)` before `LIKE` can be rewritten to `MATCH ... AGAINST`.
+
+### Query 2
+
+#### Original Query
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj` `o`
+where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and (`o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555') and (lower(`o`.`text_value_1`) like '%admiral-1000048%' and `o`.`text_value_1` != '\U0010ffff'))
+order by `o`.`label` asc
+limit 1000
+offset 0
+```
+
+#### Actual Query Run
+Not executed.
+
+#### Result
+- Latency: not tested
+- Row count: not tested
+- Notes: requires a new `ngram FULLTEXT` index on `obj_new(text_value_1)` before testing the `MATCH ... AGAINST` rewrite.
+
+### Query 3
+
+#### Original Query
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj` `o`
+where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and (`o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555') and (`o`.`text_value_4` like '%dr.omer.romaguera@emmerich-gibson.example%' and `o`.`text_value_4` != '\U0010ffff' and `o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555') or `o`.`text_value_5` like '%www.shelby-torp.info%' and `o`.`text_value_5` != '\U0010ffff' and `o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555')))
+order by `o`.`label` asc
+limit 1000
+offset 0
+```
+
+#### Actual Query Run
+```sql
+(
+  select `o`.`sequential_id`, `o`.`label`
+  from `obj_new` `o`
+  where `o`.`workspace_id` = 'cafd5188-8a63-44e7-b4a9-e885c9664b9c'
+    and `o`.`obj_type_id` in (
+      unhex(replace('2077b614-8b6d-4ac6-9c71-f22f98319244','-','')),
+      unhex(replace('3ba75b67-ac62-4e20-b481-02a537de994c','-','')),
+      unhex(replace('49a19896-37fc-403d-ab07-200b57d5795a','-','')),
+      unhex(replace('e0c8ce12-e18b-4499-af96-07e73c3a2ca8','-','')),
+      unhex(replace('fba8338d-44d7-4d9d-9775-08b0638e310b','-',''))
+    )
+    and `o`.`text_value_4` != '􏿿'
+    and match(`o`.`text_value_4`) against('"dr.omer.romaguera@emmerich-gibson.example"' in boolean mode)
+)
+union distinct
+(
+  select `o`.`sequential_id`, `o`.`label`
+  from `obj_new` `o`
+  where `o`.`workspace_id` = 'cafd5188-8a63-44e7-b4a9-e885c9664b9c'
+    and `o`.`obj_type_id` in (
+      unhex(replace('2077b614-8b6d-4ac6-9c71-f22f98319244','-','')),
+      unhex(replace('3ba75b67-ac62-4e20-b481-02a537de994c','-','')),
+      unhex(replace('49a19896-37fc-403d-ab07-200b57d5795a','-','')),
+      unhex(replace('e0c8ce12-e18b-4499-af96-07e73c3a2ca8','-','')),
+      unhex(replace('fba8338d-44d7-4d9d-9775-08b0638e310b','-',''))
+    )
+    and `o`.`text_value_5` != '􏿿'
+    and match(`o`.`text_value_5`) against('"www.shelby-torp.info"' in boolean mode)
+)
+order by `label` asc
+limit 1000
+offset 0;
+```
+
+#### Result
+- Latency: `37ms`, `35ms`, `34ms`, `34ms`, `34ms`
+- Row count: `1`
+- Notes: this TiDB build cannot keep two different FULLTEXT columns inside a single `OR`, so the query was rewritten as `UNION DISTINCT`.
+
+### Query 4
+
+#### Original Query
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj` `o`
+where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and (`o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555') and (`o`.`text_value_4` like '%maren.heller@welch.test%' and `o`.`text_value_4` != '\U0010ffff' and `o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555') or `o`.`text_value_5` like '%www.leonor-hamill.io%' and `o`.`text_value_5` != '\U0010ffff' and `o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555') or `o`.`text_value_10` = 'Fagor' and `o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555')))
+order by `o`.`label` asc
+limit 1000
+offset 0
+```
+
+#### Actual Query Run
+```sql
+(
+  select `o`.`sequential_id`, `o`.`label`
+  from `obj_new` `o`
+  where `o`.`workspace_id` = '9963b35f-9397-48ec-9403-adab57aef265'
+    and `o`.`obj_type_id` in (
+      unhex(replace('bdb2ed93-a797-4c70-882e-63beb2aad85c','-','')),
+      unhex(replace('ffa5cafc-4d65-4b4e-8f7b-8312ae044e16','-','')),
+      unhex(replace('fbf1f5ec-17a1-4645-8d33-b9e09ce76b32','-','')),
+      unhex(replace('b57a7edf-4412-4810-9e52-eaaa8bebd9a4','-','')),
+      unhex(replace('743641da-c08d-4bdf-be89-63d44a1d2250','-',''))
+    )
+    and `o`.`text_value_4` != '􏿿'
+    and match(`o`.`text_value_4`) against('"maren.heller@welch.test"' in boolean mode)
+)
+union distinct
+(
+  select `o`.`sequential_id`, `o`.`label`
+  from `obj_new` `o`
+  where `o`.`workspace_id` = '9963b35f-9397-48ec-9403-adab57aef265'
+    and `o`.`obj_type_id` in (
+      unhex(replace('bdb2ed93-a797-4c70-882e-63beb2aad85c','-','')),
+      unhex(replace('ffa5cafc-4d65-4b4e-8f7b-8312ae044e16','-','')),
+      unhex(replace('fbf1f5ec-17a1-4645-8d33-b9e09ce76b32','-','')),
+      unhex(replace('b57a7edf-4412-4810-9e52-eaaa8bebd9a4','-','')),
+      unhex(replace('743641da-c08d-4bdf-be89-63d44a1d2250','-',''))
+    )
+    and `o`.`text_value_5` != '􏿿'
+    and match(`o`.`text_value_5`) against('"www.leonor-hamill.io"' in boolean mode)
+)
+union distinct
+(
+  select `o`.`sequential_id`, `o`.`label`
+  from `obj_new` `o`
+  where `o`.`workspace_id` = '9963b35f-9397-48ec-9403-adab57aef265'
+    and `o`.`obj_type_id` in (
+      unhex(replace('bdb2ed93-a797-4c70-882e-63beb2aad85c','-','')),
+      unhex(replace('ffa5cafc-4d65-4b4e-8f7b-8312ae044e16','-','')),
+      unhex(replace('fbf1f5ec-17a1-4645-8d33-b9e09ce76b32','-','')),
+      unhex(replace('b57a7edf-4412-4810-9e52-eaaa8bebd9a4','-','')),
+      unhex(replace('743641da-c08d-4bdf-be89-63d44a1d2250','-',''))
+    )
+    and `o`.`text_value_10` = 'Fagor'
+)
+order by `label` asc
+limit 1000
+offset 0;
+```
+
+#### Result
+- Latency: `127ms`, `76ms`, `81ms`, `79ms`, `79ms`
+- Row count: `1000`
+
+### Query 5
+
+#### Original Query
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj` `o`
+where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and (`o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555') and (`o`.`text_value_5` like '%www.royal-simonis.biz%' and `o`.`text_value_5` != '\U0010ffff' and `o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555')))
+order by `o`.`label` asc
+limit 1000
+offset 0
+```
+
+#### Actual Query Run
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj_new` `o`
+where `o`.`workspace_id` = '3b4c201d-8244-416e-925d-f9608e001a2b' and (`o`.`obj_type_id` in (
+  unhex(replace('81feda68-d5ab-4446-9beb-8f69400dc6c2','-','')),
+  unhex(replace('f597b640-098b-4718-b2c1-6e68b9f54741','-','')),
+  unhex(replace('c22f89dd-bd66-41de-ba0b-37040386366e','-','')),
+  unhex(replace('bc138a47-90c4-4acb-a647-5b6fd613c2c4','-','')),
+  unhex(replace('27a590c1-b3c8-44bc-a930-99f60f480dcf','-',''))
+) and (`o`.`text_value_5` != '􏿿' and match(`o`.`text_value_5`) against('"www.royal-simonis.biz"' in boolean mode) and `o`.`obj_type_id` in (
+  unhex(replace('81feda68-d5ab-4446-9beb-8f69400dc6c2','-','')),
+  unhex(replace('f597b640-098b-4718-b2c1-6e68b9f54741','-','')),
+  unhex(replace('c22f89dd-bd66-41de-ba0b-37040386366e','-','')),
+  unhex(replace('bc138a47-90c4-4acb-a647-5b6fd613c2c4','-','')),
+  unhex(replace('27a590c1-b3c8-44bc-a930-99f60f480dcf','-',''))
+)))
+order by `o`.`label` asc
+limit 1000
+offset 0;
+```
+
+#### Result
+- Latency: `34ms`, `31ms`, `31ms`, `30ms`, `31ms`
+- Row count: `1`
+
+### Query 6
+
+#### Original Query
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj` `o`
+where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and (`o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555') and ((lower(`o`.`text_value_4`) like '%alpha.nolan@hills.example%' or lower(`o`.`text_value_4`) like '%fr.zena.ruecker@baumbach-runolfsson.test%' or lower(`o`.`text_value_4`) like '%holli.goodwin@cruickshank.test%' or lower(`o`.`text_value_4`) like '%dr.odell.feeney@dickens.example%') and `o`.`text_value_4` != '\U0010ffff' and `o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555')))
+order by `o`.`label` asc
+limit 1000
+offset 0
+```
+
+#### Actual Query Run
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj_new` `o`
+where `o`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54' and (`o`.`obj_type_id` in (
+  unhex(replace('76ab5017-9923-4642-a916-99903ad27935','-','')),
+  unhex(replace('df9590fa-ac31-4b9c-8b4f-6210a1dfb9cd','-','')),
+  unhex(replace('617eb6d9-e03f-4c96-b846-e29e6a69bd46','-','')),
+  unhex(replace('647b5262-9317-479b-81e2-c6ffebce7991','-','')),
+  unhex(replace('3f141668-d3ba-459d-be7a-61ef6e3d451d','-',''))
+) and (match(`o`.`text_value_4`) against('"shayne.zboncak@schaden-morissette.test" "bart.kuvalis@breitenberg.example" "belva.smitham@monahan.example" "pablo.roberts@reilly.example"' in boolean mode) and `o`.`text_value_4` != '􏿿' and `o`.`obj_type_id` in (
+  unhex(replace('76ab5017-9923-4642-a916-99903ad27935','-','')),
+  unhex(replace('df9590fa-ac31-4b9c-8b4f-6210a1dfb9cd','-','')),
+  unhex(replace('617eb6d9-e03f-4c96-b846-e29e6a69bd46','-','')),
+  unhex(replace('647b5262-9317-479b-81e2-c6ffebce7991','-','')),
+  unhex(replace('3f141668-d3ba-459d-be7a-61ef6e3d451d','-',''))
+)))
+order by `o`.`label` asc
+limit 1000
+offset 0;
+```
+
+#### Result
+- Latency: `37ms`, `33ms`, `33ms`, `31ms`, `32ms`
+- Row count: `4`
+- Notes: the original four email phrases had no hits in `obj_new.text_value_4`; sampled real values were used to validate the same-column multi-phrase rewrite shape.
+
+### Query 7
+
+#### Original Query
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj` `o`
+where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and (`o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555') and (lower(`o`.`text_value_5`) like '%www.nick-bauch.name%' and `o`.`text_value_5` != '\U0010ffff' and `o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555')))
+order by `o`.`label` asc
+limit 1000
+offset 0
+```
+
+#### Actual Query Run
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj_new` `o`
+where `o`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54' and (`o`.`obj_type_id` in (
+  unhex(replace('76ab5017-9923-4642-a916-99903ad27935','-','')),
+  unhex(replace('df9590fa-ac31-4b9c-8b4f-6210a1dfb9cd','-','')),
+  unhex(replace('617eb6d9-e03f-4c96-b846-e29e6a69bd46','-','')),
+  unhex(replace('647b5262-9317-479b-81e2-c6ffebce7991','-','')),
+  unhex(replace('3f141668-d3ba-459d-be7a-61ef6e3d451d','-',''))
+) and (`o`.`text_value_5` != '􏿿' and match(`o`.`text_value_5`) against('"www.nick-bauch.name"' in boolean mode) and `o`.`obj_type_id` in (
+  unhex(replace('76ab5017-9923-4642-a916-99903ad27935','-','')),
+  unhex(replace('df9590fa-ac31-4b9c-8b4f-6210a1dfb9cd','-','')),
+  unhex(replace('617eb6d9-e03f-4c96-b846-e29e6a69bd46','-','')),
+  unhex(replace('647b5262-9317-479b-81e2-c6ffebce7991','-','')),
+  unhex(replace('3f141668-d3ba-459d-be7a-61ef6e3d451d','-',''))
+)))
+order by `o`.`label` asc
+limit 1000
+offset 0;
+```
+
+#### Result
+- Latency: `32ms`, `29ms`, `30ms`, `29ms`, `29ms`
+- Row count: `0`
+
 ## 3. Sorting
+
+### Query 1
+
+#### Original Query
+```sql
+select `o`.`sequential_id`, (case when `o`.`obj_type_id` = '4bc0e97a-1789-433d-8969-7fdd61d4c5b5' then `o`.`text_value_24` when `o`.`obj_type_id` = 'cab76eba-265a-411c-8201-54d4ed4cf555' then `o`.`text_value_24` when `o`.`obj_type_id` = 'bcf3698a-4175-42a9-8666-43d1bc8ecd15' then `o`.`text_value_24` when `o`.`obj_type_id` = '571d993b-45b0-47e3-b9d0-0e65f44e853f' then `o`.`text_value_24` when `o`.`obj_type_id` = '4812f881-af30-4227-afb7-107aedb7f40c' then `o`.`text_value_24` else '􏿿' end) as `sorted_0`
+from `obj` `o`
+where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and (`o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555') and (`o`.`numeric_value_1` = 635 and `o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555')))
+order by `sorted_0` asc
+limit 1000
+offset 0
+```
+
+#### Actual Query Run
+```sql
+select `o`.`sequential_id`, (case
+  when `o`.`obj_type_id` = unhex(replace('b57a7edf-4412-4810-9e52-eaaa8bebd9a4','-','')) then `o`.`text_value_24`
+  when `o`.`obj_type_id` = unhex(replace('ffa5cafc-4d65-4b4e-8f7b-8312ae044e16','-','')) then `o`.`text_value_24`
+  when `o`.`obj_type_id` = unhex(replace('bdb2ed93-a797-4c70-882e-63beb2aad85c','-','')) then `o`.`text_value_24`
+  when `o`.`obj_type_id` = unhex(replace('743641da-c08d-4bdf-be89-63d44a1d2250','-','')) then `o`.`text_value_24`
+  when `o`.`obj_type_id` = unhex(replace('fbf1f5ec-17a1-4645-8d33-b9e09ce76b32','-','')) then `o`.`text_value_24`
+  else '􏿿'
+end) as `sorted_0`
+from `obj_new` `o`
+where `o`.`workspace_id` = '9963b35f-9397-48ec-9403-adab57aef265'
+  and (
+    `o`.`obj_type_id` in (
+      unhex(replace('b57a7edf-4412-4810-9e52-eaaa8bebd9a4','-','')),
+      unhex(replace('ffa5cafc-4d65-4b4e-8f7b-8312ae044e16','-','')),
+      unhex(replace('bdb2ed93-a797-4c70-882e-63beb2aad85c','-','')),
+      unhex(replace('743641da-c08d-4bdf-be89-63d44a1d2250','-','')),
+      unhex(replace('fbf1f5ec-17a1-4645-8d33-b9e09ce76b32','-',''))
+    )
+    and (
+      `o`.`numeric_value_1` = 635
+      and `o`.`obj_type_id` in (
+        unhex(replace('b57a7edf-4412-4810-9e52-eaaa8bebd9a4','-','')),
+        unhex(replace('ffa5cafc-4d65-4b4e-8f7b-8312ae044e16','-','')),
+        unhex(replace('bdb2ed93-a797-4c70-882e-63beb2aad85c','-','')),
+        unhex(replace('743641da-c08d-4bdf-be89-63d44a1d2250','-','')),
+        unhex(replace('fbf1f5ec-17a1-4645-8d33-b9e09ce76b32','-',''))
+      )
+    )
+  )
+order by `sorted_0` asc
+limit 1000
+offset 0;
+```
+
+#### Result
+- Latency: `51ms`, `46ms`, `44ms`, `45ms`, `45ms`
+- Row count: `1000`
+- Notes: the `CASE` branch `obj_type_id` values were rewritten together with the outer filters so that `sorted_0` stays meaningful after the dataset switch.
 
 ### Query 2
 
