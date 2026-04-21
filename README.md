@@ -9,6 +9,8 @@ Files:
   - original query texts covered by the current results document
 - `jsm_dataset_1_qps_patterns.md`
   - representative JQL-to-TiDB query patterns and a simple dataset 1 QPS benchmark plan
+- `jsm_dataset_1_simple_qps_benchmark_results.md`
+  - short mixed-workload QPS benchmark result for dataset 1
 
 Conventions:
 - `obj -> obj_new`
