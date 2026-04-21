@@ -31,8 +31,8 @@
 结果数据：
 - `bench/results/dataset_1_qps_benchmark_go_haproxy_pattern7tight_20260421_084835.json`
   - 当前最新结果：workstation + Go + HAProxy + 3 TiDB + 更高过滤率的 `Pattern 7`
-- `bench/results/fts_join_qps_benchmark_go_haproxy_20260421_1740.json`
-  - 当前最新 `FTS + JOIN` 专项结果：workstation + Go + HAProxy + 3 TiDB + `MPP` + `optimized hash join`
+- `bench/results/fts_join_qps_benchmark_go_haproxy_20260421_1908.json`
+  - 当前最新 `FTS + JOIN` 专项结果：10 条 query，`text_value_7:1 / text_value_1:3 / text_value_4:3 / text_value_5:3`
 
 改写约定：
 - `obj -> obj_new`

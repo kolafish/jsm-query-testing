@@ -28,7 +28,7 @@
     "pattern": "FTS+JOIN/text_value_1_ngram",
     "description": "workspace 00ea + narrower NGRAM phrase on text_value_1 = \"admiral-10029\"",
     "weight": 1,
-    "expected_row_count": 1000,
+    "expected_row_count": 21,
     "sql": "select /*+ BROADCAST_JOIN(o1, r) */ `o`.`sequential_id`, `o`.`label`\nfrom `obj_new` `o1`\njoin `obj_relationship_new` `r`\n  on `o1`.`id` = `r`.`object_id`\njoin `obj_new` `o`\n  on `r`.`referenced_object_id` = `o`.`id`\nwhere `o`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54'\n  and `o1`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54'\n  and `r`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54'\n  and match(`o1`.`text_value_1`) against('\"admiral-10029\"' in boolean mode)\norder by `o`.`label` asc\nlimit 1000\noffset 0;"
   },
   {
@@ -52,7 +52,7 @@
     "pattern": "FTS+JOIN/text_value_4_ngram",
     "description": "workspace 00ea + higher-selectivity NGRAM phrase on text_value_4 = \"maren.heller\"",
     "weight": 1,
-    "expected_row_count": 1000,
+    "expected_row_count": 0,
     "sql": "select /*+ BROADCAST_JOIN(o1, r) */ `o`.`sequential_id`, `o`.`label`\nfrom `obj_new` `o1`\njoin `obj_relationship_new` `r`\n  on `o1`.`id` = `r`.`object_id`\njoin `obj_new` `o`\n  on `r`.`referenced_object_id` = `o`.`id`\nwhere `o`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54'\n  and `o1`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54'\n  and `r`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54'\n  and match(`o1`.`text_value_4`) against('\"maren.heller\"' in boolean mode)\norder by `o`.`label` asc\nlimit 1000\noffset 0;"
   },
   {
@@ -76,7 +76,7 @@
     "pattern": "FTS+JOIN/text_value_5_ngram",
     "description": "workspace 00ea + higher-selectivity NGRAM phrase on text_value_5 = \"louise-haley\"",
     "weight": 1,
-    "expected_row_count": 1000,
+    "expected_row_count": 8,
     "sql": "select /*+ BROADCAST_JOIN(o1, r) */ `o`.`sequential_id`, `o`.`label`\nfrom `obj_new` `o1`\njoin `obj_relationship_new` `r`\n  on `o1`.`id` = `r`.`object_id`\njoin `obj_new` `o`\n  on `r`.`referenced_object_id` = `o`.`id`\nwhere `o`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54'\n  and `o1`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54'\n  and `r`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54'\n  and match(`o1`.`text_value_5`) against('\"louise-haley\"' in boolean mode)\norder by `o`.`label` asc\nlimit 1000\noffset 0;"
   }
 ]

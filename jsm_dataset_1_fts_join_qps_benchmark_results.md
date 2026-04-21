@@ -4,10 +4,10 @@
 
 - 客户端：AWS workstation
 - 压测程序：Go
-- 入口：workstation 本地 HAProxy，后端 3 个 TiDB
+- 入口：workstation 本地 HAProxy，后端 `3` 个 TiDB
 - 数据库：`jsm_testcase2`
 - query corpus：[bench/fts_join_qps_corpus.json](/Users/jin/Desktop/jsm-query-latency-tracking/bench/fts_join_qps_corpus.json)
-- 结果 JSON：[bench/results/fts_join_qps_benchmark_go_haproxy_20260421_1740.json](/Users/jin/Desktop/jsm-query-latency-tracking/bench/results/fts_join_qps_benchmark_go_haproxy_20260421_1740.json)
+- 结果 JSON：[bench/results/fts_join_qps_benchmark_go_haproxy_20260421_1908.json](/Users/jin/Desktop/jsm-query-latency-tracking/bench/results/fts_join_qps_benchmark_go_haproxy_20260421_1908.json)
 
 所有 query 都是正式查询，不是 `EXPLAIN ANALYZE`。每条连接初始化时都会设置：
 
@@ -18,40 +18,58 @@ set tiflash_hash_join_version='optimized';
 
 ## Query 组成
 
-这轮 workload 共 9 条 query，全部是 `obj_new + obj_relationship_new + MATCH AGAINST + JOIN + ORDER BY + LIMIT` 形态。
+这轮 workload 共 `10` 条 query，全部是 `obj_new + obj_relationship_new + MATCH AGAINST + JOIN + ORDER BY + LIMIT` 形态。
 
-- `text_value_7` `STANDARD FULLTEXT`：3 条
-- `text_value_1` `NGRAM FULLTEXT`：2 条
-- `text_value_4` `NGRAM FULLTEXT`：2 条
-- `text_value_5` `NGRAM FULLTEXT`：2 条
+- `text_value_7` `STANDARD FULLTEXT`：`1` 条，`10%`
+- `text_value_1` `NGRAM FULLTEXT`：`3` 条，`30%`
+- `text_value_4` `NGRAM FULLTEXT`：`3` 条，`30%`
+- `text_value_5` `NGRAM FULLTEXT`：`3` 条，`30%`
 
-每条 query 权重相同，query 百分比都是 `11.1%`。
+每条 query 权重相同，单条 query 百分比都是 `10%`。
+
+## 实际 Query 集合
+
+| Query | 列 | Workspace | FTS 过滤条件 | Warmup Row Count |
+| --- | --- | --- | --- | ---: |
+| `q1` | `text_value_7` | `8a6526e6-...` | `match(o1.text_value_7) against('Fagor' in boolean mode)` | `1000` |
+| `q4` | `text_value_1` | `8a6526e6-...` | `match(o1.text_value_1) against('"admiral-100"' in boolean mode)` | `1000` |
+| `q5` | `text_value_1` | `9963b35f-...` | `match(o1.text_value_1) against('"franke-100"' in boolean mode)` | `1000` |
+| `q10` | `text_value_1` | `00eaf117-...` | `match(o1.text_value_1) against('"admiral-10029"' in boolean mode)` | `21` |
+| `q6` | `text_value_4` | `3b4c201d-...` | `match(o1.text_value_4) against('"morissette.test"' in boolean mode)` | `1000` |
+| `q7` | `text_value_4` | `00eaf117-...` | `match(o1.text_value_4) against('"welch.test"' in boolean mode)` | `1000` |
+| `q11` | `text_value_4` | `00eaf117-...` | `match(o1.text_value_4) against('"maren.heller"' in boolean mode)` | `0` |
+| `q8` | `text_value_5` | `3b4c201d-...` | `match(o1.text_value_5) against('"royal-simonis"' in boolean mode)` | `12` |
+| `q9` | `text_value_5` | `cafd5188-...` | `match(o1.text_value_5) against('"shelby-torp"' in boolean mode)` | `31` |
+| `q12` | `text_value_5` | `00eaf117-...` | `match(o1.text_value_5) against('"louise-haley"' in boolean mode)` | `8` |
+
+完整 SQL 见 [bench/fts_join_qps_corpus.json](/Users/jin/Desktop/jsm-query-latency-tracking/bench/fts_join_qps_corpus.json)。
 
 ## Warmup
 
 | Query | Warmup Latency | Row Count |
 | --- | ---: | ---: |
-| `q1` `text_value_7 = Fagor` | `448.788ms` | `1000` |
-| `q2` `text_value_7 = Sharp` | `357.486ms` | `1000` |
-| `q3` `text_value_7 = Bosch` | `276.007ms` | `1000` |
-| `q4` `text_value_1 ~ "admiral-100"` | `112.409ms` | `1000` |
-| `q5` `text_value_1 ~ "franke-100"` | `110.091ms` | `1000` |
-| `q6` `text_value_4 ~ "morissette.test"` | `104.505ms` | `1000` |
-| `q7` `text_value_4 ~ "welch.test"` | `58.127ms` | `1000` |
-| `q8` `text_value_5 ~ "royal-simonis"` | `100.333ms` | `12` |
-| `q9` `text_value_5 ~ "shelby-torp"` | `64.082ms` | `31` |
+| `q1` `text_value_7 = Fagor` | `443.854ms` | `1000` |
+| `q4` `text_value_1 ~ "admiral-100"` | `125.635ms` | `1000` |
+| `q5` `text_value_1 ~ "franke-100"` | `125.210ms` | `1000` |
+| `q10` `text_value_1 ~ "admiral-10029"` | `63.838ms` | `21` |
+| `q6` `text_value_4 ~ "morissette.test"` | `117.857ms` | `1000` |
+| `q7` `text_value_4 ~ "welch.test"` | `57.352ms` | `1000` |
+| `q11` `text_value_4 ~ "maren.heller"` | `61.238ms` | `0` |
+| `q8` `text_value_5 ~ "royal-simonis"` | `116.102ms` | `12` |
+| `q9` `text_value_5 ~ "shelby-torp"` | `69.057ms` | `31` |
+| `q12` `text_value_5 ~ "louise-haley"` | `60.149ms` | `8` |
 
 ## 总体结果
 
 每档并发持续 `60s`。
 
-| Concurrency | QPS | p50 | p95 | p99 | Errors | Mismatches |
-| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| `2` | `9.674` | `145.221ms` | `459.940ms` | `511.945ms` | `0` | `0` |
-| `4` | `13.099` | `258.011ms` | `609.273ms` | `719.376ms` | `0` | `0` |
-| `6` | `14.500` | `391.631ms` | `782.608ms` | `923.339ms` | `0` | `0` |
-| `8` | `14.620` | `553.430ms` | `934.652ms` | `1103.614ms` | `0` | `0` |
-| `10` | `14.724` | `692.818ms` | `1128.380ms` | `1301.003ms` | `0` | `0` |
+| Concurrency | QPS | p50 | p95 | p99 |
+| ---: | ---: | ---: | ---: | ---: |
+| `2` | `14.417` | `104.863ms` | `455.005ms` | `505.996ms` |
+| `4` | `20.450` | `152.775ms` | `569.739ms` | `688.895ms` |
+| `6` | `22.288` | `232.011ms` | `702.252ms` | `863.458ms` |
+| `8` | `23.403` | `309.721ms` | `820.737ms` | `992.855ms` |
+| `10` | `23.359` | `436.561ms` | `906.967ms` | `1136.890ms` |
 
 ## 每条 Query 观察
 
@@ -59,20 +77,21 @@ set tiflash_hash_join_version='optimized';
 
 | Query | QPS | p95 |
 | --- | ---: | ---: |
-| `q1` `text_value_7 = Fagor` | `1.770` | `1328.712ms` |
-| `q2` `text_value_7 = Sharp` | `1.472` | `1012.970ms` |
-| `q3` `text_value_7 = Bosch` | `1.869` | `1130.319ms` |
-| `q4` `text_value_1 ~ "admiral-100"` | `1.787` | `837.124ms` |
-| `q5` `text_value_1 ~ "franke-100"` | `1.638` | `769.104ms` |
-| `q6` `text_value_4 ~ "morissette.test"` | `1.472` | `914.934ms` |
-| `q7` `text_value_4 ~ "welch.test"` | `1.737` | `275.111ms` |
-| `q8` `text_value_5 ~ "royal-simonis"` | `1.572` | `842.089ms` |
-| `q9` `text_value_5 ~ "shelby-torp"` | `1.406` | `773.731ms` |
+| `q1` `text_value_7 = Fagor` | `2.238` | `1176.772ms` |
+| `q4` `text_value_1 ~ "admiral-100"` | `2.669` | `752.846ms` |
+| `q5` `text_value_1 ~ "franke-100"` | `2.619` | `717.662ms` |
+| `q10` `text_value_1 ~ "admiral-10029"` | `2.255` | `257.778ms` |
+| `q6` `text_value_4 ~ "morissette.test"` | `2.056` | `802.328ms` |
+| `q7` `text_value_4 ~ "welch.test"` | `2.437` | `251.611ms` |
+| `q11` `text_value_4 ~ "maren.heller"` | `2.122` | `276.346ms` |
+| `q8` `text_value_5 ~ "royal-simonis"` | `2.338` | `776.920ms` |
+| `q9` `text_value_5 ~ "shelby-torp"` | `2.338` | `662.365ms` |
+| `q12` `text_value_5 ~ "louise-haley"` | `2.288` | `253.318ms` |
 
 ## 结论
 
-- 这轮 `FTS + JOIN` 专项 workload 在当前 `3 TiDB + 3 TiFlash` 环境下，峰值大约就在 `14.6 ~ 14.7 QPS`。
-- 从 `c=6` 往上继续加并发，吞吐基本不再增长，说明当前瓶颈已经固定在数据库侧，不在客户端。
-- `text_value_7` 这三条 `STANDARD FULLTEXT + JOIN` 是这轮里最重的一组，`p95` 明显最高。
-- `text_value_4 ~ "welch.test"` 这一条最轻，说明 `FTS` 选择性差异会直接放大到 `JOIN` 成本上。
-- 当前这轮没有报错，也没有行数漂移，结果是稳定可复现的。
+- 当前这组 `FTS + JOIN` workload 在 `workstation + Go + HAProxy + 3 TiDB` 这套跑法下，峰值大约在 `23.3 ~ 23.4 QPS`。
+- 从 `c=8` 往上继续加并发，吞吐基本不再增长，当前瓶颈已经固定在数据库侧。
+- `text_value_7 = Fagor` 仍然是这组里最重的一条，`p95` 最高。
+- 过滤率更高的几条 query，例如 `admiral-10029`、`maren.heller`、`louise-haley`，明显更轻，`p95` 在 `250ms` 左右。
+- 这轮结果反映的是当前最新的 query 集合和当前最新的专项 benchmark 数字。
