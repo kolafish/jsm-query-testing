@@ -25,12 +25,8 @@
   - workstation 上用于分流到 3 个 TiDB 的 `HAProxy` 配置
 
 结果数据：
-- `bench/results/dataset_1_qps_benchmark_20260421.json`
-  - 最初的短时 Python 基线结果
-- `bench/results/dataset_1_qps_benchmark_go_20260421_080916.json`
-  - workstation + Go，但还没切到正式分流入口时的 baseline
-- `bench/results/dataset_1_qps_benchmark_go_haproxy_20260421_082216.json`
-  - 当前正式结果：workstation + Go + HAProxy + 3 TiDB
+- `bench/results/dataset_1_qps_benchmark_go_haproxy_pattern7tight_20260421_084835.json`
+  - 当前最新结果：workstation + Go + HAProxy + 3 TiDB + 更高过滤率的 `Pattern 7`
 
 改写约定：
 - `obj -> obj_new`
