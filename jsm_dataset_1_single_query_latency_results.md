@@ -1421,6 +1421,47 @@ offset 0;
 - Reason: after rewrite to real `workspace_id` / `obj_type_id` / `object_type_attribute_id` values, this two-hop relationship shape did execute, but the sampled chain produced no matching outer rows.
 - Notes: the original deeply nested parenthesized shape needed light normalization to run cleanly after UUID/binary rewrite.
 
+### Depth 1 / Query 1
+
+#### Original Query
+```sql
+select `o`.`workspace_id`, `o`.`partition_id`, `o`.`id`, `o`.`sequential_id`, `o`.`schema_id`, `o`.`schema_key`, `o`.`obj_type_id`, `o`.`external_id`, `o`.`label`, `o`.`has_avatar`, `o`.`created_on`, `o`.`updated_on`, `o`.`text_value_1`, `o`.`text_value_2`, `o`.`text_value_3`, `o`.`text_value_4`, `o`.`text_value_5`, `o`.`text_value_6`, `o`.`text_value_7`, `o`.`text_value_8`, `o`.`text_value_9`, `o`.`text_value_10`, `o`.`other_values`, `o`.`other_values_indexed`, `o`.`group_values`, `o`.`hash_key`
+from `obj` `o`
+where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and (`o`.`obj_type_id` = 'bcf3698a-4175-42a9-8666-43d1bc8ecd15' and exists (select 1
+from `obj_relationship` `subR`
+inner join `obj` `subO1`
+on `subR`.`referenced_object_id` = `subO1`.`id` and `subO1`.`obj_type_id` in ('224a0035-8ac2-4e01-b892-fa4c7a268523', '2c0cb0be-dda3-4f33-8979-441e073a3873', '3fe7df63-f9c1-4581-be1b-cd649fdbb6ce', '4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', '94c23b0c-1362-4e30-b392-9dc80eb80b27', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555')
+where `o`.`id` = `subR`.`object_id` and `subO1`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and `subO1`.`label` = 'Admiral-1000153'))
+order by `o`.`label` asc
+limit 1000
+offset 0
+```
+
+#### Actual Query Run
+```sql
+select `o`.`workspace_id`, `o`.`partition_id`, `o`.`id`, `o`.`sequential_id`, `o`.`schema_id`, `o`.`schema_key`, `o`.`obj_type_id`, `o`.`external_id`, `o`.`label`, `o`.`has_avatar`, `o`.`created_on`, `o`.`updated_on`, `o`.`text_value_1`, `o`.`text_value_2`, `o`.`text_value_3`, `o`.`text_value_4`, `o`.`text_value_5`, `o`.`text_value_6`, `o`.`text_value_7`, `o`.`text_value_8`, `o`.`text_value_9`, `o`.`text_value_10`, `o`.`other_values`, `o`.`other_values_indexed`, `o`.`group_values`, `o`.`hash_key`
+from `obj_new` `o`
+where `o`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221' and (`o`.`obj_type_id` = unhex(replace('bfc6489a-3cb1-43e6-9180-9367e7254edf','-','')) and exists (select 1
+from `obj_relationship_new` `subR`
+inner join `obj_new` `subO1`
+on `subR`.`referenced_object_id` = `subO1`.`id` and `subO1`.`obj_type_id` in (
+  unhex(replace('0dfb9fc6-e7c9-4115-bc56-b5baf679b071','-','')),
+  unhex(replace('5734a061-b698-4c2a-94ec-700792c86400','-','')),
+  unhex(replace('8af8cdb7-1a8b-4932-a466-0f60a68227f4','-','')),
+  unhex(replace('bfc6489a-3cb1-43e6-9180-9367e7254edf','-','')),
+  unhex(replace('e60ef1f1-dfdb-40b9-a0ac-77d0e4d9d69c','-',''))
+)
+where `o`.`id` = `subR`.`object_id` and `subO1`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221' and `subO1`.`label` = 'Siemens-26785'))
+order by `o`.`label` asc
+limit 1000
+offset 0;
+```
+
+#### Result
+- Latency: `304ms`, `270ms`, `263ms`, `262ms`, `260ms`
+- Row count: `120`
+- Notes: original label did not hit in the sampled workspace, so it was replaced with a real referenced label `Siemens-26785`.
+
 ### Depth 1 / Query 2
 
 #### Original Query
@@ -1466,47 +1507,6 @@ offset 0;
 #### Result
 - Latency: `680ms`, `644ms`, `642ms`, `639ms`, `646ms`
 - Row count: `1000`
-
-### Depth 1 / Query 1
-
-#### Original Query
-```sql
-select `o`.`workspace_id`, `o`.`partition_id`, `o`.`id`, `o`.`sequential_id`, `o`.`schema_id`, `o`.`schema_key`, `o`.`obj_type_id`, `o`.`external_id`, `o`.`label`, `o`.`has_avatar`, `o`.`created_on`, `o`.`updated_on`, `o`.`text_value_1`, `o`.`text_value_2`, `o`.`text_value_3`, `o`.`text_value_4`, `o`.`text_value_5`, `o`.`text_value_6`, `o`.`text_value_7`, `o`.`text_value_8`, `o`.`text_value_9`, `o`.`text_value_10`, `o`.`other_values`, `o`.`other_values_indexed`, `o`.`group_values`, `o`.`hash_key`
-from `obj` `o`
-where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and (`o`.`obj_type_id` = 'bcf3698a-4175-42a9-8666-43d1bc8ecd15' and exists (select 1
-from `obj_relationship` `subR`
-inner join `obj` `subO1`
-on `subR`.`referenced_object_id` = `subO1`.`id` and `subO1`.`obj_type_id` in ('224a0035-8ac2-4e01-b892-fa4c7a268523', '2c0cb0be-dda3-4f33-8979-441e073a3873', '3fe7df63-f9c1-4581-be1b-cd649fdbb6ce', '4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', '94c23b0c-1362-4e30-b392-9dc80eb80b27', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555')
-where `o`.`id` = `subR`.`object_id` and `subO1`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and `subO1`.`label` = 'Admiral-1000153'))
-order by `o`.`label` asc
-limit 1000
-offset 0
-```
-
-#### Actual Query Run
-```sql
-select `o`.`workspace_id`, `o`.`partition_id`, `o`.`id`, `o`.`sequential_id`, `o`.`schema_id`, `o`.`schema_key`, `o`.`obj_type_id`, `o`.`external_id`, `o`.`label`, `o`.`has_avatar`, `o`.`created_on`, `o`.`updated_on`, `o`.`text_value_1`, `o`.`text_value_2`, `o`.`text_value_3`, `o`.`text_value_4`, `o`.`text_value_5`, `o`.`text_value_6`, `o`.`text_value_7`, `o`.`text_value_8`, `o`.`text_value_9`, `o`.`text_value_10`, `o`.`other_values`, `o`.`other_values_indexed`, `o`.`group_values`, `o`.`hash_key`
-from `obj_new` `o`
-where `o`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221' and (`o`.`obj_type_id` = unhex(replace('bfc6489a-3cb1-43e6-9180-9367e7254edf','-','')) and exists (select 1
-from `obj_relationship_new` `subR`
-inner join `obj_new` `subO1`
-on `subR`.`referenced_object_id` = `subO1`.`id` and `subO1`.`obj_type_id` in (
-  unhex(replace('0dfb9fc6-e7c9-4115-bc56-b5baf679b071','-','')),
-  unhex(replace('5734a061-b698-4c2a-94ec-700792c86400','-','')),
-  unhex(replace('8af8cdb7-1a8b-4932-a466-0f60a68227f4','-','')),
-  unhex(replace('bfc6489a-3cb1-43e6-9180-9367e7254edf','-','')),
-  unhex(replace('e60ef1f1-dfdb-40b9-a0ac-77d0e4d9d69c','-',''))
-)
-where `o`.`id` = `subR`.`object_id` and `subO1`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221' and `subO1`.`label` = 'Siemens-26785'))
-order by `o`.`label` asc
-limit 1000
-offset 0;
-```
-
-#### Result
-- Latency: `304ms`, `270ms`, `263ms`, `262ms`, `260ms`
-- Row count: `120`
-- Notes: original label did not hit in the sampled workspace, so it was replaced with a real referenced label `Siemens-26785`.
 
 ### Depth 1 / Query 3
 
@@ -1593,52 +1593,6 @@ offset 0;
 
 #### Result
 - Latency: `1543ms`, `1521ms`, `1524ms`, `1526ms`, `1531ms`
-- Row count: `1000`
-
-## 6. Range Queries
-
-### Query 1
-
-#### Original Query
-```sql
-select `o`.`sequential_id`, `o`.`label`
-from `obj` `o`
-where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and (`o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555') and (`o`.`numeric_value_1` > 600 and `o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555')) and (`o`.`numeric_value_3` > 0 and `o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555')))
-order by `o`.`label` asc
-limit 1000
-offset 0
-```
-
-#### Actual Query Run
-```sql
-select `o`.`sequential_id`, `o`.`label`
-from `obj_new` `o`
-where `o`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221' and (`o`.`obj_type_id` in (
-  unhex(replace('0dfb9fc6-e7c9-4115-bc56-b5baf679b071','-','')),
-  unhex(replace('5734a061-b698-4c2a-94ec-700792c86400','-','')),
-  unhex(replace('8af8cdb7-1a8b-4932-a466-0f60a68227f4','-','')),
-  unhex(replace('bfc6489a-3cb1-43e6-9180-9367e7254edf','-','')),
-  unhex(replace('e60ef1f1-dfdb-40b9-a0ac-77d0e4d9d69c','-',''))
-) and (`o`.`numeric_value_1` > 600 and `o`.`obj_type_id` in (
-  unhex(replace('0dfb9fc6-e7c9-4115-bc56-b5baf679b071','-','')),
-  unhex(replace('5734a061-b698-4c2a-94ec-700792c86400','-','')),
-  unhex(replace('8af8cdb7-1a8b-4932-a466-0f60a68227f4','-','')),
-  unhex(replace('bfc6489a-3cb1-43e6-9180-9367e7254edf','-','')),
-  unhex(replace('e60ef1f1-dfdb-40b9-a0ac-77d0e4d9d69c','-',''))
-)) and (`o`.`numeric_value_3` > 0 and `o`.`obj_type_id` in (
-  unhex(replace('0dfb9fc6-e7c9-4115-bc56-b5baf679b071','-','')),
-  unhex(replace('5734a061-b698-4c2a-94ec-700792c86400','-','')),
-  unhex(replace('8af8cdb7-1a8b-4932-a466-0f60a68227f4','-','')),
-  unhex(replace('bfc6489a-3cb1-43e6-9180-9367e7254edf','-','')),
-  unhex(replace('e60ef1f1-dfdb-40b9-a0ac-77d0e4d9d69c','-',''))
-))))
-order by `o`.`label` asc
-limit 1000
-offset 0;
-```
-
-#### Result
-- Latency: `82ms`, `58ms`, `54ms`, `54ms`, `54ms`
 - Row count: `1000`
 
 ## 5. JSON Attribute Queries
@@ -1859,3 +1813,50 @@ offset 0;
 - Latency: `674ms`, `97ms`, `100ms`, `112ms`, `110ms`
 - Row count: `1000`
 - Notes: `obj -> obj_new`; kept the JSON path shape intact and only changed workspace / `obj_type_id`.
+
+## 6. Range Queries
+
+### Query 1
+
+#### Original Query
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj` `o`
+where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and (`o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555') and (`o`.`numeric_value_1` > 600 and `o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555')) and (`o`.`numeric_value_3` > 0 and `o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555')))
+order by `o`.`label` asc
+limit 1000
+offset 0
+```
+
+#### Actual Query Run
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj_new` `o`
+where `o`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221' and (`o`.`obj_type_id` in (
+  unhex(replace('0dfb9fc6-e7c9-4115-bc56-b5baf679b071','-','')),
+  unhex(replace('5734a061-b698-4c2a-94ec-700792c86400','-','')),
+  unhex(replace('8af8cdb7-1a8b-4932-a466-0f60a68227f4','-','')),
+  unhex(replace('bfc6489a-3cb1-43e6-9180-9367e7254edf','-','')),
+  unhex(replace('e60ef1f1-dfdb-40b9-a0ac-77d0e4d9d69c','-',''))
+) and (`o`.`numeric_value_1` > 600 and `o`.`obj_type_id` in (
+  unhex(replace('0dfb9fc6-e7c9-4115-bc56-b5baf679b071','-','')),
+  unhex(replace('5734a061-b698-4c2a-94ec-700792c86400','-','')),
+  unhex(replace('8af8cdb7-1a8b-4932-a466-0f60a68227f4','-','')),
+  unhex(replace('bfc6489a-3cb1-43e6-9180-9367e7254edf','-','')),
+  unhex(replace('e60ef1f1-dfdb-40b9-a0ac-77d0e4d9d69c','-',''))
+)) and (`o`.`numeric_value_3` > 0 and `o`.`obj_type_id` in (
+  unhex(replace('0dfb9fc6-e7c9-4115-bc56-b5baf679b071','-','')),
+  unhex(replace('5734a061-b698-4c2a-94ec-700792c86400','-','')),
+  unhex(replace('8af8cdb7-1a8b-4932-a466-0f60a68227f4','-','')),
+  unhex(replace('bfc6489a-3cb1-43e6-9180-9367e7254edf','-','')),
+  unhex(replace('e60ef1f1-dfdb-40b9-a0ac-77d0e4d9d69c','-',''))
+))))
+order by `o`.`label` asc
+limit 1000
+offset 0;
+```
+
+#### Result
+- Latency: `82ms`, `58ms`, `54ms`, `54ms`, `54ms`
+- Row count: `1000`
+
