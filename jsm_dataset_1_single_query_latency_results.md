@@ -1307,6 +1307,8 @@ offset 0;
 
 ## 4. Relationship Traversal
 
+- Performance summary: all tested relationship queries are currently planned as TiFlash MPP hash/semi joins, so the main cost is scanning `obj_relationship_new`; the TiKV-side secondary indexes do not change these plans by themselves.
+
 ### Depth 0 / Query 1
 
 #### Original Query
@@ -1365,6 +1367,7 @@ offset 0;
 - Latency: `8451ms`, `627ms`, `612ms`, `613ms`, `617ms`
 - Row count: `1000`
 - Notes: `obj_relationship -> obj_relationship_new`; rewrote both object-type lists to populated UUIDs in the same workspace.
+- Performance: slow path is still a TiFlash MPP full scan of `obj_relationship_new`, then hash-joining relationship rows back to both `obj_new` branches before `TopN`.
 
 ### Depth 0 / Query 2
 
@@ -1420,6 +1423,7 @@ offset 0;
 - Row count: `0`
 - Reason: after rewrite to real `workspace_id` / `obj_type_id` / `object_type_attribute_id` values, this two-hop relationship shape did execute, but the sampled chain produced no matching outer rows.
 - Notes: the original deeply nested parenthesized shape needed light normalization to run cleanly after UUID/binary rewrite.
+- Performance: this one pays for two relationship-table scans and two hash joins on the two-hop chain before discovering the outer result is empty.
 
 ### Depth 1 / Query 1
 
@@ -1461,6 +1465,7 @@ offset 0;
 - Latency: `304ms`, `270ms`, `263ms`, `262ms`, `260ms`
 - Row count: `120`
 - Notes: original label did not hit in the sampled workspace, so it was replaced with a real referenced label `Siemens-26785`.
+- Performance: the exact referenced `label` is very selective, so this is one of the cheaper shapes even though TiFlash still full-scans `obj_relationship_new` for the semi join.
 
 ### Depth 1 / Query 2
 
@@ -1507,6 +1512,7 @@ offset 0;
 #### Result
 - Latency: `680ms`, `644ms`, `642ms`, `639ms`, `646ms`
 - Row count: `1000`
+- Performance: slower than Depth 1 / Query 1 because `text_value_7 = 'LG'` leaves a much larger referenced-object side, so more relationship rows survive the semi join.
 
 ### Depth 1 / Query 3
 
@@ -1556,6 +1562,7 @@ offset 0;
 - Latency: `312ms`, `286ms`, `276ms`, `258ms`, `264ms`
 - Row count: `0`
 - Reason: query runs after rewrite, but this OTA-set + sampled referenced object combination did not produce matches in `obj_new`.
+- Performance: the OTA filter helps, but TiFlash still scans a large slice of `obj_relationship_new` before proving the semi join has no matches.
 
 ### Depth 1 / Query 6
 
@@ -1594,6 +1601,7 @@ offset 0;
 #### Result
 - Latency: `1543ms`, `1521ms`, `1524ms`, `1526ms`, `1531ms`
 - Row count: `1000`
+- Performance: slowest in this section because the `exists` branch is very wide; TiFlash effectively joins almost all `obj_new` rows with the full `obj_relationship_new` table before sorting.
 
 ## 5. JSON Attribute Queries
 
@@ -1859,4 +1867,3 @@ offset 0;
 #### Result
 - Latency: `82ms`, `58ms`, `54ms`, `54ms`, `54ms`
 - Row count: `1000`
-
