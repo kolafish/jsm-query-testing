@@ -1,24 +1,24 @@
-# Dataset 1 QPS Benchmark Patterns
+# Dataset 1 QPS 压测 Pattern
 
-This page defines a small, representative QPS benchmark workload for dataset 1 based on the original query set in `jsm_original_queries.md`.
+这页用于定义一组适合 dataset 1 的、规模较小但具有代表性的 QPS 压测 workload，来源是 `jsm_original_queries.md` 里的原始 query 集合。
 
-Assumptions:
+约定：
 - `obj -> obj_new`
 - `obj_relationship -> obj_relationship_new`
-- UUID columns stored as `BINARY(16)` are compared with `UNHEX(REPLACE(...))`
-- For this benchmark set, text search uses `MATCH ... AGAINST` only when the source query pattern was originally `LIKE '%...%'`
-- The JQL below is approximate user-facing intent, not a verbatim export from Jira
+- 对于存储为 `BINARY(16)` 的 UUID 列，统一使用 `UNHEX(REPLACE(...))` 比较
+- 这次压测里，文本搜索只在原始 query 本来是 `LIKE '%...%'` 的情况下，才改写成 `MATCH ... AGAINST`
+- 下面的 JQL 是近似的用户语义，不是 Jira 导出的逐字原文
 
-## Included Patterns
+## 纳入本次压测的 Pattern
 
-### Pattern 1: Scalar Filters Plus Label Sort
+### Pattern 1：标量过滤 + 按标题排序
 
-Representative JQL:
+对应的 JQL 示例：
 ```jql
 project = JSM AND customNumberA = 548 AND customNumberB = 3 ORDER BY summary
 ```
 
-Representative SQL:
+对应的 SQL 模板：
 ```sql
 select o.sequential_id, o.label
 from obj_new o
@@ -34,17 +34,17 @@ order by o.label asc
 limit 1000 offset 0;
 ```
 
-Source shape:
+来源形态：
 - `1. Basic Filters / Query 1`
 
-### Pattern 2: Rewritten Phrase Search From Original `LIKE '%...%'`
+### Pattern 2：由原始 `LIKE '%...%'` 改写来的短语搜索
 
-Representative JQL:
+对应的 JQL 示例：
 ```jql
 project = JSM AND summary ~ "admiral-100000" ORDER BY summary
 ```
 
-Representative SQL:
+对应的 SQL 模板：
 ```sql
 select o.sequential_id, o.label
 from obj_new o
@@ -60,21 +60,21 @@ order by o.label asc
 limit 1000 offset 0;
 ```
 
-Notes:
-- This pattern intentionally covers the original `%...%` text-search family after rewrite to `MATCH ... AGAINST`
-- It is the replacement for the standalone text equality / enum bucket in this benchmark set
+说明：
+- 这个 pattern 用来覆盖原始 `%...%` 文本搜索家族，在 rewrite 后统一走 `MATCH ... AGAINST`
+- 本次压测里，原本“文本等值 / 枚举值过滤”的那一类不单独保留，改由这类 rewritten phrase search 来代表
 
-Source shape:
+来源形态：
 - `2. Full Text Search / Query 2`
 
-### Pattern 3: Multi-Column Phrase Search With `UNION DISTINCT`
+### Pattern 3：多列短语搜索，用 `UNION DISTINCT` 拼接
 
-Representative JQL:
+对应的 JQL 示例：
 ```jql
 project = JSM AND (email ~ "dr.omer.romaguera@emmerich-gibson.example" OR website ~ "www.shelby-torp.info") ORDER BY summary
 ```
 
-Representative SQL:
+对应的 SQL 模板：
 ```sql
 (
   select o.sequential_id, o.label
@@ -105,21 +105,21 @@ order by label asc
 limit 1000 offset 0;
 ```
 
-Notes:
-- This is the representative pattern when different FULLTEXT columns are combined with `OR`
-- In current TiDB/TiCI behavior, keeping it as a single query with multiple `MATCH` predicates is less robust than splitting into `UNION DISTINCT`
+说明：
+- 这个 pattern 代表“不同 FULLTEXT 列之间做 OR”的查询形态
+- 按当前 TiDB/TiCI 的行为，这类查询拆成 `UNION DISTINCT` 通常比在单条 SQL 里并列多个 `MATCH` 更稳
 
-Source shape:
+来源形态：
 - `2. Full Text Search / Query 3`
 
-### Pattern 4: Sort On A Custom Field
+### Pattern 4：按自定义字段排序
 
-Representative JQL:
+对应的 JQL 示例：
 ```jql
 project = JSM AND Brand = "LG" ORDER BY customNumberA
 ```
 
-Representative SQL:
+对应的 SQL 模板：
 ```sql
 select o.sequential_id, o.numeric_value_1
 from obj_new o
@@ -130,17 +130,17 @@ order by o.numeric_value_1 asc
 limit 1000 offset 0;
 ```
 
-Source shape:
+来源形态：
 - `3. Sorting / Query 7`
 
-### Pattern 5: CASE-Based Sort Projection
+### Pattern 5：CASE 投影后的排序
 
-Representative JQL:
+对应的 JQL 示例：
 ```jql
 project = JSM AND customNumberA = 635 ORDER BY customText24
 ```
 
-Representative SQL:
+对应的 SQL 模板：
 ```sql
 select
   o.sequential_id,
@@ -162,17 +162,17 @@ order by sorted_0 asc
 limit 1000 offset 0;
 ```
 
-Source shape:
+来源形态：
 - `3. Sorting / Query 1`
 
-### Pattern 6: Direct Relationship Lookup
+### Pattern 6：直接查关系表
 
-Representative JQL:
+对应的 JQL 示例：
 ```jql
 issue in linkedToObject("6df297d1-c20f-35d2-9d0d-08939fd50f17")
 ```
 
-Representative SQL:
+对应的 SQL 模板：
 ```sql
 select
   r.workspace_id,
@@ -187,17 +187,17 @@ from obj_relationship_new r
 where r.object_id = unhex(replace('<object_uuid>', '-', ''));
 ```
 
-Source shape:
+来源形态：
 - `1. Basic Filters / Query 10`
 
-### Pattern 7: Single-Hop Relationship Traversal
+### Pattern 7：单跳关系遍历
 
-Representative JQL:
+对应的 JQL 示例：
 ```jql
 project = JSM AND Appliance = "Sharp" AND referencedBy(Brand = "Samsung")
 ```
 
-Representative SQL:
+对应的 SQL 模板：
 ```sql
 select o.sequential_id, o.label
 from obj_new o
@@ -220,17 +220,17 @@ order by o.label asc
 limit 1000 offset 0;
 ```
 
-Source shape:
+来源形态：
 - `4. Relationship Traversal / Depth 0 / Query 1`
 
-### Pattern 8: Multi-Hop Relationship Traversal
+### Pattern 8：多跳关系遍历
 
-Representative JQL:
+对应的 JQL 示例：
 ```jql
 project = JSM AND hasReferencePath(label = "Admiral-1000135", depth = 2) ORDER BY summary
 ```
 
-Representative SQL:
+对应的 SQL 模板：
 ```sql
 select o.sequential_id, o.label
 from obj_new o
@@ -261,17 +261,17 @@ order by o.label asc
 limit 1000 offset 0;
 ```
 
-Source shape:
+来源形态：
 - `4. Relationship Traversal / Depth 2 / Query 1`
 
-### Pattern 9: Numeric Range Filter
+### Pattern 9：数值范围过滤
 
-Representative JQL:
+对应的 JQL 示例：
 ```jql
 project = JSM AND customNumberA > 600 AND customNumberB > 0 ORDER BY summary
 ```
 
-Representative SQL:
+对应的 SQL 模板：
 ```sql
 select o.sequential_id, o.label
 from obj_new o
@@ -287,94 +287,94 @@ order by o.label asc
 limit 1000 offset 0;
 ```
 
-Source shape:
+来源形态：
 - `6. Range Queries / Query 1`
 
-## Patterns Explicitly Not Included In This Benchmark
+## 明确不纳入本次压测的 Pattern
 
-### Not Included 1: Standalone Text Equality Or Enum Filters
+### 不纳入 1：单独的文本等值 / 枚举值过滤
 
-Reason:
-- This benchmark replaces that bucket with rewritten `MATCH ... AGAINST` phrase-search queries originating from the original `LIKE '%...%'` workload
+原因：
+- 这次压测不单独保留这个桶，而是用从原始 `LIKE '%...%'` 改写来的 `MATCH ... AGAINST` 短语搜索来代表文本类 workload
 
-Examples from the original set:
+原始 query 中的例子：
 - `text_value_23 = 'KitchenAid'`
 - `text_value_9 = 'Electrolux'`
 
-### Not Included 2: Raw `LIKE '%...%'` Or `LIKE 'prefix%'` Search As A Separate Bucket
+### 不纳入 2：原生 `LIKE '%...%'` 或 `LIKE 'prefix%'` 作为独立桶
 
-Reason:
-- This runbook wants the `%...%` family represented by `MATCH ... AGAINST`
-- Prefix search with punctuation or token boundaries is not always semantically identical after rewrite, so a separate raw-`LIKE` bucket is intentionally omitted
+原因：
+- 这次 runbook 希望把 `%...%` 家族统一纳入 `MATCH ... AGAINST`
+- 对带标点、连字符、分词边界的前缀搜索，rewrite 后不一定始终和原语义等价，因此不再单独保留 raw `LIKE` 桶
 
-Examples from the original set:
+原始 query 中的例子：
 - `lower(o.text_value_1) like 'admiral-100008%'`
 - `lower(o.text_value_1) like '%admiral-1000048%'`
 
-### Not Included 3: JSON Attribute Queries
+### 不纳入 3：JSON 属性过滤
 
-Reason:
-- `other_values`, `other_values_indexed`, and `group_values` are all `NULL` in the current dataset
-- Some original JSON paths are also invalid in current TiDB syntax
+原因：
+- 当前数据集里 `other_values`、`other_values_indexed`、`group_values` 全部是 `NULL`
+- 同时，一部分原始 JSON path 在当前 TiDB 语法下本身也不合法
 
-Examples from the original set:
+原始 query 中的例子：
 - `JSON_CONTAINS(o.other_values_indexed, ...)`
 - `JSON_LENGTH(JSON_EXTRACT(...)) > 0`
 
-### Not Included 4: Constant-False Queries
+### 不纳入 4：恒为 false 的 query
 
-Reason:
-- Queries that collapse to `and 0` do not represent meaningful search workload for QPS tests
+原因：
+- 会被化简成 `and 0` 的 query，不代表有意义的搜索 workload，不适合放进 QPS 压测
 
-Examples from the original set:
+原始 query 中的例子：
 - `1. Basic Filters / Query 3/4/5/12/14/15/17/19`
 - `3. Sorting / Query 10`
 
-### Not Included 5: Wide Detail Fetch / Hydration Queries
+### 不纳入 5：宽行详情拉取 / hydration 查询
 
-Reason:
-- Queries that select a very wide object row are better treated as follow-up fetches after search, not as the main search-pattern QPS mix
+原因：
+- 一次性把很多对象字段全部 select 出来的 query，更适合作为搜索后的详情拉取，不适合作为主搜索 workload pattern
 
-Example from the original set:
+原始 query 中的例子：
 - `1. Basic Filters / Query 7`
 
-## Simple Benchmark Plan For The Current Environment
+## 当前环境下的一版简单压测计划
 
-### Goal
+### 目标
 
-Measure a small but realistic QPS mix against the current dataset 1 cluster, focusing on search and relationship traversal patterns rather than JSON or detail hydration.
+在当前 dataset 1 集群上，测一版规模不大但足够真实的 QPS mix，重点观察搜索类和关系遍历类 workload，而不是 JSON 或对象详情拉取。
 
-### Scope For The First Pass
+### 第一轮建议纳入的范围
 
-Use these patterns in the initial mixed workload:
-- Pattern 1: Scalar filters plus label sort
-- Pattern 2: Rewritten phrase search from original `LIKE '%...%'`
-- Pattern 3: Multi-column phrase search with `UNION DISTINCT`
-- Pattern 4: Sort on a custom field
-- Pattern 6: Direct relationship lookup
-- Pattern 7: Single-hop relationship traversal
-- Pattern 9: Numeric range filter
+第一轮 mixed workload 建议先用下面这些 pattern：
+- Pattern 1：标量过滤 + 按标题排序
+- Pattern 2：由原始 `LIKE '%...%'` 改写来的短语搜索
+- Pattern 3：多列短语搜索，用 `UNION DISTINCT` 拼接
+- Pattern 4：按自定义字段排序
+- Pattern 6：直接查关系表
+- Pattern 7：单跳关系遍历
+- Pattern 9：数值范围过滤
 
-Keep these out of the first mixed run:
-- Pattern 5: CASE-based sort projection
-- Pattern 8: Multi-hop relationship traversal
+第一轮先不要混进去：
+- Pattern 5：CASE 投影后的排序
+- Pattern 8：多跳关系遍历
 
-Reason:
-- They are valid workload shapes, but they are more expensive and can dominate a first-pass QPS sanity run
+原因：
+- 这两类也是有效的 workload 形态，但更重，容易在第一轮 sanity run 里把整体 latency 和资源消耗拉偏
 
-### Query Set Construction
+### Query Set 构造方式
 
-Prepare 5 to 20 concrete queries for each included pattern:
-- Use real `workspace_id` values that return rows
-- Use real `obj_type_id` values that return rows
-- Use real phrase literals for the `MATCH ... AGAINST` queries
-- Keep `limit 1000 offset 0` for consistency with the original workload
+每个纳入的 pattern，先准备 `5` 到 `20` 条具体 query：
+- 用真实有返回值的 `workspace_id`
+- 用真实有返回值的 `obj_type_id`
+- 对 `MATCH ... AGAINST` 使用真实存在的短语字面量
+- 保持 `limit 1000 offset 0`，和原始 workload 口径一致
 
-Store each concrete query as a plain SQL statement in a query corpus file.
+建议把这些具体 query 按一条一条 SQL 的形式放进一个 query corpus 文件里。
 
-### Recommended Mix
+### 推荐的混合比例
 
-Start with this weighted mix:
+可以先从这组权重开始：
 - 25% Pattern 1
 - 20% Pattern 2
 - 15% Pattern 3
@@ -383,51 +383,51 @@ Start with this weighted mix:
 - 10% Pattern 7
 - 5% Pattern 9
 
-This keeps the first run dominated by common search patterns while still exercising `obj_relationship_new`.
+这样第一轮会以常见搜索类查询为主，同时也能覆盖到 `obj_relationship_new` 的访问。
 
-### Simple Execution Plan
+### 简单执行计划
 
-1. Warm up:
-   - run every concrete query once serially
-   - clear out obvious cold-start noise before measuring
-2. Single-pattern sanity:
-   - run each pattern separately at concurrency `1`, `4`, `8`, `16`
-   - duration `3` to `5` minutes each
-3. Mixed workload:
-   - run the weighted mix at concurrency `8`, `16`, `32`
-   - duration `10` minutes each
-4. Relationship-heavy follow-up:
-   - only if needed, add Pattern 8 and rerun a second mixed profile
+1. 预热：
+   - 每条具体 query 先串行跑 1 次
+   - 先把明显的冷启动噪声压掉
+2. 单 pattern 验证：
+   - 每个 pattern 分别在并发 `1`、`4`、`8`、`16` 下跑
+   - 每轮持续 `3` 到 `5` 分钟
+3. 混合 workload：
+   - 按上面的权重，在并发 `8`、`16`、`32` 下分别跑
+   - 每轮持续 `10` 分钟
+4. 关系型加压补充：
+   - 如果需要，再把 Pattern 8 加进去，做第二轮 mixed profile
 
-### Tooling Suggestion
+### 工具建议
 
-For a very simple first pass:
-- use a short benchmark driver script on the workstation
-- the script should:
-  - hold a connection pool
-  - randomly pick from the concrete query corpus using the target weights
-  - record QPS, error count, p50, p95, and p99 latency
+如果只是做一版简单的第一轮压测：
+- 建议在 workstation 上写一个很短的 benchmark driver 脚本
+- 脚本只需要做到：
+  - 维护连接池
+  - 按目标权重随机选 query
+  - 记录 QPS、错误数、p50、p95、p99
 
-Why not rely on `mysqlslap` alone:
-- it is fine for single-query or single-pattern smoke tests
-- it is awkward for a weighted mixed workload with several SQL shapes
+为什么不直接只用 `mysqlslap`：
+- 它适合单 query 或单 pattern 的 smoke test
+- 但对这种带权重的 mixed workload 支持比较别扭
 
-### What To Watch During The Run
+### 压测时重点观察什么
 
-At minimum capture:
-- overall QPS
+最少需要记录：
+- 总体 QPS
 - p50 / p95 / p99 latency
-- error count / timeout count
+- 错误数 / 超时数
 
-Also watch cluster-side hotspots:
-- TiDB CPU and session count
-- TiFlash CPU, scan throughput, and MPP task count
+同时建议关注集群侧热点：
+- TiDB CPU 和 session 数
+- TiFlash CPU、扫描吞吐、MPP task 数
 - TiKV coprocessor latency
 
-### Success Criteria For A First Iteration
+### 第一轮压测的成功标准
 
-The first pass is good enough if it answers these questions:
-- what QPS the current cluster can sustain for the mixed search workload
-- which pattern becomes the first bottleneck
-- whether relationship traversal queries dominate p95 / p99
-- whether the rewritten `MATCH ... AGAINST` queries behave stably under concurrency
+第一轮做到下面几点，就已经足够有价值：
+- 大致知道当前集群能撑住多少 QPS 的混合搜索 workload
+- 能看出最先变成瓶颈的是哪类 pattern
+- 能判断关系遍历类 query 是否主导了 p95 / p99
+- 能确认 rewritten `MATCH ... AGAINST` 查询在并发下是否稳定
