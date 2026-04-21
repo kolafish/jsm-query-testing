@@ -8,22 +8,6 @@
     "sql": "select /*+ BROADCAST_JOIN(o1, r) */ `o`.`sequential_id`, `o`.`label`\nfrom `obj_new` `o1`\njoin `obj_relationship_new` `r`\n  on `o1`.`id` = `r`.`object_id`\njoin `obj_new` `o`\n  on `r`.`referenced_object_id` = `o`.`id`\nwhere `o`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221'\n  and `o1`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221'\n  and `r`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221'\n  and match(`o1`.`text_value_7`) against('Fagor' in boolean mode)\norder by `o`.`label` asc\nlimit 1000\noffset 0;"
   },
   {
-    "id": "fts_join_q2_tv7_sharp_w9963",
-    "pattern": "FTS+JOIN/text_value_7",
-    "description": "workspace 9963 + STANDARD FTS on text_value_7 = Sharp",
-    "weight": 1,
-    "expected_row_count": 1000,
-    "sql": "select /*+ BROADCAST_JOIN(o1, r) */ `o`.`sequential_id`, `o`.`label`\nfrom `obj_new` `o1`\njoin `obj_relationship_new` `r`\n  on `o1`.`id` = `r`.`object_id`\njoin `obj_new` `o`\n  on `r`.`referenced_object_id` = `o`.`id`\nwhere `o`.`workspace_id` = '9963b35f-9397-48ec-9403-adab57aef265'\n  and `o1`.`workspace_id` = '9963b35f-9397-48ec-9403-adab57aef265'\n  and `r`.`workspace_id` = '9963b35f-9397-48ec-9403-adab57aef265'\n  and match(`o1`.`text_value_7`) against('Sharp' in boolean mode)\norder by `o`.`label` asc\nlimit 1000\noffset 0;"
-  },
-  {
-    "id": "fts_join_q3_tv7_bosch_w3b4c",
-    "pattern": "FTS+JOIN/text_value_7",
-    "description": "workspace 3b4c + STANDARD FTS on text_value_7 = Bosch",
-    "weight": 1,
-    "expected_row_count": 1000,
-    "sql": "select /*+ BROADCAST_JOIN(o1, r) */ `o`.`sequential_id`, `o`.`label`\nfrom `obj_new` `o1`\njoin `obj_relationship_new` `r`\n  on `o1`.`id` = `r`.`object_id`\njoin `obj_new` `o`\n  on `r`.`referenced_object_id` = `o`.`id`\nwhere `o`.`workspace_id` = '3b4c201d-8244-416e-925d-f9608e001a2b'\n  and `o1`.`workspace_id` = '3b4c201d-8244-416e-925d-f9608e001a2b'\n  and `r`.`workspace_id` = '3b4c201d-8244-416e-925d-f9608e001a2b'\n  and match(`o1`.`text_value_7`) against('Bosch' in boolean mode)\norder by `o`.`label` asc\nlimit 1000\noffset 0;"
-  },
-  {
     "id": "fts_join_q4_tv1_admiral1000_w8",
     "pattern": "FTS+JOIN/text_value_1_ngram",
     "description": "workspace 8a65 + NGRAM phrase on text_value_1 = \"admiral-100\"",
@@ -38,6 +22,14 @@
     "weight": 1,
     "expected_row_count": 1000,
     "sql": "select /*+ BROADCAST_JOIN(o1, r) */ `o`.`sequential_id`, `o`.`label`\nfrom `obj_new` `o1`\njoin `obj_relationship_new` `r`\n  on `o1`.`id` = `r`.`object_id`\njoin `obj_new` `o`\n  on `r`.`referenced_object_id` = `o`.`id`\nwhere `o`.`workspace_id` = '9963b35f-9397-48ec-9403-adab57aef265'\n  and `o1`.`workspace_id` = '9963b35f-9397-48ec-9403-adab57aef265'\n  and `r`.`workspace_id` = '9963b35f-9397-48ec-9403-adab57aef265'\n  and match(`o1`.`text_value_1`) against('\"franke-100\"' in boolean mode)\norder by `o`.`label` asc\nlimit 1000\noffset 0;"
+  },
+  {
+    "id": "fts_join_q10_tv1_admiral10029_w00ea",
+    "pattern": "FTS+JOIN/text_value_1_ngram",
+    "description": "workspace 00ea + narrower NGRAM phrase on text_value_1 = \"admiral-10029\"",
+    "weight": 1,
+    "expected_row_count": 1000,
+    "sql": "select /*+ BROADCAST_JOIN(o1, r) */ `o`.`sequential_id`, `o`.`label`\nfrom `obj_new` `o1`\njoin `obj_relationship_new` `r`\n  on `o1`.`id` = `r`.`object_id`\njoin `obj_new` `o`\n  on `r`.`referenced_object_id` = `o`.`id`\nwhere `o`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54'\n  and `o1`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54'\n  and `r`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54'\n  and match(`o1`.`text_value_1`) against('\"admiral-10029\"' in boolean mode)\norder by `o`.`label` asc\nlimit 1000\noffset 0;"
   },
   {
     "id": "fts_join_q6_tv4_morissette_w3b4c",
@@ -56,6 +48,14 @@
     "sql": "select /*+ BROADCAST_JOIN(o1, r) */ `o`.`sequential_id`, `o`.`label`\nfrom `obj_new` `o1`\njoin `obj_relationship_new` `r`\n  on `o1`.`id` = `r`.`object_id`\njoin `obj_new` `o`\n  on `r`.`referenced_object_id` = `o`.`id`\nwhere `o`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54'\n  and `o1`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54'\n  and `r`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54'\n  and match(`o1`.`text_value_4`) against('\"welch.test\"' in boolean mode)\norder by `o`.`label` asc\nlimit 1000\noffset 0;"
   },
   {
+    "id": "fts_join_q11_tv4_maren_local_w00ea",
+    "pattern": "FTS+JOIN/text_value_4_ngram",
+    "description": "workspace 00ea + higher-selectivity NGRAM phrase on text_value_4 = \"maren.heller\"",
+    "weight": 1,
+    "expected_row_count": 1000,
+    "sql": "select /*+ BROADCAST_JOIN(o1, r) */ `o`.`sequential_id`, `o`.`label`\nfrom `obj_new` `o1`\njoin `obj_relationship_new` `r`\n  on `o1`.`id` = `r`.`object_id`\njoin `obj_new` `o`\n  on `r`.`referenced_object_id` = `o`.`id`\nwhere `o`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54'\n  and `o1`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54'\n  and `r`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54'\n  and match(`o1`.`text_value_4`) against('\"maren.heller\"' in boolean mode)\norder by `o`.`label` asc\nlimit 1000\noffset 0;"
+  },
+  {
     "id": "fts_join_q8_tv5_royal_w3b4c",
     "pattern": "FTS+JOIN/text_value_5_ngram",
     "description": "workspace 3b4c + NGRAM phrase on text_value_5 = \"royal-simonis\"",
@@ -70,5 +70,13 @@
     "weight": 1,
     "expected_row_count": 31,
     "sql": "select /*+ BROADCAST_JOIN(o1, r) */ `o`.`sequential_id`, `o`.`label`\nfrom `obj_new` `o1`\njoin `obj_relationship_new` `r`\n  on `o1`.`id` = `r`.`object_id`\njoin `obj_new` `o`\n  on `r`.`referenced_object_id` = `o`.`id`\nwhere `o`.`workspace_id` = 'cafd5188-8a63-44e7-b4a9-e885c9664b9c'\n  and `o1`.`workspace_id` = 'cafd5188-8a63-44e7-b4a9-e885c9664b9c'\n  and `r`.`workspace_id` = 'cafd5188-8a63-44e7-b4a9-e885c9664b9c'\n  and match(`o1`.`text_value_5`) against('\"shelby-torp\"' in boolean mode)\norder by `o`.`label` asc\nlimit 1000\noffset 0;"
+  },
+  {
+    "id": "fts_join_q12_tv5_louise_haley_w00ea",
+    "pattern": "FTS+JOIN/text_value_5_ngram",
+    "description": "workspace 00ea + higher-selectivity NGRAM phrase on text_value_5 = \"louise-haley\"",
+    "weight": 1,
+    "expected_row_count": 1000,
+    "sql": "select /*+ BROADCAST_JOIN(o1, r) */ `o`.`sequential_id`, `o`.`label`\nfrom `obj_new` `o1`\njoin `obj_relationship_new` `r`\n  on `o1`.`id` = `r`.`object_id`\njoin `obj_new` `o`\n  on `r`.`referenced_object_id` = `o`.`id`\nwhere `o`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54'\n  and `o1`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54'\n  and `r`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54'\n  and match(`o1`.`text_value_5`) against('\"louise-haley\"' in boolean mode)\norder by `o`.`label` asc\nlimit 1000\noffset 0;"
   }
 ]
