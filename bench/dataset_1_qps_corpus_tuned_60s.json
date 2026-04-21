@@ -1,0 +1,58 @@
+[
+  {
+    "id": "pattern_1_scalar_filters",
+    "pattern": "Pattern 1",
+    "description": "标量过滤 + 按标题排序",
+    "weight": 25,
+    "expected_row_count": 51,
+    "sql": "select `o`.`sequential_id`, `o`.`label`\nfrom `obj_new` `o`\nwhere `o`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221'\n  and `o`.`obj_type_id` in (\n    unhex(replace('5734a061-b698-4c2a-94ec-700792c86400','-','')),\n    unhex(replace('0dfb9fc6-e7c9-4115-bc56-b5baf679b071','-','')),\n    unhex(replace('8af8cdb7-1a8b-4932-a466-0f60a68227f4','-','')),\n    unhex(replace('e60ef1f1-dfdb-40b9-a0ac-77d0e4d9d69c','-','')),\n    unhex(replace('bfc6489a-3cb1-43e6-9180-9367e7254edf','-',''))\n  )\n  and `o`.`numeric_value_1` = 548\n  and `o`.`numeric_value_3` = 3\norder by `o`.`label` asc\nlimit 1000\noffset 0;"
+  },
+  {
+    "id": "pattern_2_phrase_match",
+    "pattern": "Pattern 2",
+    "description": "由原始 LIKE '%...%' 改写来的短语搜索",
+    "weight": 25,
+    "expected_row_count": 1,
+    "sql": "select `o`.`sequential_id`, `o`.`label`\nfrom `obj_new` `o`\nwhere `o`.`workspace_id` = '9963b35f-9397-48ec-9403-adab57aef265' and (`o`.`obj_type_id` in (\n  unhex(replace('bdb2ed93-a797-4c70-882e-63beb2aad85c','-','')),\n  unhex(replace('ffa5cafc-4d65-4b4e-8f7b-8312ae044e16','-','')),\n  unhex(replace('fbf1f5ec-17a1-4645-8d33-b9e09ce76b32','-','')),\n  unhex(replace('b57a7edf-4412-4810-9e52-eaaa8bebd9a4','-','')),\n  unhex(replace('743641da-c08d-4bdf-be89-63d44a1d2250','-',''))\n) and (`o`.`text_value_1` != '􏿿' and match(`o`.`text_value_1`) against('\"admiral-100000\"' in boolean mode)))\norder by `o`.`label` asc\nlimit 1000\noffset 0;"
+  },
+  {
+    "id": "pattern_3_multi_column_union",
+    "pattern": "Pattern 3",
+    "description": "多列短语搜索，用 UNION DISTINCT 拼接",
+    "weight": 15,
+    "expected_row_count": 1,
+    "sql": "(\n  select `o`.`sequential_id`, `o`.`label`\n  from `obj_new` `o`\n  where `o`.`workspace_id` = 'cafd5188-8a63-44e7-b4a9-e885c9664b9c'\n    and `o`.`obj_type_id` in (\n      unhex(replace('2077b614-8b6d-4ac6-9c71-f22f98319244','-','')),\n      unhex(replace('3ba75b67-ac62-4e20-b481-02a537de994c','-','')),\n      unhex(replace('49a19896-37fc-403d-ab07-200b57d5795a','-','')),\n      unhex(replace('e0c8ce12-e18b-4499-af96-07e73c3a2ca8','-','')),\n      unhex(replace('fba8338d-44d7-4d9d-9775-08b0638e310b','-',''))\n    )\n    and `o`.`text_value_4` != '􏿿'\n    and match(`o`.`text_value_4`) against('\"dr.omer.romaguera@emmerich-gibson.example\"' in boolean mode)\n)\nunion distinct\n(\n  select `o`.`sequential_id`, `o`.`label`\n  from `obj_new` `o`\n  where `o`.`workspace_id` = 'cafd5188-8a63-44e7-b4a9-e885c9664b9c'\n    and `o`.`obj_type_id` in (\n      unhex(replace('2077b614-8b6d-4ac6-9c71-f22f98319244','-','')),\n      unhex(replace('3ba75b67-ac62-4e20-b481-02a537de994c','-','')),\n      unhex(replace('49a19896-37fc-403d-ab07-200b57d5795a','-','')),\n      unhex(replace('e0c8ce12-e18b-4499-af96-07e73c3a2ca8','-','')),\n      unhex(replace('fba8338d-44d7-4d9d-9775-08b0638e310b','-',''))\n    )\n    and `o`.`text_value_5` != '􏿿'\n    and match(`o`.`text_value_5`) against('\"www.shelby-torp.info\"' in boolean mode)\n)\norder by `label` asc\nlimit 1000\noffset 0;"
+  },
+  {
+    "id": "pattern_4_sort_custom_field",
+    "pattern": "Pattern 4",
+    "description": "按自定义字段排序",
+    "weight": 20,
+    "expected_row_count": 1000,
+    "sql": "select `o`.`sequential_id`, `o`.`numeric_value_1`\nfrom `obj_new` `o`\nwhere `o`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221' and (`o`.`obj_type_id` = unhex(replace('0dfb9fc6-e7c9-4115-bc56-b5baf679b071','-','')) and (`o`.`text_value_7` = 'LG' and `o`.`obj_type_id` = unhex(replace('0dfb9fc6-e7c9-4115-bc56-b5baf679b071','-',''))))\norder by `o`.`numeric_value_1` asc\nlimit 1000\noffset 0;"
+  },
+  {
+    "id": "pattern_6_direct_relationship",
+    "pattern": "Pattern 6",
+    "description": "直接查关系表",
+    "weight": 5,
+    "expected_row_count": 56,
+    "sql": "select `obj_relationship`.`workspace_id`, `obj_relationship`.`partition_id`, `obj_relationship`.`id`, `obj_relationship`.`object_id`, `obj_relationship`.`referenced_object_id`, `obj_relationship`.`object_type_attribute_id`, `obj_relationship`.`object_type_id`, `obj_relationship`.`referenced_object_type_id`\nfrom `obj_relationship_new` `obj_relationship`\nwhere `obj_relationship`.`object_id` = unhex(replace('0000db1b-2c55-3677-be47-5087d500faba','-',''));"
+  },
+  {
+    "id": "pattern_7_single_hop_reference",
+    "pattern": "Pattern 7",
+    "description": "单跳关系遍历",
+    "weight": 5,
+    "expected_row_count": 1000,
+    "sql": "select `o`.`sequential_id`, `o`.`label`\nfrom `obj_new` `o`\nwhere `o`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221' and (`o`.`obj_type_id` in (\n  unhex(replace('0dfb9fc6-e7c9-4115-bc56-b5baf679b071','-','')),\n  unhex(replace('5734a061-b698-4c2a-94ec-700792c86400','-','')),\n  unhex(replace('8af8cdb7-1a8b-4932-a466-0f60a68227f4','-','')),\n  unhex(replace('bfc6489a-3cb1-43e6-9180-9367e7254edf','-','')),\n  unhex(replace('e60ef1f1-dfdb-40b9-a0ac-77d0e4d9d69c','-',''))\n) and (`o`.`text_value_24` = 'Sharp' and `o`.`obj_type_id` in (\n  unhex(replace('0dfb9fc6-e7c9-4115-bc56-b5baf679b071','-','')),\n  unhex(replace('5734a061-b698-4c2a-94ec-700792c86400','-','')),\n  unhex(replace('8af8cdb7-1a8b-4932-a466-0f60a68227f4','-','')),\n  unhex(replace('bfc6489a-3cb1-43e6-9180-9367e7254edf','-','')),\n  unhex(replace('e60ef1f1-dfdb-40b9-a0ac-77d0e4d9d69c','-',''))\n)) and `o`.`id` in (select `subR`.`referenced_object_id`\nfrom `obj_relationship_new` `subR`\ninner join `obj_new` `subO1`\non `subR`.`object_id` = `subO1`.`id` and `subO1`.`obj_type_id` in (\n  unhex(replace('0dfb9fc6-e7c9-4115-bc56-b5baf679b071','-','')),\n  unhex(replace('5734a061-b698-4c2a-94ec-700792c86400','-','')),\n  unhex(replace('8af8cdb7-1a8b-4932-a466-0f60a68227f4','-','')),\n  unhex(replace('bfc6489a-3cb1-43e6-9180-9367e7254edf','-','')),\n  unhex(replace('e60ef1f1-dfdb-40b9-a0ac-77d0e4d9d69c','-',''))\n)\nwhere `subO1`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221' and (`subO1`.`text_value_8` = 'Samsung' and `subO1`.`obj_type_id` in (\n  unhex(replace('0dfb9fc6-e7c9-4115-bc56-b5baf679b071','-','')),\n  unhex(replace('5734a061-b698-4c2a-94ec-700792c86400','-','')),\n  unhex(replace('8af8cdb7-1a8b-4932-a466-0f60a68227f4','-','')),\n  unhex(replace('bfc6489a-3cb1-43e6-9180-9367e7254edf','-','')),\n  unhex(replace('e60ef1f1-dfdb-40b9-a0ac-77d0e4d9d69c','-',''))\n))))\norder by `o`.`label` asc\nlimit 1000\noffset 0;"
+  },
+  {
+    "id": "pattern_9_numeric_range",
+    "pattern": "Pattern 9",
+    "description": "数值范围过滤",
+    "weight": 5,
+    "expected_row_count": 1000,
+    "sql": "select `o`.`sequential_id`, `o`.`label`\nfrom `obj_new` `o`\nwhere `o`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221'\n  and `o`.`obj_type_id` in (\n    unhex(replace('0dfb9fc6-e7c9-4115-bc56-b5baf679b071','-','')),\n    unhex(replace('5734a061-b698-4c2a-94ec-700792c86400','-','')),\n    unhex(replace('8af8cdb7-1a8b-4932-a466-0f60a68227f4','-','')),\n    unhex(replace('bfc6489a-3cb1-43e6-9180-9367e7254edf','-','')),\n    unhex(replace('e60ef1f1-dfdb-40b9-a0ac-77d0e4d9d69c','-',''))\n  )\n  and `o`.`numeric_value_1` > 600\n  and `o`.`numeric_value_3` > 0\norder by `o`.`label` asc\nlimit 1000\noffset 0;"
+  }
+]

@@ -1,58 +1,85 @@
 # Dataset 1 简单 QPS 压测结果
 
-这页记录基于 dataset 1 的一版短时混合 QPS 压测结果。它不是长时间 soak test，也不是最终容量结论，目标是先验证：
-- 当前 query pattern 混合后，大致能跑到什么 QPS
-- 哪类 query 最先拉高 p95 / p99
-- rewrite 后的 `MATCH ... AGAINST` 查询在并发下是否稳定
+这页记录目前这套 dataset 1 mixed workload 的正式压测方法和最新结果。
 
-## 压测输入
+当前这版结果，和前面“本地 Python + port-forward”的短压测不一样。现在这版已经切到：
+- 客户端跑在 `workstation`
+- 压测程序改成 `Go`
+- 入口改成 workstation 本地 `HAProxy`
+- 后端均匀分发到 `3` 个 `TiDB`
+
+所以这页里的结论，优先以这一版为准。
+
+## 当前压测代码
 
 相关文件：
 - Query pattern 页面：[jsm_dataset_1_qps_patterns.md](/Users/jin/Desktop/jsm-query-latency-tracking/jsm_dataset_1_qps_patterns.md)
-- Query corpus：[bench/dataset_1_qps_corpus.json](/Users/jin/Desktop/jsm-query-latency-tracking/bench/dataset_1_qps_corpus.json)
-- Benchmark driver：[bench/run_dataset_1_qps_benchmark.py](/Users/jin/Desktop/jsm-query-latency-tracking/bench/run_dataset_1_qps_benchmark.py)
-- 原始结果 JSON：[bench/results/dataset_1_qps_benchmark_20260421.json](/Users/jin/Desktop/jsm-query-latency-tracking/bench/results/dataset_1_qps_benchmark_20260421.json)
+- 当前 corpus：[bench/dataset_1_qps_corpus_tuned_60s.json](/Users/jin/Desktop/jsm-query-latency-tracking/bench/dataset_1_qps_corpus_tuned_60s.json)
+- Go benchmark driver：
+  - [bench/go_qps_bench/main.go](/Users/jin/Desktop/jsm-query-latency-tracking/bench/go_qps_bench/main.go)
+  - [bench/go_qps_bench/go.mod](/Users/jin/Desktop/jsm-query-latency-tracking/bench/go_qps_bench/go.mod)
+- workstation 上的 `HAProxy` 配置：
+  - [bench/haproxy_tidb_workstation.cfg](/Users/jin/Desktop/jsm-query-latency-tracking/bench/haproxy_tidb_workstation.cfg)
+- 当前正式结果 JSON：
+  - [bench/results/dataset_1_qps_benchmark_go_haproxy_20260421_082216.json](/Users/jin/Desktop/jsm-query-latency-tracking/bench/results/dataset_1_qps_benchmark_go_haproxy_20260421_082216.json)
+- 扩容到 `3 TiDB` 但还没换正式分流入口时的 baseline：
+  - [bench/results/dataset_1_qps_benchmark_go_20260421_080916.json](/Users/jin/Desktop/jsm-query-latency-tracking/bench/results/dataset_1_qps_benchmark_go_20260421_080916.json)
 
-本次纳入的 pattern：
-- Pattern 1：标量过滤 + 按标题排序
-- Pattern 2：由原始 `LIKE '%...%'` 改写来的短语搜索
-- Pattern 3：多列短语搜索，用 `UNION DISTINCT` 拼接
-- Pattern 4：按自定义字段排序
-- Pattern 6：直接查关系表
-- Pattern 7：单跳关系遍历
-- Pattern 9：数值范围过滤
+## 当前正式压测方法
 
-权重：
-- Pattern 1: `25%`
-- Pattern 2: `20%`
-- Pattern 3: `15%`
-- Pattern 4: `15%`
-- Pattern 6: `10%`
-- Pattern 7: `10%`
-- Pattern 9: `5%`
+### 客户端
 
-## 程序并发模型
+- benchmark 进程运行在 `workstation`
+- 压测程序是 `Go`，不是 Python
+- 每个 worker goroutine 复用一个持久数据库连接
+- 每条 query 都完整取回结果并校验 `row_count`
+- 正式 run 前会先串行 warmup 一次
 
-这次 benchmark driver 特意按“不要让压测程序本身成为瓶颈”的思路写：
-- 使用固定 worker 线程，而不是单线程串行发 SQL
-- 每个 worker 在整个 run 生命周期里复用一个持久 MySQL 连接，不在循环里反复建连
-- 由每个 worker 独立按权重随机抽 query 执行，避免中心调度线程串行阻塞
-- 每条 query 都会 `fetchall()` 并校验返回行数，确保不是只测到“发请求”而没测到结果读取
-- 在正式 run 前，先对 corpus 中每条 query 做 1 次串行 warmup
+### 数据库入口
 
-这次实际执行命令：
+当前正式入口不是 `kubectl port-forward`，而是：
+- workstation 本地 `127.0.0.1:34008`
+- 由 workstation 本地 `HAProxy` 做 TCP 负载均衡
+- 后端直连 3 个 `TiDB pod IP:4000`
+
+当前 3 个后端是：
+- `192.168.27.181:4000`
+- `192.168.23.56:4000`
+- `192.168.7.250:4000`
+
+我做过分流验证：
+- 连续 `12` 次新建连接
+- 落到 `3` 个 `TiDB` 的分布是 `4 / 4 / 4`
+
+这意味着这轮压测已经不是“单 TiDB + 单 port-forward”的假分流结果。
+
+### 集群规格
+
+当前与这轮压测直接相关的前端规格：
+- `TiDB replicas = 3`
+- `TiDB pods`：
+  - `tici-demo-s3-tidb-0`
+  - `tici-demo-s3-tidb-1`
+  - `tici-demo-s3-tidb-2`
+
+### 正式执行命令
 
 ```bash
-python3 bench/run_dataset_1_qps_benchmark.py \
-  --duration 20 \
-  --concurrency 1 4 8 \
-  --output bench/results/dataset_1_qps_benchmark_20260421.json
+cd /home/ec2-user/jsm-query-bench
+./dataset_1_qps_bench_go \
+  --host 127.0.0.1 \
+  --port 34008 \
+  --user root \
+  --database jsm_testcase2 \
+  --corpus /home/ec2-user/jsm-query-bench/dataset_1_qps_corpus_tuned_60s.json \
+  --duration 60 \
+  --output /home/ec2-user/jsm-query-bench/results/dataset_1_qps_benchmark_go_haproxy_20260421_082216.json \
+  1 4 8 16
 ```
 
 说明：
-- 每档并发跑 `20s`
-- 并发档位：`1`、`4`、`8`
-- 数据库连接走本地 `127.0.0.1:34006`，由 SSH + `kubectl port-forward` 转到当前 TiDB service
+- 每档并发跑 `60s`
+- 并发档位：`1 / 4 / 8 / 16`
 
 ## Warmup 结果
 
@@ -60,159 +87,119 @@ python3 bench/run_dataset_1_qps_benchmark.py \
 
 | Query | Pattern | Warmup Latency | Row Count |
 |---|---|---:|---:|
-| `pattern_1_scalar_filters` | Pattern 1 | `264.768ms` | `51` |
-| `pattern_2_phrase_match` | Pattern 2 | `256.606ms` | `1` |
-| `pattern_3_multi_column_union` | Pattern 3 | `256.260ms` | `1` |
-| `pattern_4_sort_custom_field` | Pattern 4 | `783.447ms` | `1000` |
-| `pattern_6_direct_relationship` | Pattern 6 | `368.805ms` | `56` |
-| `pattern_7_single_hop_reference` | Pattern 7 | `876.124ms` | `1000` |
-| `pattern_9_numeric_range` | Pattern 9 | `297.287ms` | `1000` |
+| `pattern_1_scalar_filters` | Pattern 1 | `51.307ms` | `51` |
+| `pattern_2_phrase_match` | Pattern 2 | `94.130ms` | `1` |
+| `pattern_3_multi_column_union` | Pattern 3 | `19.873ms` | `1` |
+| `pattern_4_sort_custom_field` | Pattern 4 | `33.304ms` | `1000` |
+| `pattern_6_direct_relationship` | Pattern 6 | `14.158ms` | `56` |
+| `pattern_7_single_hop_reference` | Pattern 7 | `858.774ms` | `1000` |
+| `pattern_9_numeric_range` | Pattern 9 | `51.034ms` | `1000` |
 
-## 总体结果
+## 当前正式结果
 
 | Concurrency | QPS | Avg | p50 | p95 | p99 | Errors | Row Count Mismatch |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| `1` | `2.781` | `335.999ms` | `265.322ms` | `875.105ms` | `881.253ms` | `0` | `0` |
-| `4` | `8.345` | `442.768ms` | `282.275ms` | `1399.619ms` | `1785.165ms` | `0` | `0` |
-| `8` | `11.905` | `611.984ms` | `343.610ms` | `2549.609ms` | `3633.751ms` | `0` | `0` |
+| `1` | `16.447` | `60.798ms` | `16.309ms` | `712.967ms` | `922.071ms` | `0` | `0` |
+| `4` | `59.598` | `66.802ms` | `17.272ms` | `708.485ms` | `1105.378ms` | `0` | `0` |
+| `8` | `79.780` | `99.554ms` | `22.217ms` | `894.486ms` | `1685.730ms` | `0` | `0` |
+| `16` | `79.156` | `198.288ms` | `48.840ms` | `1607.103ms` | `3087.987ms` | `0` | `0` |
+
+## 和前一轮的对比
+
+前一轮 baseline 是：
+- 客户端已经在 `workstation`
+- 压测程序已经是 `Go`
+- 但入口还不是 `HAProxy`
+- 没有真正把流量均匀铺到 `3` 个 `TiDB`
+
+对比结果：
+
+| Concurrency | Baseline QPS | 当前正式 QPS |
+|---|---:|---:|
+| `1` | `15.807` | `16.447` |
+| `4` | `30.315` | `59.598` |
+| `8` | `27.714` | `79.780` |
+| `16` | `22.526` | `79.156` |
+
+最值得关注的是：
+- `c=4`：`30.3 -> 59.6`
+- `c=8`：`27.7 -> 79.8`
+
+这说明：
+- 之前确实不是数据库后端极限，而是前端 `TiDB` 和入口链路先卡住了
+- 把 `TiDB` 扩到 `3`，再换成真正分流的入口后，吞吐提升很明显
 
 ## 分 Pattern 观察
 
-### Concurrency = 1
-
-| Pattern | Completed | QPS | p50 | p95 | p99 |
-|---|---:|---:|---:|---:|---:|
-| `pattern_7_single_hop_reference` | `5` | `0.248` | `878.257ms` | `882.712ms` | `883.380ms` |
-| `pattern_6_direct_relationship` | `9` | `0.447` | `362.477ms` | `370.990ms` | `371.559ms` |
-| `pattern_9_numeric_range` | `1` | `0.050` | `301.183ms` | `301.183ms` | `301.183ms` |
-| `pattern_4_sort_custom_field` | `7` | `0.348` | `290.099ms` | `292.946ms` | `293.255ms` |
-| `pattern_1_scalar_filters` | `14` | `0.695` | `264.887ms` | `275.230ms` | `278.467ms` |
-| `pattern_3_multi_column_union` | `14` | `0.695` | `255.321ms` | `261.990ms` | `263.567ms` |
-| `pattern_2_phrase_match` | `6` | `0.298` | `254.730ms` | `255.778ms` | `256.030ms` |
-
-### Concurrency = 4
-
-| Pattern | Completed | QPS | p50 | p95 | p99 |
-|---|---:|---:|---:|---:|---:|
-| `pattern_7_single_hop_reference` | `20` | `0.965` | `1345.771ms` | `1802.625ms` | `1862.676ms` |
-| `pattern_9_numeric_range` | `8` | `0.386` | `323.579ms` | `694.662ms` | `755.728ms` |
-| `pattern_6_direct_relationship` | `17` | `0.820` | `381.913ms` | `660.006ms` | `668.890ms` |
-| `pattern_4_sort_custom_field` | `29` | `1.399` | `305.964ms` | `615.995ms` | `671.494ms` |
-| `pattern_2_phrase_match` | `30` | `1.447` | `258.023ms` | `524.410ms` | `557.388ms` |
-| `pattern_3_multi_column_union` | `26` | `1.254` | `259.670ms` | `397.809ms` | `403.328ms` |
-| `pattern_1_scalar_filters` | `43` | `2.074` | `264.365ms` | `271.132ms` | `299.114ms` |
+这里只列当前更有代表性的 `c=8` 和 `c=16`。
 
 ### Concurrency = 8
 
 | Pattern | Completed | QPS | p50 | p95 | p99 |
 |---|---:|---:|---:|---:|---:|
-| `pattern_7_single_hop_reference` | `29` | `1.365` | `2514.449ms` | `3759.954ms` | `4006.513ms` |
-| `pattern_4_sort_custom_field` | `45` | `2.117` | `463.483ms` | `864.440ms` | `946.088ms` |
-| `pattern_9_numeric_range` | `13` | `0.612` | `386.573ms` | `754.470ms` | `759.724ms` |
-| `pattern_6_direct_relationship` | `23` | `1.082` | `535.828ms` | `659.295ms` | `724.895ms` |
-| `pattern_2_phrase_match` | `47` | `2.212` | `313.762ms` | `533.545ms` | `710.890ms` |
-| `pattern_3_multi_column_union` | `39` | `1.835` | `310.466ms` | `501.778ms` | `749.223ms` |
-| `pattern_1_scalar_filters` | `57` | `2.682` | `264.812ms` | `284.235ms` | `353.809ms` |
+| `pattern_1_scalar_filters` | `1218` | `19.892` | `25.148ms` | `60.509ms` | `146.068ms` |
+| `pattern_2_phrase_match` | `1212` | `19.794` | `12.655ms` | `39.079ms` | `138.207ms` |
+| `pattern_3_multi_column_union` | `726` | `11.857` | `12.264ms` | `35.535ms` | `131.490ms` |
+| `pattern_4_sort_custom_field` | `965` | `15.760` | `29.283ms` | `74.828ms` | `120.315ms` |
+| `pattern_6_direct_relationship` | `263` | `4.295` | `5.270ms` | `41.397ms` | `74.393ms` |
+| `pattern_7_single_hop_reference` | `251` | `4.099` | `1424.605ms` | `1865.524ms` | `2089.748ms` |
+| `pattern_9_numeric_range` | `250` | `4.083` | `51.158ms` | `87.158ms` | `262.698ms` |
+
+### Concurrency = 16
+
+| Pattern | Completed | QPS | p50 | p95 | p99 |
+|---|---:|---:|---:|---:|---:|
+| `pattern_1_scalar_filters` | `1275` | `20.463` | `60.083ms` | `203.308ms` | `347.566ms` |
+| `pattern_2_phrase_match` | `1226` | `19.677` | `23.417ms` | `156.897ms` | `281.475ms` |
+| `pattern_3_multi_column_union` | `718` | `11.524` | `25.528ms` | `181.739ms` | `295.830ms` |
+| `pattern_4_sort_custom_field` | `967` | `15.520` | `62.390ms` | `256.111ms` | `386.206ms` |
+| `pattern_6_direct_relationship` | `260` | `4.173` | `27.740ms` | `183.124ms` | `422.652ms` |
+| `pattern_7_single_hop_reference` | `258` | `4.141` | `2511.083ms` | `3544.618ms` | `4003.067ms` |
+| `pattern_9_numeric_range` | `228` | `3.659` | `63.932ms` | `393.733ms` | `1127.193ms` |
 
 ## 结论
 
-这轮短压测里，最重要的结论有 4 个：
+当前这轮更像正式 benchmark 的结论有 5 条：
 
-1. 当前这组混合 workload 的短时吞吐大致在：
-   - `c=1`: `2.8 QPS`
-   - `c=4`: `8.3 QPS`
-   - `c=8`: `11.9 QPS`
+1. 当前 mixed workload 在这套集群上的真实吞吐已经接近 `80 QPS`
+   - `c=8`：`79.780 QPS`
+   - `c=16`：`79.156 QPS`
 
-2. 最稳定的 pattern 是：
-   - Pattern 1：标量过滤 + 按标题排序
-   - 即使在 `c=8`，它的 `p95` 也仍然只有 `284ms`
+2. 这轮结果已经可以基本排除“压测程序本身是瓶颈”
+   - 客户端在 `workstation`
+   - 压测程序是 `Go`
+   - 每个 worker 复用持久连接
+   - 所有 query 都做结果读取和行数校验
+   - `errors = 0`
+   - `row_count_mismatches = 0`
 
-3. 最明显的尾延迟来源是：
-   - Pattern 7：单跳关系遍历
-   - 在 `c=8` 时，`p50` 已经到 `2514ms`，`p95` 到 `3759ms`
-   - 也就是说，整体 p95 / p99 基本是被关系遍历类 query 拉高的
+3. 之前的主要瓶颈确实是 `TiDB` 前端和入口链路
+   - 把 `TiDB` 从 `1` 扩到 `3`
+   - 再把入口换成真正分流的 `HAProxy`
+   - `c=4` 和 `c=8` 的 QPS 都接近翻倍甚至更多
 
-4. rewritten `MATCH ... AGAINST` 查询本身是稳定的：
-   - Pattern 2 和 Pattern 3 在 `c=8` 下的 `p95` 都还在 `500ms` 左右
-   - 没有报错，也没有行数漂移
+4. 当前新的瓶颈已经偏数据库侧，不是客户端侧
+   - `c=8 -> c=16` 时，QPS 没继续涨
+   - 但 `p95/p99` 明显恶化
+   - 说明现在是重查询开始互相堆积，不是 benchmark driver 发不动
 
-## 如果目标是 100+ 混合 QPS
+5. 最主要的尾延迟来源仍然是 `Pattern 7`
+   - `c=8` 时 `p95 = 1865ms`
+   - `c=16` 时 `p95 = 3545ms`
+   - 它仍然是这组 mixed workload 里最该继续优化的 query 形态
 
-先说结论：如果 mixed workload 仍然保持这页的 pattern 和大致权重，尤其继续包含 `10%` 左右的单跳关系遍历（Pattern 7），当前这套集群规格很难直接冲到 `100+ QPS`。更现实的做法是：
-- 先把当前 `1 TiDB / 3 TiKV / 3 TiFlash` 扩到一版更偏读查询的规格；
-- 同时接受一个前提：只扩机器、不改关系遍历类 SQL 的执行形态，`100+ QPS` 只能作为起步目标，不能当成保证值。
+## 对 100+ QPS 的判断
 
-### 当前规格
+基于当前这轮结果，`100+ QPS` 已经不是遥远目标，但还没到。
 
-- `PD`: `1` 副本
-- `TiDB`: `1` 副本，每个 `15 CPU / 25Gi`
-- `TiKV`: `3` 副本，每个 `15 CPU / 56Gi / 500Gi`
-- `TiFlash`: `3` 副本，每个 `15 CPU / 100Gi / 500Gi`
-- 节点组：
-  - `node16c32`: `11 x c8i.4xlarge`
-  - `node-tikv`: `3 x m8i.4xlarge`
-  - `node-tiflash`: `3 x r8i.4xlarge`
+当前状态：
+- 峰值大约 `80 QPS`
+- 离 `100 QPS` 还差大约 `20-25%`
 
-### 建议的起步规格
+更务实的下一步不是继续换客户端程序，而是继续做数据库侧优化：
+- 优先看 `Pattern 7` 的执行计划和关系遍历路径
+- 再决定是继续扩 `TiDB/TiFlash/TiKV`，还是先改 query/plan
 
-如果目标是把这套 mixed workload 往 `100+ QPS` 推，建议先从下面这版开始压：
-- `PD`: `3` 副本
-- `TiDB`: `3` 副本，每个 `12-16 CPU / 32Gi`
-- `TiKV`: `6` 副本，每个 `15-16 CPU / 56-64Gi / 500Gi`
-- `TiFlash`: `8` 副本，每个 `15-16 CPU / 100-128Gi / 500Gi`
-- 对应节点组大致扩成：
-  - `node16c32`: `13-15 x c8i.4xlarge`
-  - `node-tikv`: `6 x m8i.4xlarge`
-  - `node-tiflash`: `8 x r8i.4xlarge`
-
-如果目标不只是吞吐到 `100+ QPS`，还希望把 mixed workload 的 `p95` 压在 `1s` 附近，那么更激进但更稳的建议是：
-- `TiFlash` 直接到 `10-12` 副本，或者改成更大的 `r8i.8xlarge`
-- `TiKV` 提到 `6-8` 副本
-- `TiDB` 维持 `3` 副本即可
-
-### 为什么重点要扩 TiFlash
-
-原因很直接，当前瓶颈主要不在 TiDB 前端，而在扫描和 join：
-- 当前短压测在 `c=8` 只有 `11.9 QPS`
-- 尾延迟几乎被 `Pattern 7` 拉高：
-  - `p50 = 2514ms`
-  - `p95 = 3759ms`
-  - `p99 = 4006ms`
-- 这类关系遍历 query 在当前 plan 下主要是 `TiFlash MPP + relationship table scan`
-- 之前单独看执行计划时，`obj_relationship_new` 经常要扫当前 workspace 的大段数据，量级在 `29996619` 行
-
-所以这套 workload 要提吞吐，第一优先级是补 `TiFlash` 的并行扫描和 hash join 能力，而不是先盯着 TiDB。
-
-### 为什么还要补 TiDB 和 TiKV
-
-- `TiDB` 现在只有 `1` 个副本，`100+ QPS` mixed workload 下会承担更多 session、编排、MPP task 协调；扩到 `3` 个副本主要是避免前端和单点瓶颈。
-- `TiKV` 虽然不是当前第一瓶颈，但 `MATCH ... AGAINST` 的 rowid probe、`IndexLookUp`、直接关系查找这些都还会吃到 TiKV；当 TiFlash 扩完后，TiKV 很容易变成第二瓶颈，所以建议至少翻倍到 `6` 副本。
-- `PD` 从 `1` 到 `3` 更多是为了稳定性和测试时的可用性，不是主吞吐瓶颈。
-
-### 一个重要边界
-
-这组规格是“朝 `100+ mixed QPS` 靠近的一版起步配置”，不是承诺值。原因是当前结果已经说明：
-- `MATCH ... AGAINST` 类 query 本身是稳定的，不是主问题；
-- 真正拖吞吐的是关系遍历类 query，尤其 Pattern 7；
-- 如果这些 query 继续保持现在的 plan 形态，只靠加机器，收益不会完全线性。
-
-因此更务实的顺序是：
-1. 先把 `TiFlash / TiKV / TiDB` 扩到上面的起步规格；
-2. 再在 `c=16 / 32 / 64` 下做第二轮 mixed benchmark；
-3. 如果那时吞吐还明显卡在关系遍历上，再继续做 SQL / plan 级优化，而不是只继续堆机器。
-
-## 限制
-
-这轮结果需要结合下面几点理解：
-- 每档只跑了 `20s`，属于短时基线，不是长时间容量测试
-- 每个 pattern 现在只放了 1 条具体 query，语义上有代表性，但覆盖度还不够广
-- 这次只记录了 query 侧结果，没有同步抓 TiDB / TiKV / TiFlash 的系统指标时间线
-- 因为 Pattern 7 很重，它在混合 workload 中对 p95 / p99 的影响会比权重本身看起来更大
-
-## 下一步建议
-
-如果要把这套 benchmark 往更可信的方向推进，优先顺序建议是：
-- 每个 pattern 扩成 `5` 到 `20` 条具体 query，减少单条样本偏差
-- 保留当前 driver，不改并发模型，只把运行时长拉到 `3` 到 `5` 分钟
-- 在压测时同步记录 TiDB / TiKV / TiFlash 指标
-- 对关系遍历类 query 单独做一轮 profile，确认是单跳 join 还是关系表扫描主导了尾延迟
+一句话说就是：
+- benchmark 客户端这边已经基本到位
+- 后面要追 `100+ QPS`，主要该动数据库和 query pattern，而不是 benchmark 程序
