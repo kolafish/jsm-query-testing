@@ -11,11 +11,23 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 	"sync"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
+
+type stringListFlag []string
+
+func (f *stringListFlag) String() string {
+	return strings.Join(*f, " | ")
+}
+
+func (f *stringListFlag) Set(value string) error {
+	*f = append(*f, value)
+	return nil
+}
 
 type QuerySpec struct {
 	ID               string `json:"id"`
@@ -160,11 +172,30 @@ func runQuery(ctx context.Context, queryer interface {
 	return mustCountRows(rows)
 }
 
-func warmup(ctx context.Context, db *sql.DB, corpus []QuerySpec) ([]WarmupResult, error) {
+func applySessionSQL(ctx context.Context, execer interface {
+	ExecContext(context.Context, string, ...any) (sql.Result, error)
+}, statements []string) error {
+	for _, stmt := range statements {
+		if _, err := execer.ExecContext(ctx, stmt); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func warmup(ctx context.Context, db *sql.DB, corpus []QuerySpec, sessionSQL []string) ([]WarmupResult, error) {
 	results := make([]WarmupResult, 0, len(corpus))
+	conn, err := db.Conn(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+	if err := applySessionSQL(ctx, conn, sessionSQL); err != nil {
+		return nil, fmt.Errorf("warmup init sql: %w", err)
+	}
 	for _, spec := range corpus {
 		start := time.Now()
-		rowCount, err := runQuery(ctx, db, spec.SQL)
+		rowCount, err := runQuery(ctx, conn, spec.SQL)
 		if err != nil {
 			return nil, fmt.Errorf("warmup %s: %w", spec.ID, err)
 		}
@@ -182,7 +213,7 @@ func warmup(ctx context.Context, db *sql.DB, corpus []QuerySpec) ([]WarmupResult
 	return results, nil
 }
 
-func worker(ctx context.Context, db *sql.DB, corpus []QuerySpec, cumulative []int, seed int64, stopAt time.Time, out chan<- WorkerStats) {
+func worker(ctx context.Context, db *sql.DB, corpus []QuerySpec, cumulative []int, seed int64, stopAt time.Time, sessionSQL []string, out chan<- WorkerStats) {
 	stats := WorkerStats{
 		PatternCounts:      map[string]int{},
 		PatternLatenciesMS: map[string][]float64{},
@@ -194,6 +225,11 @@ func worker(ctx context.Context, db *sql.DB, corpus []QuerySpec, cumulative []in
 		return
 	}
 	defer conn.Close()
+	if err := applySessionSQL(ctx, conn, sessionSQL); err != nil {
+		stats.Errors++
+		out <- stats
+		return
+	}
 	rng := rand.New(rand.NewSource(seed))
 	for time.Now().Before(stopAt) {
 		idx := pickWeighted(rng, cumulative)
@@ -322,6 +358,8 @@ func main() {
 	corpusPath := flag.String("corpus", "bench/dataset_1_qps_corpus.json", "")
 	duration := flag.Int("duration", 20, "seconds per concurrency level")
 	outputPath := flag.String("output", "bench/results/latest_dataset_1_qps_benchmark_go.json", "")
+	var sessionSQL stringListFlag
+	flag.Var(&sessionSQL, "init-sql", "session SQL to execute once per connection before warmup/benchmark")
 	flag.Parse()
 	concurrencyArgs := flag.Args()
 	if len(concurrencyArgs) == 0 {
@@ -359,7 +397,7 @@ func main() {
 	db.SetConnMaxLifetime(30 * time.Minute)
 
 	ctx := context.Background()
-	warm, err := warmup(ctx, db, corpus)
+	warm, err := warmup(ctx, db, corpus, sessionSQL)
 	if err != nil {
 		panic(err)
 	}
@@ -376,7 +414,7 @@ func main() {
 			wg.Add(1)
 			go func(i int) {
 				defer wg.Done()
-				worker(ctx, db, corpus, cumulative, int64(20260421+i), stopAt, out)
+				worker(ctx, db, corpus, cumulative, int64(20260421+i), stopAt, sessionSQL, out)
 			}(i)
 		}
 		wg.Wait()

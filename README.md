@@ -11,22 +11,28 @@
   - 从 JQL 视角整理出来的代表性 query pattern，以及压测计划
 - `jsm_dataset_1_simple_qps_benchmark_results.md`
   - 当前 mixed workload QPS 压测结果和结论
+- `jsm_dataset_1_fts_join_qps_benchmark_results.md`
+  - 当前 `FTS + JOIN` 专项 QPS 压测结果和结论
 
 压测相关代码：
 - `bench/dataset_1_qps_corpus.json`
   - 最初的 query corpus
 - `bench/dataset_1_qps_corpus_tuned_60s.json`
   - 当前正式压测使用的 tuned corpus
+- `bench/fts_join_qps_corpus.json`
+  - 当前 `FTS + JOIN` 专项压测使用的 corpus
 - `bench/run_dataset_1_qps_benchmark.py`
   - 早期 Python benchmark driver
 - `bench/go_qps_bench/main.go`
-  - 当前正式使用的 Go benchmark driver
+  - 当前正式使用的 Go benchmark driver，支持每条连接初始化 session SQL
 - `bench/haproxy_tidb_workstation.cfg`
   - workstation 上用于分流到 3 个 TiDB 的 `HAProxy` 配置
 
 结果数据：
 - `bench/results/dataset_1_qps_benchmark_go_haproxy_pattern7tight_20260421_084835.json`
   - 当前最新结果：workstation + Go + HAProxy + 3 TiDB + 更高过滤率的 `Pattern 7`
+- `bench/results/fts_join_qps_benchmark_go_haproxy_20260421_1740.json`
+  - 当前最新 `FTS + JOIN` 专项结果：workstation + Go + HAProxy + 3 TiDB + `MPP` + `optimized hash join`
 
 改写约定：
 - `obj -> obj_new`
