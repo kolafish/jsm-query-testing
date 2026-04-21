@@ -12,7 +12,7 @@
 - `jsm_dataset_1_simple_qps_benchmark_results.md`
   - 当前 mixed workload QPS 压测结果和结论
 - `jsm_dataset_1_fts_join_qps_benchmark_results.md`
-  - 当前 `FTS + JOIN` 专项 QPS 压测结果和结论
+  - 当前 `FTS + JOIN` 与 `LIKE + JOIN` 专项 QPS 对比结果和结论
 
 压测相关代码：
 - `bench/dataset_1_qps_corpus.json`
@@ -21,6 +21,8 @@
   - 当前正式压测使用的 tuned corpus
 - `bench/fts_join_qps_corpus.json`
   - 当前 `FTS + JOIN` 专项压测使用的 corpus
+- `bench/fts_join_like_qps_corpus.json`
+  - 当前 `LIKE + JOIN` 专项压测使用的 corpus
 - `bench/run_dataset_1_qps_benchmark.py`
   - 早期 Python benchmark driver
 - `bench/go_qps_bench/main.go`
@@ -33,6 +35,8 @@
   - 当前最新结果：workstation + Go + HAProxy + 3 TiDB + 更高过滤率的 `Pattern 7`
 - `bench/results/fts_join_qps_benchmark_go_haproxy_20260421_1908.json`
   - 当前最新 `FTS + JOIN` 专项结果：10 条 query，`text_value_7:1 / text_value_1:3 / text_value_4:3 / text_value_5:3`
+- `bench/results/fts_join_like_qps_benchmark_go_haproxy_20260421_2250.json`
+  - 当前最新 `LIKE + JOIN` 专项结果：与 `FTS + JOIN` 使用同一组 query，只把过滤写法改成 `LIKE`
 
 改写约定：
 - `obj -> obj_new`

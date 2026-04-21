@@ -1,0 +1,82 @@
+[
+  {
+    "id": "like_join_q1_tv7_fagor_w8",
+    "pattern": "LIKE+JOIN/text_value_7",
+    "description": "workspace 8a65 + STANDARD LIKE full scan on text_value_7 = Fagor",
+    "weight": 1,
+    "expected_row_count": 1000,
+    "sql": "select /*+ BROADCAST_JOIN(o1, r) */ `o`.`sequential_id`, `o`.`label`\nfrom `obj_new` `o1`\njoin `obj_relationship_new` `r`\n  on `o1`.`id` = `r`.`object_id`\njoin `obj_new` `o`\n  on `r`.`referenced_object_id` = `o`.`id`\nwhere `o`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221'\n  and `o1`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221'\n  and `r`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221'\n  and lower(`o1`.`text_value_7`) like '%fagor%'\norder by `o`.`label` asc\nlimit 1000\noffset 0;"
+  },
+  {
+    "id": "like_join_q4_tv1_admiral1000_w8",
+    "pattern": "LIKE+JOIN/text_value_1_ngram",
+    "description": "workspace 8a65 + LIKE on text_value_1 = \"admiral-100\"",
+    "weight": 1,
+    "expected_row_count": 1000,
+    "sql": "select /*+ BROADCAST_JOIN(o1, r) */ `o`.`sequential_id`, `o`.`label`\nfrom `obj_new` `o1`\njoin `obj_relationship_new` `r`\n  on `o1`.`id` = `r`.`object_id`\njoin `obj_new` `o`\n  on `r`.`referenced_object_id` = `o`.`id`\nwhere `o`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221'\n  and `o1`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221'\n  and `r`.`workspace_id` = '8a6526e6-cd57-4216-bac6-358a6177d221'\n  and lower(`o1`.`text_value_1`) like '%admiral-100%'\norder by `o`.`label` asc\nlimit 1000\noffset 0;"
+  },
+  {
+    "id": "like_join_q5_tv1_franke1000_w9963",
+    "pattern": "LIKE+JOIN/text_value_1_ngram",
+    "description": "workspace 9963 + LIKE on text_value_1 = \"franke-100\"",
+    "weight": 1,
+    "expected_row_count": 1000,
+    "sql": "select /*+ BROADCAST_JOIN(o1, r) */ `o`.`sequential_id`, `o`.`label`\nfrom `obj_new` `o1`\njoin `obj_relationship_new` `r`\n  on `o1`.`id` = `r`.`object_id`\njoin `obj_new` `o`\n  on `r`.`referenced_object_id` = `o`.`id`\nwhere `o`.`workspace_id` = '9963b35f-9397-48ec-9403-adab57aef265'\n  and `o1`.`workspace_id` = '9963b35f-9397-48ec-9403-adab57aef265'\n  and `r`.`workspace_id` = '9963b35f-9397-48ec-9403-adab57aef265'\n  and lower(`o1`.`text_value_1`) like '%franke-100%'\norder by `o`.`label` asc\nlimit 1000\noffset 0;"
+  },
+  {
+    "id": "like_join_q10_tv1_admiral10029_w00ea",
+    "pattern": "LIKE+JOIN/text_value_1_ngram",
+    "description": "workspace 00ea + narrower LIKE on text_value_1 = \"admiral-10029\"",
+    "weight": 1,
+    "expected_row_count": 21,
+    "sql": "select /*+ BROADCAST_JOIN(o1, r) */ `o`.`sequential_id`, `o`.`label`\nfrom `obj_new` `o1`\njoin `obj_relationship_new` `r`\n  on `o1`.`id` = `r`.`object_id`\njoin `obj_new` `o`\n  on `r`.`referenced_object_id` = `o`.`id`\nwhere `o`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54'\n  and `o1`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54'\n  and `r`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54'\n  and lower(`o1`.`text_value_1`) like '%admiral-10029%'\norder by `o`.`label` asc\nlimit 1000\noffset 0;"
+  },
+  {
+    "id": "like_join_q6_tv4_morissette_w3b4c",
+    "pattern": "LIKE+JOIN/text_value_4_ngram",
+    "description": "workspace 3b4c + LIKE on text_value_4 = \"morissette.test\"",
+    "weight": 1,
+    "expected_row_count": 1000,
+    "sql": "select /*+ BROADCAST_JOIN(o1, r) */ `o`.`sequential_id`, `o`.`label`\nfrom `obj_new` `o1`\njoin `obj_relationship_new` `r`\n  on `o1`.`id` = `r`.`object_id`\njoin `obj_new` `o`\n  on `r`.`referenced_object_id` = `o`.`id`\nwhere `o`.`workspace_id` = '3b4c201d-8244-416e-925d-f9608e001a2b'\n  and `o1`.`workspace_id` = '3b4c201d-8244-416e-925d-f9608e001a2b'\n  and `r`.`workspace_id` = '3b4c201d-8244-416e-925d-f9608e001a2b'\n  and lower(`o1`.`text_value_4`) like '%morissette.test%'\norder by `o`.`label` asc\nlimit 1000\noffset 0;"
+  },
+  {
+    "id": "like_join_q7_tv4_welch_w00ea",
+    "pattern": "LIKE+JOIN/text_value_4_ngram",
+    "description": "workspace 00ea + LIKE on text_value_4 = \"welch.test\"",
+    "weight": 1,
+    "expected_row_count": 1000,
+    "sql": "select /*+ BROADCAST_JOIN(o1, r) */ `o`.`sequential_id`, `o`.`label`\nfrom `obj_new` `o1`\njoin `obj_relationship_new` `r`\n  on `o1`.`id` = `r`.`object_id`\njoin `obj_new` `o`\n  on `r`.`referenced_object_id` = `o`.`id`\nwhere `o`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54'\n  and `o1`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54'\n  and `r`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54'\n  and lower(`o1`.`text_value_4`) like '%welch.test%'\norder by `o`.`label` asc\nlimit 1000\noffset 0;"
+  },
+  {
+    "id": "like_join_q11_tv4_maren_local_w00ea",
+    "pattern": "LIKE+JOIN/text_value_4_ngram",
+    "description": "workspace 00ea + higher-selectivity LIKE on text_value_4 = \"maren.heller\"",
+    "weight": 1,
+    "expected_row_count": 0,
+    "sql": "select /*+ BROADCAST_JOIN(o1, r) */ `o`.`sequential_id`, `o`.`label`\nfrom `obj_new` `o1`\njoin `obj_relationship_new` `r`\n  on `o1`.`id` = `r`.`object_id`\njoin `obj_new` `o`\n  on `r`.`referenced_object_id` = `o`.`id`\nwhere `o`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54'\n  and `o1`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54'\n  and `r`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54'\n  and lower(`o1`.`text_value_4`) like '%maren.heller%'\norder by `o`.`label` asc\nlimit 1000\noffset 0;"
+  },
+  {
+    "id": "like_join_q8_tv5_royal_w3b4c",
+    "pattern": "LIKE+JOIN/text_value_5_ngram",
+    "description": "workspace 3b4c + LIKE on text_value_5 = \"royal-simonis\"",
+    "weight": 1,
+    "expected_row_count": 12,
+    "sql": "select /*+ BROADCAST_JOIN(o1, r) */ `o`.`sequential_id`, `o`.`label`\nfrom `obj_new` `o1`\njoin `obj_relationship_new` `r`\n  on `o1`.`id` = `r`.`object_id`\njoin `obj_new` `o`\n  on `r`.`referenced_object_id` = `o`.`id`\nwhere `o`.`workspace_id` = '3b4c201d-8244-416e-925d-f9608e001a2b'\n  and `o1`.`workspace_id` = '3b4c201d-8244-416e-925d-f9608e001a2b'\n  and `r`.`workspace_id` = '3b4c201d-8244-416e-925d-f9608e001a2b'\n  and lower(`o1`.`text_value_5`) like '%royal-simonis%'\norder by `o`.`label` asc\nlimit 1000\noffset 0;"
+  },
+  {
+    "id": "like_join_q9_tv5_shelby_wcafd",
+    "pattern": "LIKE+JOIN/text_value_5_ngram",
+    "description": "workspace cafd + LIKE on text_value_5 = \"shelby-torp\"",
+    "weight": 1,
+    "expected_row_count": 31,
+    "sql": "select /*+ BROADCAST_JOIN(o1, r) */ `o`.`sequential_id`, `o`.`label`\nfrom `obj_new` `o1`\njoin `obj_relationship_new` `r`\n  on `o1`.`id` = `r`.`object_id`\njoin `obj_new` `o`\n  on `r`.`referenced_object_id` = `o`.`id`\nwhere `o`.`workspace_id` = 'cafd5188-8a63-44e7-b4a9-e885c9664b9c'\n  and `o1`.`workspace_id` = 'cafd5188-8a63-44e7-b4a9-e885c9664b9c'\n  and `r`.`workspace_id` = 'cafd5188-8a63-44e7-b4a9-e885c9664b9c'\n  and lower(`o1`.`text_value_5`) like '%shelby-torp%'\norder by `o`.`label` asc\nlimit 1000\noffset 0;"
+  },
+  {
+    "id": "like_join_q12_tv5_louise_haley_w00ea",
+    "pattern": "LIKE+JOIN/text_value_5_ngram",
+    "description": "workspace 00ea + higher-selectivity LIKE on text_value_5 = \"louise-haley\"",
+    "weight": 1,
+    "expected_row_count": 8,
+    "sql": "select /*+ BROADCAST_JOIN(o1, r) */ `o`.`sequential_id`, `o`.`label`\nfrom `obj_new` `o1`\njoin `obj_relationship_new` `r`\n  on `o1`.`id` = `r`.`object_id`\njoin `obj_new` `o`\n  on `r`.`referenced_object_id` = `o`.`id`\nwhere `o`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54'\n  and `o1`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54'\n  and `r`.`workspace_id` = '00eaf117-fdd6-4176-9926-45310e6b9f54'\n  and lower(`o1`.`text_value_5`) like '%louise-haley%'\norder by `o`.`label` asc\nlimit 1000\noffset 0;"
+  }
+]
