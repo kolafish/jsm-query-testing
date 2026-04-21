@@ -136,6 +136,71 @@ python3 bench/run_dataset_1_qps_benchmark.py \
    - Pattern 2 和 Pattern 3 在 `c=8` 下的 `p95` 都还在 `500ms` 左右
    - 没有报错，也没有行数漂移
 
+## 如果目标是 100+ 混合 QPS
+
+先说结论：如果 mixed workload 仍然保持这页的 pattern 和大致权重，尤其继续包含 `10%` 左右的单跳关系遍历（Pattern 7），当前这套集群规格很难直接冲到 `100+ QPS`。更现实的做法是：
+- 先把当前 `1 TiDB / 3 TiKV / 3 TiFlash` 扩到一版更偏读查询的规格；
+- 同时接受一个前提：只扩机器、不改关系遍历类 SQL 的执行形态，`100+ QPS` 只能作为起步目标，不能当成保证值。
+
+### 当前规格
+
+- `PD`: `1` 副本
+- `TiDB`: `1` 副本，每个 `15 CPU / 25Gi`
+- `TiKV`: `3` 副本，每个 `15 CPU / 56Gi / 500Gi`
+- `TiFlash`: `3` 副本，每个 `15 CPU / 100Gi / 500Gi`
+- 节点组：
+  - `node16c32`: `11 x c8i.4xlarge`
+  - `node-tikv`: `3 x m8i.4xlarge`
+  - `node-tiflash`: `3 x r8i.4xlarge`
+
+### 建议的起步规格
+
+如果目标是把这套 mixed workload 往 `100+ QPS` 推，建议先从下面这版开始压：
+- `PD`: `3` 副本
+- `TiDB`: `3` 副本，每个 `12-16 CPU / 32Gi`
+- `TiKV`: `6` 副本，每个 `15-16 CPU / 56-64Gi / 500Gi`
+- `TiFlash`: `8` 副本，每个 `15-16 CPU / 100-128Gi / 500Gi`
+- 对应节点组大致扩成：
+  - `node16c32`: `13-15 x c8i.4xlarge`
+  - `node-tikv`: `6 x m8i.4xlarge`
+  - `node-tiflash`: `8 x r8i.4xlarge`
+
+如果目标不只是吞吐到 `100+ QPS`，还希望把 mixed workload 的 `p95` 压在 `1s` 附近，那么更激进但更稳的建议是：
+- `TiFlash` 直接到 `10-12` 副本，或者改成更大的 `r8i.8xlarge`
+- `TiKV` 提到 `6-8` 副本
+- `TiDB` 维持 `3` 副本即可
+
+### 为什么重点要扩 TiFlash
+
+原因很直接，当前瓶颈主要不在 TiDB 前端，而在扫描和 join：
+- 当前短压测在 `c=8` 只有 `11.9 QPS`
+- 尾延迟几乎被 `Pattern 7` 拉高：
+  - `p50 = 2514ms`
+  - `p95 = 3759ms`
+  - `p99 = 4006ms`
+- 这类关系遍历 query 在当前 plan 下主要是 `TiFlash MPP + relationship table scan`
+- 之前单独看执行计划时，`obj_relationship_new` 经常要扫当前 workspace 的大段数据，量级在 `29996619` 行
+
+所以这套 workload 要提吞吐，第一优先级是补 `TiFlash` 的并行扫描和 hash join 能力，而不是先盯着 TiDB。
+
+### 为什么还要补 TiDB 和 TiKV
+
+- `TiDB` 现在只有 `1` 个副本，`100+ QPS` mixed workload 下会承担更多 session、编排、MPP task 协调；扩到 `3` 个副本主要是避免前端和单点瓶颈。
+- `TiKV` 虽然不是当前第一瓶颈，但 `MATCH ... AGAINST` 的 rowid probe、`IndexLookUp`、直接关系查找这些都还会吃到 TiKV；当 TiFlash 扩完后，TiKV 很容易变成第二瓶颈，所以建议至少翻倍到 `6` 副本。
+- `PD` 从 `1` 到 `3` 更多是为了稳定性和测试时的可用性，不是主吞吐瓶颈。
+
+### 一个重要边界
+
+这组规格是“朝 `100+ mixed QPS` 靠近的一版起步配置”，不是承诺值。原因是当前结果已经说明：
+- `MATCH ... AGAINST` 类 query 本身是稳定的，不是主问题；
+- 真正拖吞吐的是关系遍历类 query，尤其 Pattern 7；
+- 如果这些 query 继续保持现在的 plan 形态，只靠加机器，收益不会完全线性。
+
+因此更务实的顺序是：
+1. 先把 `TiFlash / TiKV / TiDB` 扩到上面的起步规格；
+2. 再在 `c=16 / 32 / 64` 下做第二轮 mixed benchmark；
+3. 如果那时吞吐还明显卡在关系遍历上，再继续做 SQL / plan 级优化，而不是只继续堆机器。
+
 ## 限制
 
 这轮结果需要结合下面几点理解：
