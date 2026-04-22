@@ -85,7 +85,6 @@ This document records one pass over the original query corpus against `jsm_asset
 
 | Query | Column(s) | FULLTEXT index | LIKE rows | LIKE DB latency (ms) | MATCH rows | MATCH DB latency (ms) | Notes |
 | --- | --- | --- | ---: | ---: | ---: | ---: | --- |
-| Full Text Search / Query 1 | `text_value_1` | idx_obj_new_text_value_1_ngram (NGRAM) | 5 | 40.1 | 1000 | 997.2 | prefix LIKE; MATCH candidate uses boolean prefix syntax, not exact-equivalent for hyphenated prefix |
 | Full Text Search / Query 2 | `text_value_1` | idx_obj_new_text_value_1_ngram (NGRAM) | 2 | 54.1 | 2 | 6.27 | contains semantics; MATCH uses quoted phrase |
 | Full Text Search / Query 3 | `text_value_4 + text_value_5` | idx_obj_new_text_value_4_ngram (NGRAM); idx_obj_new_text_value_5_ngram (NGRAM) | 3 | 60.7 | 3 | 5.4 | cross-column OR rewritten to UNION DISTINCT |
 | Full Text Search / Query 4 | `text_value_4 + text_value_5 + text_value_10` | idx_obj_new_text_value_4_ngram (NGRAM); idx_obj_new_text_value_5_ngram (NGRAM); text_value_10 has no FULLTEXT index | 1000 | 79.0 | 1000 | 104.4 | LIKE branches rewritten to MATCH; equality branch on text_value_10 kept as-is |
@@ -93,7 +92,6 @@ This document records one pass over the original query corpus against `jsm_asset
 | Full Text Search / Query 6 | `text_value_4` | idx_obj_new_text_value_4_ngram (NGRAM) | 4 | 77.0 | 4 | 8.46 | same-column OR rewritten to a single MATCH with multiple quoted phrases |
 | Full Text Search / Query 7 | `text_value_5` | idx_obj_new_text_value_5_ngram (NGRAM) | 1 | 61.9 | 1 | 5.76 | contains semantics; MATCH uses quoted phrase |
 | 1. Basic Filters / Query 2 | `text_value_22` | idx_obj_new_text_value_22_ngram (NGRAM) | 28 | 93.4 | 28 | 4410.0 | contains semantics; MATCH is executable now but much slower because the FTS candidate set is very wide |
-| 1. Basic Filters / Query 6 | `label` | idx_obj_new_label_ngram (NGRAM) | 1000 | 11.354 | - | - | `lower(label) like '%%'` is tautological; still no meaningful MATCH rewrite |
 | 1. Basic Filters / Query 7 | `label` | idx_obj_new_label_ngram (NGRAM) | 0 | 13.888 | 0 | 3.78 | contains semantics; MATCH uses quoted phrase |
 | 4. Relationship Traversal / Depth 1 / Query 4 | `text_value_1` | idx_obj_new_text_value_1_ngram (NGRAM) | 0 | 905.5 | 0 | 935.9 | recommended rewrite runs with `tidb_enforce_mpp=on` and `tiflash_hash_join_version='optimized'`; the better rewrite pushes `UNION DISTINCT` into the FTS candidate-id subquery so the relationship traversal runs only once |
 | 5. JSON Attribute Queries / Query 6 | `text_value_20` | idx_obj_new_text_value_20_ngram (NGRAM) | 0 | 5185.842 | 0 | 2.89 | includes JSON predicates; MATCH branch is executable now and collapses the scan quickly |
