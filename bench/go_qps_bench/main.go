@@ -184,6 +184,18 @@ func applySessionSQL(ctx context.Context, execer interface {
 	return nil
 }
 
+func openSessionConn(ctx context.Context, db *sql.DB, sessionSQL []string) (*sql.Conn, error) {
+	conn, err := db.Conn(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if err := applySessionSQL(ctx, conn, sessionSQL); err != nil {
+		conn.Close()
+		return nil, err
+	}
+	return conn, nil
+}
+
 func warmup(ctx context.Context, db *sql.DB, corpus []QuerySpec, sessionSQL []string) ([]WarmupResult, error) {
 	results := make([]WarmupResult, 0, len(corpus))
 	conn, err := db.Conn(ctx)
@@ -214,25 +226,38 @@ func warmup(ctx context.Context, db *sql.DB, corpus []QuerySpec, sessionSQL []st
 	return results, nil
 }
 
-func worker(ctx context.Context, db *sql.DB, corpus []QuerySpec, cumulative []int, seed int64, stopAt time.Time, sessionSQL []string, out chan<- WorkerStats) {
+func worker(ctx context.Context, db *sql.DB, corpus []QuerySpec, cumulative []int, seed int64, stopAt time.Time, sessionSQL []string, reconnectEvery int, reconnectAfter time.Duration, out chan<- WorkerStats) {
 	stats := WorkerStats{
 		PatternCounts:      map[string]int{},
 		PatternLatenciesMS: map[string][]float64{},
 	}
-	conn, err := db.Conn(ctx)
-	if err != nil {
-		stats.Errors++
-		out <- stats
-		return
-	}
-	defer conn.Close()
-	if err := applySessionSQL(ctx, conn, sessionSQL); err != nil {
-		stats.Errors++
-		out <- stats
-		return
-	}
+	var conn *sql.Conn
+	var err error
+	var openedAt time.Time
+	completedOnConn := 0
 	rng := rand.New(rand.NewSource(seed))
 	for time.Now().Before(stopAt) {
+		needReconnect := conn == nil
+		if !needReconnect && reconnectEvery > 0 && completedOnConn >= reconnectEvery {
+			needReconnect = true
+		}
+		if !needReconnect && reconnectAfter > 0 && time.Since(openedAt) >= reconnectAfter {
+			needReconnect = true
+		}
+		if needReconnect {
+			if conn != nil {
+				conn.Close()
+			}
+			conn, err = openSessionConn(ctx, db, sessionSQL)
+			if err != nil {
+				stats.Errors++
+				conn = nil
+				time.Sleep(100 * time.Millisecond)
+				continue
+			}
+			openedAt = time.Now()
+			completedOnConn = 0
+		}
 		idx := pickWeighted(rng, cumulative)
 		spec := corpus[idx]
 		start := time.Now()
@@ -245,6 +270,7 @@ func worker(ctx context.Context, db *sql.DB, corpus []QuerySpec, cumulative []in
 		}
 		elapsed := float64(time.Since(start).Microseconds()) / 1000.0
 		stats.Completed++
+		completedOnConn++
 		stats.LatenciesMS = append(stats.LatenciesMS, elapsed)
 		stats.PatternCounts[spec.ID]++
 		stats.PatternLatenciesMS[spec.ID] = append(stats.PatternLatenciesMS[spec.ID], elapsed)
@@ -252,27 +278,43 @@ func worker(ctx context.Context, db *sql.DB, corpus []QuerySpec, cumulative []in
 			stats.RowCountMismatches++
 		}
 	}
+	if conn != nil {
+		conn.Close()
+	}
 	out <- stats
 }
 
-func fixedQueryWorker(ctx context.Context, db *sql.DB, spec QuerySpec, stopAt time.Time, sessionSQL []string, limiter chan struct{}, out chan<- WorkerStats) {
+func fixedQueryWorker(ctx context.Context, db *sql.DB, spec QuerySpec, stopAt time.Time, sessionSQL []string, reconnectEvery int, reconnectAfter time.Duration, limiter chan struct{}, out chan<- WorkerStats) {
 	stats := WorkerStats{
 		PatternCounts:      map[string]int{},
 		PatternLatenciesMS: map[string][]float64{},
 	}
-	conn, err := db.Conn(ctx)
-	if err != nil {
-		stats.Errors++
-		out <- stats
-		return
-	}
-	defer conn.Close()
-	if err := applySessionSQL(ctx, conn, sessionSQL); err != nil {
-		stats.Errors++
-		out <- stats
-		return
-	}
+	var conn *sql.Conn
+	var err error
+	var openedAt time.Time
+	completedOnConn := 0
 	for time.Now().Before(stopAt) {
+		needReconnect := conn == nil
+		if !needReconnect && reconnectEvery > 0 && completedOnConn >= reconnectEvery {
+			needReconnect = true
+		}
+		if !needReconnect && reconnectAfter > 0 && time.Since(openedAt) >= reconnectAfter {
+			needReconnect = true
+		}
+		if needReconnect {
+			if conn != nil {
+				conn.Close()
+			}
+			conn, err = openSessionConn(ctx, db, sessionSQL)
+			if err != nil {
+				stats.Errors++
+				conn = nil
+				time.Sleep(100 * time.Millisecond)
+				continue
+			}
+			openedAt = time.Now()
+			completedOnConn = 0
+		}
 		limiter <- struct{}{}
 		start := time.Now()
 		qctx, cancel := context.WithTimeout(ctx, 10*time.Minute)
@@ -285,12 +327,16 @@ func fixedQueryWorker(ctx context.Context, db *sql.DB, spec QuerySpec, stopAt ti
 		}
 		elapsed := float64(time.Since(start).Microseconds()) / 1000.0
 		stats.Completed++
+		completedOnConn++
 		stats.LatenciesMS = append(stats.LatenciesMS, elapsed)
 		stats.PatternCounts[spec.ID]++
 		stats.PatternLatenciesMS[spec.ID] = append(stats.PatternLatenciesMS[spec.ID], elapsed)
 		if rowCount != spec.ExpectedRowCount {
 			stats.RowCountMismatches++
 		}
+	}
+	if conn != nil {
+		conn.Close()
 	}
 	out <- stats
 }
@@ -401,6 +447,8 @@ func main() {
 	duration := flag.Int("duration", 20, "seconds per concurrency level")
 	outputPath := flag.String("output", "bench/results/latest_dataset_1_qps_benchmark_go.json", "")
 	sleepBetween := flag.Int("sleep-between", 0, "seconds to sleep between concurrency levels")
+	reconnectEvery := flag.Int("reconnect-every", 0, "reconnect after N completed queries per worker; 0 disables")
+	reconnectSeconds := flag.Int("reconnect-seconds", 0, "reconnect after N seconds per worker connection; 0 disables")
 	var sessionSQL stringListFlag
 	flag.Var(&sessionSQL, "init-sql", "session SQL to execute once per connection before warmup/benchmark")
 	flag.Parse()
@@ -446,6 +494,7 @@ func main() {
 	}
 
 	runs := make([]RunSummary, 0, len(concurrencyLevels))
+	reconnectAfter := time.Duration(*reconnectSeconds) * time.Second
 	for _, concurrency := range concurrencyLevels {
 		if *mode == "per-query-pool" {
 			db.SetMaxOpenConns(len(corpus) + 4)
@@ -462,24 +511,24 @@ func main() {
 		}
 		out := make(chan WorkerStats, workerCount)
 		var wg sync.WaitGroup
-		if *mode == "per-query-pool" {
-			limiter := make(chan struct{}, concurrency)
-			for _, spec := range corpus {
-				wg.Add(1)
-				go func(spec QuerySpec) {
-					defer wg.Done()
-					fixedQueryWorker(ctx, db, spec, stopAt, sessionSQL, limiter, out)
-				}(spec)
+			if *mode == "per-query-pool" {
+				limiter := make(chan struct{}, concurrency)
+				for _, spec := range corpus {
+					wg.Add(1)
+					go func(spec QuerySpec) {
+						defer wg.Done()
+						fixedQueryWorker(ctx, db, spec, stopAt, sessionSQL, *reconnectEvery, reconnectAfter, limiter, out)
+					}(spec)
+				}
+			} else {
+				for i := 0; i < concurrency; i++ {
+					wg.Add(1)
+					go func(i int) {
+						defer wg.Done()
+						worker(ctx, db, corpus, cumulative, int64(20260421+i), stopAt, sessionSQL, *reconnectEvery, reconnectAfter, out)
+					}(i)
+				}
 			}
-		} else {
-			for i := 0; i < concurrency; i++ {
-				wg.Add(1)
-				go func(i int) {
-					defer wg.Done()
-					worker(ctx, db, corpus, cumulative, int64(20260421+i), stopAt, sessionSQL, out)
-				}(i)
-			}
-		}
 		wg.Wait()
 		close(out)
 		stats := make([]WorkerStats, 0, workerCount)
