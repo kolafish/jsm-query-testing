@@ -83,13 +83,14 @@ This page is the unified result page for the original query corpus on `jsm_asset
 | Full Text Search / Query 5 | `text_value_5` | idx_obj_new_text_value_5_ngram (NGRAM) | 1 | 43.8 | 1 | 4.47 | contains semantics; MATCH uses quoted phrase |
 | Full Text Search / Query 6 | `text_value_4` | idx_obj_new_text_value_4_ngram (NGRAM) | 4 | 80.9 | 4 | 9.51 | same-column OR rewritten to a single MATCH with multiple quoted phrases |
 | Full Text Search / Query 7 | `text_value_5` | idx_obj_new_text_value_5_ngram (NGRAM) | 1 | 60.7 | 1 | 4.74 | contains semantics; MATCH uses quoted phrase |
-| 1. Basic Filters / Query 2 | `text_value_22` | none | 28 | 81.2 | - | - | no FULLTEXT index on `text_value_22`, so no runnable MATCH rewrite |
-| 1. Basic Filters / Query 6 | `label` | none | 1000 | 8.628 | - | - | `lower(label) like '%%'` is tautological; no meaningful MATCH rewrite |
-| 1. Basic Filters / Query 7 | `label` | none | 0 | 978.13 | - | - | no FULLTEXT index on `label`, so no runnable MATCH rewrite |
-| 5. JSON Attribute Queries / Query 6 | `text_value_20` | none | 0 | 4603.523 | - | - | no FULLTEXT index on `text_value_20`; query also includes JSON predicates |
+| 1. Basic Filters / Query 2 | `text_value_22` | idx_obj_new_text_value_22_ngram (NGRAM) | 28 | 81.2 | 28 | 4690.0 | contains semantics; MATCH is executable now but much slower because the FTS candidate set is very wide |
+| 1. Basic Filters / Query 6 | `label` | idx_obj_new_label_ngram (NGRAM) | 1000 | 8.628 | - | - | `lower(label) like '%%'` is tautological; still no meaningful MATCH rewrite |
+| 1. Basic Filters / Query 7 | `label` | idx_obj_new_label_ngram (NGRAM) | 0 | 978.13 | 0 | 2.57 | contains semantics; MATCH uses quoted phrase |
+| 5. JSON Attribute Queries / Query 6 | `text_value_20` | idx_obj_new_text_value_20_ngram (NGRAM) | 0 | 4603.523 | 0 | 2.29 | includes JSON predicates; MATCH branch is executable now and collapses the scan quickly |
 
 ## Notes
 
 - `Full Text Search / Query 1` should stay on `LIKE`, not `MATCH`, because the tested prefix rewrite on a hyphenated token is not semantically equivalent and returns many more rows.
 - `text_value_10` has no FULLTEXT index, so in `Full Text Search / Query 4` only the `text_value_4` and `text_value_5` branches were rewritten to `MATCH`; the equality branch on `text_value_10` stayed unchanged.
-- Outside the explicit `Full Text Search` section, the remaining `LIKE` predicates target `text_value_22`, `label`, and `text_value_20`; all three currently have only BTREE indexes on `jsm_assets3.obj_new`, not FULLTEXT indexes, so there are no additional executable `MATCH AGAINST` comparisons.
+- Outside the explicit `Full Text Search` section, `text_value_22`, `label`, and `text_value_20` now also have `NGRAM FULLTEXT` indexes, so their executable `MATCH AGAINST` comparisons are included in the same table.
+- `1. Basic Filters / Query 2` is a good example of “can rewrite, but should not blindly rewrite”: after adding `text_value_22` FULLTEXT, the `MATCH` form still returns the same 28 rows, but it is far slower than the original `LIKE` because the token `Requirements` is too unselective on this dataset.
