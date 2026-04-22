@@ -103,3 +103,70 @@ This document records one pass over the original query corpus against `jsm_asset
 - Outside the explicit `Full Text Search` section, `text_value_22`, `label`, and `text_value_20` also have `NGRAM FULLTEXT` indexes, so their executable `MATCH AGAINST` comparisons are included in the same table.
 - Among the newly restored queries, `4. Relationship Traversal / Depth 1 / Query 4` is the only additional `LIKE` case whose target column already has a matching FULLTEXT index. The recommended execution recipe for the rewrite is to enable `tidb_enforce_mpp=on` and `tiflash_hash_join_version='optimized'`, then `UNION DISTINCT` the small FTS candidate-id set first and join/filter once. Under the same settings, the rewritten form is close to the original `LIKE` runtime, but not faster on this dataset.
 - `1. Basic Filters / Query 2` is a good example of “can rewrite, but should not blindly rewrite”: after adding `text_value_22` FULLTEXT, the `MATCH` form still returns the same 28 rows, but it is far slower than the original `LIKE` because the token `Requirements` is too unselective on this dataset.
+
+## LIKE vs MATCH QPS Benchmark
+
+This benchmark uses the comparable `LIKE vs MATCH AGAINST` subset from the table above as two separate mixed workloads:
+
+- `LIKE` corpus: `bench/assets3_like_vs_match_like_qps_corpus.json`
+- `MATCH` corpus: `bench/assets3_like_vs_match_match_qps_corpus.json`
+- Benchmark driver: `bench/go_qps_bench/main.go`
+- Client path: workstation -> HAProxy -> TiDB
+- Concurrency levels: `2 / 4 / 6 / 8 / 10 / 12`
+- Per-level duration: `90s`
+- Sleep between levels: `15s`
+- `MATCH` session settings:
+  - `set tidb_enforce_mpp=on;`
+  - `set tiflash_hash_join_version='optimized';`
+
+Result files:
+
+- `LIKE`: `bench/results/assets3_like_qps_benchmark_20260422.json`
+- `MATCH`: `bench/results/assets3_match_qps_benchmark_20260422.json`
+
+### Overall Results
+
+| Concurrency | LIKE QPS | LIKE p50 (ms) | LIKE p95 (ms) | MATCH QPS | MATCH p50 (ms) | MATCH p95 (ms) |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 2 | 1.907 | 83.599 | 8033.057 | 3.329 | 12.276 | 4209.262 |
+| 4 | 2.408 | 167.680 | 14462.511 | 4.485 | 23.605 | 4724.378 |
+| 6 | 2.585 | 100.742 | 20853.472 | 5.169 | 34.442 | 6406.438 |
+| 8 | 2.952 | 197.810 | 22904.356 | 5.704 | 40.759 | 7223.654 |
+| 10 | 4.165 | 593.620 | 14350.547 | 5.511 | 67.221 | 10128.682 |
+| 12 | 5.184 | 900.371 | 11455.976 | 5.274 | 76.751 | 11653.893 |
+
+### Warmup Highlights
+
+- `LIKE` warmup slowest queries:
+  - `5. JSON Attribute Queries / Query 6`: `5143.350ms`
+  - `4. Relationship Traversal / Depth 1 / Query 4`: `1266.233ms`
+- `MATCH` warmup slowest queries:
+  - `1. Basic Filters / Query 2`: `32298.523ms`
+  - `4. Relationship Traversal / Depth 1 / Query 4`: `1717.954ms`
+
+### Dominant Query Costs
+
+For the `LIKE` workload, the main throughput limiter is still:
+
+- `5. JSON Attribute Queries / Query 6`
+  - `c=12`: `avg=12385.185ms`, `p95=19364.716ms`
+- `4. Relationship Traversal / Depth 1 / Query 4`
+  - `c=12`: `avg=3720.053ms`, `p95=5903.377ms`
+
+For the `MATCH` workload, `JSON Query 6` stops being the dominant bottleneck, and the cost shifts to:
+
+- `1. Basic Filters / Query 2`
+  - `c=12`: `avg=9016.083ms`, `p95=12773.294ms`
+- `4. Relationship Traversal / Depth 1 / Query 4`
+  - `c=12`: `avg=10274.851ms`, `p95=26818.131ms`
+
+### Conclusions
+
+- On this 10-query mixed workload, `MATCH` reaches a slightly higher QPS ceiling than `LIKE`.
+- `LIKE` peaks at `5.184 QPS` at `c=12`.
+- `MATCH` peaks at `5.704 QPS` at `c=8`.
+- The main improvement comes from removing the very slow `LIKE` behavior of `JSON Attribute Queries / Query 6`.
+- After that shift, the workload is limited mostly by:
+  - `1. Basic Filters / Query 2`
+  - `4. Relationship Traversal / Depth 1 / Query 4`
+- Both workloads completed without execution errors or row-count mismatches.

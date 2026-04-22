@@ -358,6 +358,7 @@ func main() {
 	corpusPath := flag.String("corpus", "bench/dataset_1_qps_corpus.json", "")
 	duration := flag.Int("duration", 20, "seconds per concurrency level")
 	outputPath := flag.String("output", "bench/results/latest_dataset_1_qps_benchmark_go.json", "")
+	sleepBetween := flag.Int("sleep-between", 0, "seconds to sleep between concurrency levels")
 	var sessionSQL stringListFlag
 	flag.Var(&sessionSQL, "init-sql", "session SQL to execute once per connection before warmup/benchmark")
 	flag.Parse()
@@ -425,6 +426,9 @@ func main() {
 		}
 		endedAt := time.Now()
 		runs = append(runs, summarizeRun(corpus, startedAt, endedAt, stats, concurrency))
+		if *sleepBetween > 0 && concurrency != concurrencyLevels[len(concurrencyLevels)-1] {
+			time.Sleep(time.Duration(*sleepBetween) * time.Second)
+		}
 	}
 
 	out := Output{
