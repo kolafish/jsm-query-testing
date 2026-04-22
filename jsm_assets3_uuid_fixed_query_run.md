@@ -218,3 +218,32 @@ Takeaway:
 - `MATCH per-query-pool` benefits more from the extra TiDB front-end capacity:
   - previous peak on 1 TiDB: `405.337 QPS`
   - new peak on 2 TiDB: `483.032 QPS`
+
+### per-query-pool long-run comparison on 2 TiDB
+
+To check whether the short `90s` runs were overstating throughput, two longer single-point reruns were added on the 2-TiDB setup:
+
+- `20 workers`, `5 minutes`
+- `30 workers`, `5 minutes`
+
+Result files:
+
+- `bench/results/assets3_like_per_query_qps_benchmark_20workers_5min_20260422.json`
+- `bench/results/assets3_match_per_query_qps_benchmark_20workers_5min_20260422.json`
+- `bench/results/assets3_like_per_query_qps_benchmark_30workers_5min_20260422.json`
+- `bench/results/assets3_match_per_query_qps_benchmark_30workers_5min_20260422.json`
+
+| Workers | LIKE QPS | LIKE p95 (ms) | MATCH QPS | MATCH p95 (ms) |
+| --- | ---: | ---: | ---: | ---: |
+| 20 | 113.611 | 1281.427 | 603.659 | 67.545 |
+| 30 | 131.464 | 1812.501 | 380.401 | 190.310 |
+
+Takeaway:
+
+- `LIKE` continues to improve from `20` to `30` workers:
+  - `113.611 -> 131.464 QPS`
+- `MATCH` does not; its better long-run point is still `20 workers`:
+  - `603.659 -> 380.401 QPS`
+- So on the current `2 TiDB` setup:
+  - `LIKE` prefers a higher worker count
+  - `MATCH` prefers a lower worker count than `30`, and `20 workers / 5 minutes` is the better reference point
