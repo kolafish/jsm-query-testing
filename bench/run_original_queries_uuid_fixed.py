@@ -219,6 +219,7 @@ def render_markdown(results: list[dict], source_doc: str) -> str:
         "  - `obj_relationship -> obj_relationship_new`",
         "  - binary UUID comparisons rewritten to `UNHEX(REPLACE(...))` for `id`/`obj_type_id`/relationship UUID columns",
         "- Latency source: `information_schema.statements_summary_history.avg_latency`",
+        "- Fallback for missing statement-summary rows: `EXPLAIN ANALYZE` top operator time",
         "",
         "## Summary",
         "",

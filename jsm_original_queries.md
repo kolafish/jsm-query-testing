@@ -1,6 +1,17 @@
 # JSM Original Queries
 
-This file stores the original query texts currently covered by `jsm_dataset_1_single_query_latency_results.md`.
+This file stores the full original query corpus.
+
+## Overview
+
+- Total queries: 58
+- Group summary:
+  - Basic Filters: 19
+  - Full Text Search: 7
+  - Sorting: 11
+  - Relationship Traversal: 12
+  - JSON Attribute Queries: 8
+  - Range Queries: 1
 
 ## 1. Basic Filters
 
@@ -380,7 +391,9 @@ offset 0
 
 ## 4. Relationship Traversal
 
-### Depth 0 / Query 1
+### Depth 0
+
+#### Query 1
 ```sql
 select `o`.`sequential_id`, `o`.`label`
 from `obj` `o`
@@ -394,7 +407,7 @@ limit 1000
 offset 0
 ```
 
-### Depth 0 / Query 2
+#### Query 2
 ```sql
 select `o`.`sequential_id`, `o`.`label`
 from `obj` `o`
@@ -410,7 +423,9 @@ limit 1000
 offset 0
 ```
 
-### Depth 1 / Query 1
+### Depth 1
+
+#### Query 1
 ```sql
 select `o`.`workspace_id`, `o`.`partition_id`, `o`.`id`, `o`.`sequential_id`, `o`.`schema_id`, `o`.`schema_key`, `o`.`obj_type_id`, `o`.`external_id`, `o`.`label`, `o`.`has_avatar`, `o`.`created_on`, `o`.`updated_on`, `o`.`text_value_1`, `o`.`text_value_2`, `o`.`text_value_3`, `o`.`text_value_4`, `o`.`text_value_5`, `o`.`text_value_6`, `o`.`text_value_7`, `o`.`text_value_8`, `o`.`text_value_9`, `o`.`text_value_10`, `o`.`other_values`, `o`.`other_values_indexed`, `o`.`group_values`, `o`.`hash_key`
 from `obj` `o`
@@ -424,7 +439,7 @@ limit 1000
 offset 0
 ```
 
-### Depth 1 / Query 2
+#### Query 2
 ```sql
 select `o`.`workspace_id`, `o`.`partition_id`, `o`.`id`, `o`.`sequential_id`, `o`.`schema_id`, `o`.`schema_key`, `o`.`obj_type_id`, `o`.`external_id`, `o`.`label`, `o`.`has_avatar`, `o`.`created_on`, `o`.`updated_on`, `o`.`other_values`, `o`.`other_values_indexed`, `o`.`group_values`, `o`.`hash_key`
 from `obj` `o`
@@ -438,7 +453,7 @@ limit 1000
 offset 0
 ```
 
-### Depth 1 / Query 3
+#### Query 3
 ```sql
 select `o`.`workspace_id`, `o`.`partition_id`, `o`.`id`, `o`.`sequential_id`, `o`.`schema_id`, `o`.`schema_key`, `o`.`obj_type_id`, `o`.`external_id`, `o`.`label`, `o`.`has_avatar`, `o`.`created_on`, `o`.`updated_on`, `o`.`other_values`, `o`.`other_values_indexed`, `o`.`group_values`, `o`.`hash_key`
 from `obj` `o`
@@ -452,11 +467,107 @@ limit 1000
 offset 0
 ```
 
-### Depth 1 / Query 6
+#### Query 4
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj` `o`
+where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and (`o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'cab76eba-265a-411c-8201-54d4ed4cf555') and (`o`.`numeric_value_3` > 22 and `o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'cab76eba-265a-411c-8201-54d4ed4cf555')) and (`o`.`obj_type_id` = 'cab76eba-265a-411c-8201-54d4ed4cf555' or `o`.`obj_type_id` = '571d993b-45b0-47e3-b9d0-0e65f44e853f' or `o`.`obj_type_id` = '4812f881-af30-4227-afb7-107aedb7f40c') and exists (select 1
+from `obj_relationship` `subR`
+inner join `obj` `subO1`
+on `subR`.`referenced_object_id` = `subO1`.`id` and `subO1`.`obj_type_id` in ('224a0035-8ac2-4e01-b892-fa4c7a268523', '2c0cb0be-dda3-4f33-8979-441e073a3873', '3fe7df63-f9c1-4581-be1b-cd649fdbb6ce', '4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', '94c23b0c-1362-4e30-b392-9dc80eb80b27', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555')
+where `o`.`id` = `subR`.`object_id` and `subO1`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598') and (lower(`o`.`text_value_1`) like '%admiral-1000178%' and `o`.`text_value_1` != '\U0010ffff' or lower(`o`.`text_value_1`) like '%admiral-100009%' and `o`.`text_value_1` != '\U0010ffff'))
+order by `o`.`label` asc
+limit 1000
+offset 0
+```
+
+#### Query 5
+```sql
+select `o`.`workspace_id`, `o`.`partition_id`, `o`.`id`, `o`.`sequential_id`, `o`.`schema_id`, `o`.`schema_key`, `o`.`obj_type_id`, `o`.`external_id`, `o`.`label`, `o`.`has_avatar`, `o`.`created_on`, `o`.`updated_on`, `o`.`other_values`, `o`.`other_values_indexed`, `o`.`group_values`, `o`.`hash_key`
+from `obj` `o`
+where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and (`o`.`obj_type_id` = '4812f881-af30-4227-afb7-107aedb7f40c' and (exists (select 1
+from `obj_relationship` `subR`
+inner join `obj` `subO1`
+on `subR`.`referenced_object_id` = `subO1`.`id` and `subR`.`object_type_attribute_id` in ('25aaa6a0-e709-4965-9e09-eef721a64f0c', '594ceda5-9417-4c7f-a62a-d1e890809c2f') and `subO1`.`obj_type_id` in ('224a0035-8ac2-4e01-b892-fa4c7a268523', '2c0cb0be-dda3-4f33-8979-441e073a3873', '3fe7df63-f9c1-4581-be1b-cd649fdbb6ce', '4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', '94c23b0c-1362-4e30-b392-9dc80eb80b27', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555')
+where `o`.`id` = `subR`.`object_id` and `subO1`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and (`subO1`.`numeric_value_1` = 513 and `subO1`.`obj_type_id` = 'bcf3698a-4175-42a9-8666-43d1bc8ecd15')) and `o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '571d993b-45b0-47e3-b9d0-0e65f44e853f')))
+order by `o`.`label` asc
+limit 1000
+offset 0
+```
+
+#### Query 6
 ```sql
 select `o`.`sequential_id`, `o`.`label`
 from `obj` `o`
 where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and (`o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555') and (`o`.`text_value_24` = 'Electrolux' and `o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555')) and exists (select 1 from `obj_relationship` `subR` inner join `obj` `subO1` on `subR`.`referenced_object_id` = `subO1`.`id` where `o`.`id` = `subR`.`object_id` and `subO1`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598'))
+order by `o`.`label` asc
+limit 1000
+offset 0
+```
+
+### Depth 2
+
+#### Query 1
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj` `o`
+where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and (`o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555') and exists (select 1
+from `obj_relationship` `subR`
+inner join `obj` `subO1`
+on `subR`.`referenced_object_id` = `subO1`.`id` and `subO1`.`obj_type_id` in ('224a0035-8ac2-4e01-b892-fa4c7a268523', '2c0cb0be-dda3-4f33-8979-441e073a3873', '3fe7df63-f9c1-4581-be1b-cd649fdbb6ce', '4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', '94c23b0c-1362-4e30-b392-9dc80eb80b27', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555')
+where `o`.`id` = `subR`.`object_id` and `subO1`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and exists (select 1
+from `obj_relationship` `subR1`
+inner join `obj` `subO2`
+on `subR1`.`referenced_object_id` = `subO2`.`id` and `subO2`.`obj_type_id` in ('224a0035-8ac2-4e01-b892-fa4c7a268523', '2c0cb0be-dda3-4f33-8979-441e073a3873', '3fe7df63-f9c1-4581-be1b-cd649fdbb6ce', '4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', '94c23b0c-1362-4e30-b392-9dc80eb80b27', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555')
+where `subO1`.`id` = `subR1`.`object_id` and `subO2`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and `subO2`.`label` = 'Admiral-1000135')))
+order by `o`.`label` asc
+limit 1000
+offset 0
+```
+
+#### Query 2
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj` `o`
+where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and (`o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555') and (exists (select 1
+from `obj_relationship` `subR`
+inner join `obj` `subO1`
+on `subR`.`referenced_object_id` = `subO1`.`id` and `subR`.`object_type_attribute_id` in ('3eae60cd-b8eb-435a-81fe-bb289ae70079', '1839b024-b917-4508-92ee-8c7d468c2725', '26c1d48a-33a5-4991-a456-568f8efc9fa4') and `subO1`.`obj_type_id` in ('224a0035-8ac2-4e01-b892-fa4c7a268523', '2c0cb0be-dda3-4f33-8979-441e073a3873', '3fe7df63-f9c1-4581-be1b-cd649fdbb6ce', '4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', '94c23b0c-1362-4e30-b392-9dc80eb80b27', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555')
+where `o`.`id` = `subR`.`object_id` and `subO1`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and (`subO1`.`text_value_24` = 'Sharp' and `subO1`.`obj_type_id` = 'cab76eba-265a-411c-8201-54d4ed4cf555')) and `o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15')) and (exists (select 1
+from `obj_relationship` `subR1`
+inner join `obj` `subO2`
+on `subR1`.`referenced_object_id` = `subO2`.`id` and `subR1`.`object_type_attribute_id` in ('25aaa6a0-e709-4965-9e09-eef721a64f0c', '594ceda5-9417-4c7f-a62a-d1e890809c2f') and `subO2`.`obj_type_id` in ('224a0035-8ac2-4e01-b892-fa4c7a268523', '2c0cb0be-dda3-4f33-8979-441e073a3873', '3fe7df63-f9c1-4581-be1b-cd649fdbb6ce', '4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', '94c23b0c-1362-4e30-b392-9dc80eb80b27', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555')
+where `o`.`id` = `subR1`.`object_id` and `subO2`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and (`subO2`.`numeric_value_1` = 513 and `subO2`.`obj_type_id` = 'bcf3698a-4175-42a9-8666-43d1bc8ecd15')) and `o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '571d993b-45b0-47e3-b9d0-0e65f44e853f')))
+order by `o`.`label` asc
+limit 1000
+offset 0
+```
+
+#### Query 3
+```sql
+select `o`.`workspace_id`, `o`.`partition_id`, `o`.`id`, `o`.`sequential_id`, `o`.`schema_id`, `o`.`schema_key`, `o`.`obj_type_id`, `o`.`external_id`, `o`.`label`, `o`.`has_avatar`, `o`.`created_on`, `o`.`updated_on`, `o`.`other_values`, `o`.`other_values_indexed`, `o`.`group_values`, `o`.`hash_key`
+from `obj` `o`
+where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and (`o`.`obj_type_id` = '4812f881-af30-4227-afb7-107aedb7f40c' and (exists (select 1
+from `obj_relationship` `subR`
+inner join `obj` `subO1`
+on `subR`.`referenced_object_id` = `subO1`.`id` and `subR`.`object_type_attribute_id` in ('3eae60cd-b8eb-435a-81fe-bb289ae70079', '1839b024-b917-4508-92ee-8c7d468c2725', '26c1d48a-33a5-4991-a456-568f8efc9fa4') and `subO1`.`obj_type_id` in ('224a0035-8ac2-4e01-b892-fa4c7a268523', '2c0cb0be-dda3-4f33-8979-441e073a3873', '3fe7df63-f9c1-4581-be1b-cd649fdbb6ce', '4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', '94c23b0c-1362-4e30-b392-9dc80eb80b27', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555')
+where `o`.`id` = `subR`.`object_id` and `subO1`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and (`subO1`.`text_value_1` = 'Admiral-1000124' and `subO1`.`obj_type_id` = 'cab76eba-265a-411c-8201-54d4ed4cf555')) and `o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15') or exists (select 1
+from `obj_relationship` `subR1`
+inner join `obj` `subO2`
+on `subR1`.`referenced_object_id` = `subO2`.`id` and `subR1`.`object_type_attribute_id` in ('25aaa6a0-e709-4965-9e09-eef721a64f0c', '594ceda5-9417-4c7f-a62a-d1e890809c2f') and `subO2`.`obj_type_id` in ('224a0035-8ac2-4e01-b892-fa4c7a268523', '2c0cb0be-dda3-4f33-8979-441e073a3873', '3fe7df63-f9c1-4581-be1b-cd649fdbb6ce', '4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', '94c23b0c-1362-4e30-b392-9dc80eb80b27', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555')
+where `o`.`id` = `subR1`.`object_id` and `subO2`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and (`subO2`.`text_value_1` = 'Admiral-1000638' and `subO2`.`obj_type_id` = 'bcf3698a-4175-42a9-8666-43d1bc8ecd15')) and `o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '571d993b-45b0-47e3-b9d0-0e65f44e853f')))
+order by `o`.`label` asc
+limit 1000
+offset 0
+```
+
+### Depth 3
+
+#### Query 1
+```sql
+select `o`.`sequential_id`, `o`.`label`
+from `obj` `o`
+where `o`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and (`o`.`obj_type_id` in ('4812f881-af30-4227-afb7-107aedb7f40c', '4bc0e97a-1789-433d-8969-7fdd61d4c5b5', '571d993b-45b0-47e3-b9d0-0e65f44e853f', 'bcf3698a-4175-42a9-8666-43d1bc8ecd15', 'cab76eba-265a-411c-8201-54d4ed4cf555') and exists (select 1 from `obj_relationship` `subR` inner join `obj` `subO1` on `subR`.`referenced_object_id` = `subO1`.`id` where `o`.`id` = `subR`.`object_id` and `subO1`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and exists (select 1 from `obj_relationship` `subR1` inner join `obj` `subO2` on `subR1`.`referenced_object_id` = `subO2`.`id` where `subO1`.`id` = `subR1`.`object_id` and `subO2`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and exists (select 1 from `obj_relationship` `subR2` inner join `obj` `subO3` on `subR2`.`referenced_object_id` = `subO3`.`id` where `subO2`.`id` = `subR2`.`object_id` and `subO3`.`workspace_id` = '3264257b-7e21-44e2-ada3-fd1117ede598' and `subO3`.`label` = 'Admiral-1000119'))))
 order by `o`.`label` asc
 limit 1000
 offset 0
