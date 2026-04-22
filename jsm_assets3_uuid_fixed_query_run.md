@@ -196,29 +196,6 @@ The table below shows how many times each query actually completed in the peak `
   - `MATCH`: `405.337 QPS`
 - The big gap comes from preventing a few slow queries from monopolizing the whole mixed worker pool.
 
-### per-query-pool high-concurrency rerun on 2 TiDB
-
-After scaling TiDB from `1` to `2`, the `per-query-pool` benchmark was rerun only on the higher concurrency levels: `8 / 10 / 12 / 16`.
-
-Result files:
-
-- `bench/results/assets3_like_per_query_qps_benchmark_2tidb_20260422.json`
-- `bench/results/assets3_match_per_query_qps_benchmark_2tidb_20260422.json`
-
-| Concurrency | LIKE QPS | LIKE p95 (ms) | MATCH QPS | MATCH p95 (ms) |
-| --- | ---: | ---: | ---: | ---: |
-| 8 | 14.246 | 1822.749 | 334.702 | 35.288 |
-| 10 | 72.774 | 896.049 | 473.016 | 32.004 |
-| 12 | 73.570 | 852.058 | 472.085 | 32.985 |
-| 16 | 73.160 | 864.650 | 483.032 | 36.222 |
-
-Takeaway:
-
-- Adding the second TiDB barely changed `LIKE per-query-pool`; it still saturates around `73 QPS`.
-- `MATCH per-query-pool` benefits more from the extra TiDB front-end capacity:
-  - previous peak on 1 TiDB: `405.337 QPS`
-  - new peak on 2 TiDB: `483.032 QPS`
-
 ### per-query-pool long-run comparison on 2 TiDB
 
 To check whether the short `90s` runs were overstating throughput, two longer single-point reruns were added on the 2-TiDB setup:
