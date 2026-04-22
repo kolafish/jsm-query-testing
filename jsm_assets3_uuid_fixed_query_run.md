@@ -15,8 +15,8 @@ This document records one pass over the original query corpus against `jsm_asset
 
 - Total queries: `58`
 - Queries with returned rows > 0: `36`
-- Queries with returned rows = 0: `17`
-- Queries with execution errors: `5`
+- Queries with returned rows = 0: `22`
+- Queries with execution errors: `0`
 
 ## Results
 
@@ -71,11 +71,11 @@ This document records one pass over the original query corpus against `jsm_asset
 | 4. Relationship Traversal / Depth 2 / Query 2 | `ok` | yes | 1000 | 532.332 | matched |
 | 4. Relationship Traversal / Depth 2 / Query 3 | `ok` | yes | 12 | 479.233 | matched |
 | 4. Relationship Traversal / Depth 3 / Query 1 | `ok` | no | 0 | 3122.104 | no rows |
-| 5. JSON Attribute Queries / Query 1 | `error` | - | - | - | ERROR 1105 (HY000) at line 1: [components/tidb_query_datatype/src/codec/mysql/json/path_expr.rs:293]: Invalid JSON path expression. The error is around character position 1. comman |
-| 5. JSON Attribute Queries / Query 2 | `error` | - | - | - | ERROR 1105 (HY000) at line 1: [components/tidb_query_datatype/src/codec/mysql/json/path_expr.rs:293]: Invalid JSON path expression. The error is around character position 1. comman |
-| 5. JSON Attribute Queries / Query 3 | `error` | - | - | - | ERROR 1105 (HY000) at line 1: [components/tidb_query_datatype/src/codec/mysql/json/path_expr.rs:293]: Invalid JSON path expression. The error is around character position 1. comman |
-| 5. JSON Attribute Queries / Query 4 | `error` | - | - | - | ERROR 1105 (HY000) at line 1: [components/tidb_query_datatype/src/codec/mysql/json/path_expr.rs:293]: Invalid JSON path expression. The error is around character position 1. comman |
-| 5. JSON Attribute Queries / Query 5 | `error` | - | - | - | ERROR 1105 (HY000) at line 1: [components/tidb_query_datatype/src/codec/mysql/json/path_expr.rs:293]: Invalid JSON path expression. The error is around character position 1. comman |
+| 5. JSON Attribute Queries / Query 1 | `ok` | no | 0 | 5890.228 | no rows |
+| 5. JSON Attribute Queries / Query 2 | `ok` | no | 0 | 5610.457 | no rows |
+| 5. JSON Attribute Queries / Query 3 | `ok` | no | 0 | 5273.968 | no rows |
+| 5. JSON Attribute Queries / Query 4 | `ok` | no | 0 | 6934.63 | no rows |
+| 5. JSON Attribute Queries / Query 5 | `ok` | no | 0 | 5974.24 | no rows |
 | 5. JSON Attribute Queries / Query 6 | `ok` | no | 0 | 5185.842 | no rows |
 | 5. JSON Attribute Queries / Query 7 | `ok` | no | 0 | 5075.727 | no rows |
 | 5. JSON Attribute Queries / Query 8 | `ok` | yes | 1000 | 356.05 | matched |

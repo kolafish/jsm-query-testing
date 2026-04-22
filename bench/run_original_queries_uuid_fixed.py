@@ -65,6 +65,20 @@ def rewrite_binary_uuid_literals(sql: str) -> str:
     return out
 
 
+def rewrite_json_path_literals(sql: str) -> str:
+    def repl(m: re.Match[str]) -> str:
+        tag = m.group(1)
+        uuid = m.group(2)
+        return f"'$.\"{tag}\".\"{uuid}\"'"
+
+    return re.sub(
+        rf"'(<\/?equation>)\.\"({UUID_RE})\"'",
+        repl,
+        sql,
+        flags=re.IGNORECASE,
+    )
+
+
 def run_remote_query(
     ssh_host: str,
     ssh_key: str,
@@ -142,7 +156,7 @@ def fetch_stmt_latency_ms(
 
 def run_case(case, args) -> dict:
     transformed = QCHECK.transform_sql(case.sql)
-    actual_sql = rewrite_binary_uuid_literals(transformed).strip().rstrip(";") + ";"
+    actual_sql = rewrite_json_path_literals(rewrite_binary_uuid_literals(transformed)).strip().rstrip(";") + ";"
     query_text = actual_sql.rstrip(";")
     earliest = (datetime.now(timezone.utc) - timedelta(seconds=2)).strftime("%Y-%m-%d %H:%M:%S")
 
