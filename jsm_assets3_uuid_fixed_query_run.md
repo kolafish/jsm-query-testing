@@ -1,14 +1,12 @@
-# JSM Assets3 UUID-Fixed Original Query Run
+# JSM Assets3 Query Run
 
-This document records one pass over the original query corpus against `jsm_assets3`.
+This page is the unified result page for the original query corpus on `jsm_assets3`.
 
 - Source query doc: `jsm_original_queries.md`
 - Target tables: `jsm_assets3.obj_new / jsm_assets3.obj_relationship_new`
-- Query text changes:
-  - `obj -> obj_new`
-  - `obj_relationship -> obj_relationship_new`
-  - binary UUID comparisons rewritten to `UNHEX(REPLACE(...))` for `id`/`obj_type_id`/relationship UUID columns
-- Latency source: `information_schema.statements_summary_history.avg_latency`
+- Main query text changes: `obj -> obj_new`, `obj_relationship -> obj_relationship_new`, binary UUID comparisons rewritten to `UNHEX(REPLACE(...))`
+- Main query DB latency source: `information_schema.statements_summary_history.avg_latency`, with `EXPLAIN ANALYZE` top operator used only as fallback for missing rows
+- Full Text Search group additionally includes a `LIKE` vs `MATCH AGAINST` comparison
 
 ## Summary
 
@@ -17,7 +15,7 @@ This document records one pass over the original query corpus against `jsm_asset
 - Queries with returned rows = 0: `15`
 - Queries with execution errors: `5`
 
-## Results
+## Original Query Run
 
 | Query | Status | Has rows | Returned rows | DB latency (ms) | Notes |
 | --- | --- | --- | ---: | ---: | --- |
@@ -73,3 +71,32 @@ This document records one pass over the original query corpus against `jsm_asset
 | 5. JSON Attribute Queries / Query 7 | `ok` | no | 0 | 4631.261 | no rows |
 | 5. JSON Attribute Queries / Query 8 | `ok` | yes | 1000 | 362.883 | matched |
 | 6. Range Queries / Query 1 | `ok` | yes | 1000 | 102.28 | matched |
+
+## Full Text Search: LIKE vs MATCH AGAINST
+
+| Query | Column(s) | FULLTEXT index | LIKE rows | LIKE DB latency (ms) | MATCH rows | MATCH DB latency (ms) | Notes |
+| --- | --- | --- | ---: | ---: | ---: | ---: | --- |
+| Full Text Search / Query 1 | `text_value_1` | idx_obj_new_text_value_1_ngram (NGRAM) | 5 | 41.5 | 1000 | 1110.0 | prefix LIKE; MATCH candidate uses boolean prefix syntax, not exact-equivalent for hyphenated prefix |
+| Full Text Search / Query 2 | `text_value_1` | idx_obj_new_text_value_1_ngram (NGRAM) | 2 | 43.7 | 2 | 6.55 | contains semantics; MATCH uses quoted phrase |
+| Full Text Search / Query 3 | `text_value_4 + text_value_5` | idx_obj_new_text_value_4_ngram (NGRAM); idx_obj_new_text_value_5_ngram (NGRAM) | 3 | 64.6 | 3 | 6.14 | cross-column OR rewritten as UNION DISTINCT |
+| Full Text Search / Query 4 | `text_value_4 + text_value_5 + text_value_10` | idx_obj_new_text_value_4_ngram (NGRAM); idx_obj_new_text_value_5_ngram (NGRAM); text_value_10 has no FULLTEXT index | 1000 | 78.3 | 1000 | 89.7 | LIKE branches rewritten to MATCH; equality branch on text_value_10 kept as-is |
+| Full Text Search / Query 5 | `text_value_5` | idx_obj_new_text_value_5_ngram (NGRAM) | 1 | 43.8 | 1 | 4.47 | contains semantics; MATCH uses quoted phrase |
+| Full Text Search / Query 6 | `text_value_4` | idx_obj_new_text_value_4_ngram (NGRAM) | 4 | 80.9 | 4 | 9.51 | same-column OR rewritten to a single MATCH with multiple quoted phrases |
+| Full Text Search / Query 7 | `text_value_5` | idx_obj_new_text_value_5_ngram (NGRAM) | 1 | 60.7 | 1 | 4.74 | contains semantics; MATCH uses quoted phrase |
+
+## Non-FTS LIKE Rewrite Check
+
+Excluding the `Full Text Search` section, the remaining queries that still contain `LIKE` were checked separately. None of their target columns has a corresponding FULLTEXT index on `jsm_assets3.obj_new`, so there were no additional `MATCH AGAINST` runs beyond the dedicated Full Text Search group.
+
+| Query | Column | Original LIKE predicate | FULLTEXT index | Rewrite/run status |
+| --- | --- | --- | --- | --- |
+| 1. Basic Filters / Query 2 | `text_value_22` | `%Requirements%` | none | not rewritten |
+| 1. Basic Filters / Query 6 | `label` | `%%` | none | not rewritten; tautological predicate |
+| 1. Basic Filters / Query 7 | `label` | `%qcewpvmssdry%` | none | not rewritten |
+| 5. JSON Attribute Queries / Query 6 | `text_value_20` | `%⁣4⁣%` | none | not rewritten |
+
+## Notes
+
+- `Full Text Search / Query 1` should stay on `LIKE`, not `MATCH`, because the tested prefix rewrite on a hyphenated token is not semantically equivalent and returns many more rows.
+- `text_value_10` has no FULLTEXT index, so in `Full Text Search / Query 4` only the `text_value_4` and `text_value_5` branches were rewritten to `MATCH`; the equality branch on `text_value_10` stayed unchanged.
+
