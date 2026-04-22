@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import argparse
-import concurrent.futures
 import importlib.util
 import json
 import re
@@ -9,6 +8,7 @@ import shlex
 import subprocess
 import sys
 import time
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 
@@ -92,12 +92,62 @@ def run_remote_query(
     return stdout, stderr, proc.returncode, elapsed_ms
 
 
+def run_remote_sql(
+    ssh_host: str,
+    ssh_key: str,
+    database: str,
+    sql: str,
+    timeout_sec: int = 45,
+) -> tuple[str, str, int]:
+    stdout, stderr, rc, _ = run_remote_query(
+        ssh_host=ssh_host,
+        ssh_key=ssh_key,
+        database=database,
+        sql=sql,
+        timeout_sec=timeout_sec,
+    )
+    return stdout, stderr, rc
+
+
+def fetch_stmt_latency_ms(
+    ssh_host: str,
+    ssh_key: str,
+    query_text: str,
+    earliest_time: str,
+    timeout_sec: int = 20,
+) -> tuple[float | None, str | None]:
+    escaped_query = query_text.replace("'", "''")
+    sql = (
+        "select concat_ws('|', avg_latency, exec_count, summary_begin_time, summary_end_time) "
+        "from information_schema.statements_summary_history "
+        f"where query_sample_text = '{escaped_query}' "
+        f"and summary_end_time >= '{earliest_time}' "
+        "order by summary_end_time desc limit 1;"
+    )
+    stdout, stderr, rc = run_remote_sql(
+        ssh_host=ssh_host,
+        ssh_key=ssh_key,
+        database="information_schema",
+        sql=sql,
+        timeout_sec=timeout_sec,
+    )
+    if rc != 0 or not stdout.strip():
+        return None, stderr or stdout or None
+    first = stdout.strip().splitlines()[-1]
+    parts = first.split("|", 3)
+    if not parts or not parts[0]:
+        return None, first
+    return round(int(parts[0]) / 1_000_000, 3), first
+
+
 def run_case(case, args) -> dict:
     transformed = QCHECK.transform_sql(case.sql)
     actual_sql = rewrite_binary_uuid_literals(transformed).strip().rstrip(";") + ";"
+    query_text = actual_sql.rstrip(";")
+    earliest = (datetime.now(timezone.utc) - timedelta(seconds=2)).strftime("%Y-%m-%d %H:%M:%S")
 
     try:
-        stdout, stderr, rc, elapsed_ms = run_remote_query(
+        stdout, stderr, rc, _ = run_remote_query(
             ssh_host=args.ssh_host,
             ssh_key=args.ssh_key,
             database=args.database,
@@ -109,20 +159,33 @@ def run_case(case, args) -> dict:
             "order": case.order,
             "query_id": case.full_id,
             "status": "timeout",
-            "latency_ms": args.timeout_sec * 1000,
+            "latency_ms": None,
             "original_sql": case.sql,
             "actual_sql": actual_sql,
         }
 
     if rc == 0:
         rows = [line for line in stdout.splitlines() if line.strip() != ""]
+        latency_ms = None
+        stmt_summary_raw = None
+        for _ in range(5):
+            latency_ms, stmt_summary_raw = fetch_stmt_latency_ms(
+                ssh_host=args.ssh_host,
+                ssh_key=args.ssh_key,
+                query_text=query_text,
+                earliest_time=earliest,
+            )
+            if latency_ms is not None:
+                break
+            time.sleep(0.4)
         return {
             "order": case.order,
             "query_id": case.full_id,
             "status": "ok",
-            "latency_ms": round(elapsed_ms, 1),
+            "latency_ms": latency_ms,
             "has_rows": bool(rows),
             "returned_rows": len(rows),
+            "stmt_summary_raw": stmt_summary_raw,
             "original_sql": case.sql,
             "actual_sql": actual_sql,
         }
@@ -131,7 +194,7 @@ def run_case(case, args) -> dict:
         "order": case.order,
         "query_id": case.full_id,
         "status": "error",
-        "latency_ms": round(elapsed_ms, 1),
+        "latency_ms": None,
         "error": (stderr or stdout or f"mysql exited with {rc}")[:400],
         "original_sql": case.sql,
         "actual_sql": actual_sql,
@@ -155,6 +218,7 @@ def render_markdown(results: list[dict], source_doc: str) -> str:
         "  - `obj -> obj_new`",
         "  - `obj_relationship -> obj_relationship_new`",
         "  - binary UUID comparisons rewritten to `UNHEX(REPLACE(...))` for `id`/`obj_type_id`/relationship UUID columns",
+        "- Latency source: `information_schema.statements_summary_history.avg_latency`",
         "",
         "## Summary",
         "",
@@ -165,7 +229,7 @@ def render_markdown(results: list[dict], source_doc: str) -> str:
         "",
         "## Results",
         "",
-        "| Query | Status | Has rows | Returned rows | Latency (ms) | Notes |",
+        "| Query | Status | Has rows | Returned rows | DB latency (ms) | Notes |",
         "| --- | --- | --- | ---: | ---: | --- |",
     ]
 
@@ -184,7 +248,7 @@ def render_markdown(results: list[dict], source_doc: str) -> str:
             notes = result["error"].replace("\n", " ")[:180]
 
         lines.append(
-            f"| {result['query_id']} | `{result['status']}` | {has_rows} | {returned_rows} | {result['latency_ms']} | {notes} |"
+            f"| {result['query_id']} | `{result['status']}` | {has_rows} | {returned_rows} | {result['latency_ms'] if result['latency_ms'] is not None else '-'} | {notes} |"
         )
 
     return "\n".join(lines) + "\n"
@@ -197,7 +261,6 @@ def main() -> int:
     parser.add_argument("--output-json", required=True)
     parser.add_argument("--database", default="jsm_assets3")
     parser.add_argument("--timeout-sec", type=int, default=45)
-    parser.add_argument("--workers", type=int, default=4)
     parser.add_argument("--ssh-host", required=True)
     parser.add_argument("--ssh-key", required=True)
     args = parser.parse_args()
@@ -209,21 +272,27 @@ def main() -> int:
     output_json.parent.mkdir(parents=True, exist_ok=True)
 
     queries = QCHECK.parse_queries(source)
-    print(f"starting {len(queries)} queries with {args.workers} workers", flush=True)
+    run_remote_sql(
+        ssh_host=args.ssh_host,
+        ssh_key=args.ssh_key,
+        database="jsm_assets3",
+        sql="set global tidb_enable_stmt_summary=1; set global tidb_stmt_summary_refresh_interval=1;",
+        timeout_sec=20,
+    )
+    time.sleep(2)
+
+    print(f"starting {len(queries)} queries sequentially", flush=True)
 
     results = []
-    with concurrent.futures.ThreadPoolExecutor(max_workers=args.workers) as executor:
-        futures = [executor.submit(run_case, q, args) for q in queries]
-        for idx, future in enumerate(concurrent.futures.as_completed(futures), start=1):
-            result = future.result()
-            print(
-                f"[{idx}/{len(queries)}] {result['query_id']} -> {result['status']} "
-                f"{result.get('returned_rows', '-')}/{result['latency_ms']}ms",
-                flush=True,
-            )
-            results.append(result)
+    for idx, query in enumerate(queries, start=1):
+        result = run_case(query, args)
+        print(
+            f"[{idx}/{len(queries)}] {result['query_id']} -> {result['status']} "
+            f"{result.get('returned_rows', '-')}/{result['latency_ms'] if result['latency_ms'] is not None else '-'}ms",
+            flush=True,
+        )
+        results.append(result)
 
-    results.sort(key=lambda item: item["order"])
     for result in results:
         result.pop("order", None)
 
