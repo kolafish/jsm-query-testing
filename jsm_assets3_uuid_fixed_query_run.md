@@ -170,3 +170,91 @@ For the `MATCH` workload, `JSON Query 6` stops being the dominant bottleneck, an
   - `1. Basic Filters / Query 2`
   - `4. Relationship Traversal / Depth 1 / Query 4`
 - Both workloads completed without execution errors or row-count mismatches.
+
+## LIKE vs MATCH QPS Benchmark (per-query-pool)
+
+This rerun uses the same 10-query `LIKE` and `MATCH` corpora, but the driver runs in `per-query-pool` mode:
+
+- each query has its own long-lived worker loop
+- a global concurrency gate limits how many queries execute in the database at once
+- slow queries only occupy their own slot instead of blocking the shared random worker pool
+
+Setup:
+
+- driver mode: `per-query-pool`
+- result files:
+  - `bench/results/assets3_like_per_query_qps_benchmark_20260422.json`
+  - `bench/results/assets3_match_per_query_qps_benchmark_20260422.json`
+- concurrency levels: `2 / 4 / 6 / 8 / 10 / 12`
+- per-level duration: `90s`
+- sleep between levels: `15s`
+- `MATCH` session settings:
+  - `set tidb_enforce_mpp=on;`
+  - `set tiflash_hash_join_version='optimized';`
+
+### Overall Results
+
+| Concurrency | LIKE QPS | LIKE p50 (ms) | LIKE p95 (ms) | MATCH QPS | MATCH p50 (ms) | MATCH p95 (ms) |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 2 | 6.309 | 83.211 | 1401.386 | 6.438 | 11.194 | 1797.253 |
+| 4 | 9.893 | 172.233 | 1525.000 | 74.586 | 15.517 | 162.587 |
+| 6 | 12.260 | 338.283 | 1678.086 | 183.912 | 14.323 | 50.910 |
+| 8 | 14.761 | 416.908 | 1826.737 | 296.827 | 14.204 | 37.950 |
+| 10 | 73.902 | 15.797 | 870.369 | 401.557 | 14.252 | 38.600 |
+| 12 | 73.166 | 15.864 | 889.796 | 405.337 | 14.159 | 37.138 |
+
+### Main Effects
+
+- `per-query-pool` changes the answer much more than the `LIKE -> MATCH` rewrite by itself.
+- In the earlier shared-pool run:
+  - `LIKE` peaked at `5.184 QPS`
+  - `MATCH` peaked at `5.704 QPS`
+- In `per-query-pool`:
+  - `LIKE` peaks at `73.902 QPS` at `c=10`
+  - `MATCH` peaks at `405.337 QPS` at `c=12`
+
+### Why the Throughput Jumps
+
+- In `shared-pool`, slow queries such as:
+  - `5. JSON Attribute Queries / Query 6`
+  - `4. Relationship Traversal / Depth 1 / Query 4`
+  consume worker time and reduce the total number of completed requests.
+- In `per-query-pool`, those slow queries still run, but they only occupy their own slot.
+- Fast queries can keep cycling in parallel and dominate total throughput once enough global slots are available.
+
+This is especially visible when concurrency reaches the same order of magnitude as the number of query-specific workers:
+
+- `LIKE`
+  - `c=8`: `14.761 QPS`
+  - `c=10`: `73.902 QPS`
+- `MATCH`
+  - `c=2`: `6.438 QPS`
+  - `c=4`: `74.586 QPS`
+  - `c=10`: `401.557 QPS`
+
+### Residual Slow Queries
+
+Even in `per-query-pool`, the slowest per-query latencies still belong to the same heavy queries.
+
+For `LIKE` at `c=12`:
+
+- `4. Relationship Traversal / Depth 1 / Query 4`
+  - `qps=0.518`, `avg=1931.779ms`, `p95=2110.835ms`
+- `5. JSON Attribute Queries / Query 6`
+  - `qps=0.485`, `avg=2046.192ms`, `p95=2105.571ms`
+
+For `MATCH` at `c=12`:
+
+- `1. Basic Filters / Query 2`
+  - `qps=0.219`, `avg=4571.436ms`, `p95=4675.755ms`
+- `4. Relationship Traversal / Depth 1 / Query 4`
+  - `qps=0.405`, `avg=2461.370ms`, `p95=2693.784ms`
+
+### Conclusions
+
+- If the benchmark goal is to model a shared connection pool serving a mixed request stream, the earlier `shared-pool` result is the right reference.
+- If the benchmark goal is to model independent per-query traffic sources, `per-query-pool` is the more appropriate model.
+- Under `per-query-pool`, the advantage of `MATCH` becomes much larger than in the shared-pool run:
+  - `LIKE`: `73.902 QPS`
+  - `MATCH`: `405.337 QPS`
+- The workload is no longer dominated by a few slow queries blocking the whole worker pool; instead, fast queries are allowed to saturate the available concurrency.

@@ -88,6 +88,7 @@ type RunSummary struct {
 type Output struct {
 	GeneratedAt           string         `json:"generated_at"`
 	CorpusPath            string         `json:"corpus_path"`
+	Mode                  string         `json:"mode"`
 	Database              map[string]any `json:"database"`
 	DurationSecondsPerRun int            `json:"duration_seconds_per_run"`
 	Warmup                []WarmupResult `json:"warmup"`
@@ -254,6 +255,46 @@ func worker(ctx context.Context, db *sql.DB, corpus []QuerySpec, cumulative []in
 	out <- stats
 }
 
+func fixedQueryWorker(ctx context.Context, db *sql.DB, spec QuerySpec, stopAt time.Time, sessionSQL []string, limiter chan struct{}, out chan<- WorkerStats) {
+	stats := WorkerStats{
+		PatternCounts:      map[string]int{},
+		PatternLatenciesMS: map[string][]float64{},
+	}
+	conn, err := db.Conn(ctx)
+	if err != nil {
+		stats.Errors++
+		out <- stats
+		return
+	}
+	defer conn.Close()
+	if err := applySessionSQL(ctx, conn, sessionSQL); err != nil {
+		stats.Errors++
+		out <- stats
+		return
+	}
+	for time.Now().Before(stopAt) {
+		limiter <- struct{}{}
+		start := time.Now()
+		qctx, cancel := context.WithTimeout(ctx, 10*time.Minute)
+		rowCount, err := runQuery(qctx, conn, spec.SQL)
+		cancel()
+		<-limiter
+		if err != nil {
+			stats.Errors++
+			continue
+		}
+		elapsed := float64(time.Since(start).Microseconds()) / 1000.0
+		stats.Completed++
+		stats.LatenciesMS = append(stats.LatenciesMS, elapsed)
+		stats.PatternCounts[spec.ID]++
+		stats.PatternLatenciesMS[spec.ID] = append(stats.PatternLatenciesMS[spec.ID], elapsed)
+		if rowCount != spec.ExpectedRowCount {
+			stats.RowCountMismatches++
+		}
+	}
+	out <- stats
+}
+
 func pickWeighted(rng *rand.Rand, cumulative []int) int {
 	target := rng.Intn(cumulative[len(cumulative)-1]) + 1
 	return sort.Search(len(cumulative), func(i int) bool { return cumulative[i] >= target })
@@ -356,6 +397,7 @@ func main() {
 	password := flag.String("password", "", "")
 	database := flag.String("database", "jsm_testcase2", "")
 	corpusPath := flag.String("corpus", "bench/dataset_1_qps_corpus.json", "")
+	mode := flag.String("mode", "shared-pool", "shared-pool or per-query-pool")
 	duration := flag.Int("duration", 20, "seconds per concurrency level")
 	outputPath := flag.String("output", "bench/results/latest_dataset_1_qps_benchmark_go.json", "")
 	sleepBetween := flag.Int("sleep-between", 0, "seconds to sleep between concurrency levels")
@@ -405,22 +447,42 @@ func main() {
 
 	runs := make([]RunSummary, 0, len(concurrencyLevels))
 	for _, concurrency := range concurrencyLevels {
-		db.SetMaxOpenConns(concurrency + 4)
-		db.SetMaxIdleConns(concurrency)
+		if *mode == "per-query-pool" {
+			db.SetMaxOpenConns(len(corpus) + 4)
+			db.SetMaxIdleConns(len(corpus))
+		} else {
+			db.SetMaxOpenConns(concurrency + 4)
+			db.SetMaxIdleConns(concurrency)
+		}
 		stopAt := time.Now().Add(time.Duration(*duration) * time.Second)
 		startedAt := time.Now()
-		out := make(chan WorkerStats, concurrency)
+		workerCount := concurrency
+		if *mode == "per-query-pool" {
+			workerCount = len(corpus)
+		}
+		out := make(chan WorkerStats, workerCount)
 		var wg sync.WaitGroup
-		for i := 0; i < concurrency; i++ {
-			wg.Add(1)
-			go func(i int) {
-				defer wg.Done()
-				worker(ctx, db, corpus, cumulative, int64(20260421+i), stopAt, sessionSQL, out)
-			}(i)
+		if *mode == "per-query-pool" {
+			limiter := make(chan struct{}, concurrency)
+			for _, spec := range corpus {
+				wg.Add(1)
+				go func(spec QuerySpec) {
+					defer wg.Done()
+					fixedQueryWorker(ctx, db, spec, stopAt, sessionSQL, limiter, out)
+				}(spec)
+			}
+		} else {
+			for i := 0; i < concurrency; i++ {
+				wg.Add(1)
+				go func(i int) {
+					defer wg.Done()
+					worker(ctx, db, corpus, cumulative, int64(20260421+i), stopAt, sessionSQL, out)
+				}(i)
+			}
 		}
 		wg.Wait()
 		close(out)
-		stats := make([]WorkerStats, 0, concurrency)
+		stats := make([]WorkerStats, 0, workerCount)
 		for item := range out {
 			stats = append(stats, item)
 		}
@@ -434,6 +496,7 @@ func main() {
 	out := Output{
 		GeneratedAt:           time.Now().UTC().Format(time.RFC3339),
 		CorpusPath:            *corpusPath,
+		Mode:                  *mode,
 		Database:              map[string]any{"host": *host, "port": *port, "user": *user, "database": *database},
 		DurationSecondsPerRun: *duration,
 		Warmup:                warm,
