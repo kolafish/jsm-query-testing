@@ -198,10 +198,10 @@ The table below shows how many times each query actually completed in the peak `
 
 ### per-query-pool long-run comparison on 2 TiDB
 
-To check whether the short `90s` runs were overstating throughput, two longer single-point reruns were added on the 2-TiDB setup:
+On the 2-TiDB setup, the retained long-run `per-query-pool` reference points are:
 
-- `20 workers`, `5 minutes`
-- `30 workers`, `5 minutes`
+- `20 workers / 5 minutes`
+- `30 workers / 5 minutes`
 
 Result files:
 
