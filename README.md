@@ -1,5 +1,61 @@
 # JSM Query Latency Tracking
 
+## 当前 AWS 测试环境
+
+新 AWS/EKS TiDB + TiCI 测试集群已创建并完成数据恢复，当前可用于 `jsm_assets2` / `jsm_assets3` 查询验证和压测。
+
+| 项目 | 当前值 |
+|---|---|
+| AWS account | `178851224597` |
+| Region | `us-east-2` |
+| EKS cluster | `Atlassian-jsm-tici` |
+| Namespace | `tidb-cluster` |
+| TidbCluster | `tici-demo-s3` |
+| S3 bucket | `s3://atlassian-jsm-tici-178851224597-us-east-2` |
+| 初始规模 | `1 TiDB / 3 TiKV / 3 TiFlash` |
+| 数据库 | `jsm_assets2`, `jsm_assets3` |
+
+当前组件状态：
+
+| Component | Replicas | Status |
+|---|---:|---|
+| PD | 1 | Running |
+| TiDB | 1 | Running |
+| TiKV | 3 | Running |
+| TiFlash | 3 | Running |
+| TiCDC | 1 | Running |
+| TiCI meta | 1 | Running |
+| TiCI worker | 1 | Running |
+
+节点规格：
+
+| Node group | Instance type | 当前数量 | 用途 |
+|---|---|---:|---|
+| `node16c32` | `c8i.4xlarge` | 3 | TiDB / PD / TiCI / TiCDC / general |
+| `node-tikv` | `c8i.4xlarge` | 3 | TiKV |
+| `node-tiflash` | `m8i.4xlarge` | 3 | TiFlash |
+
+数据恢复和索引状态：
+
+| 项目 | 结果 |
+|---|---|
+| BR restore | 已完成，`2026-04-27 08:41:55 UTC` 到 `08:58:58 UTC`，耗时 `17m02s` |
+| Restore source | `s3://atlassian-jsm-tici-178851224597-us-east-2/br-backups/jsm-assets2-assets3-20260427T042546Z` |
+| TiFlash replica | 四张表均 `available=1`, `progress=1` |
+| FULLTEXT indexes | 两个 `obj_new` 表均已重建 `idx_fts_1/4/5/7/20/22/label`，parser 为 `NGRAM` |
+| FTS smoke check | `text_value_7 = Fagor` 的 `MATCH` 和 `LIKE` 命中数一致 |
+
+当前表规模：
+
+| Table | Rows | data_length | index_length |
+|---|---:|---:|---:|
+| `jsm_assets2.obj_new` | 14,000,000 | 62.53 GiB | 638.72 GiB |
+| `jsm_assets2.obj_relationship_new` | 139,991,715 | 20.47 GiB | 45.37 GiB |
+| `jsm_assets3.obj_new` | 10,000,000 | 44.59 GiB | 489.27 GiB |
+| `jsm_assets3.obj_relationship_new` | 100,005,360 | 14.62 GiB | 32.41 GiB |
+
+详细重建记录、镜像版本、BR 命令和 FULLTEXT 重建步骤见 [`jsm_assets_aws_rebuild_manifest.md`](jsm_assets_aws_rebuild_manifest.md)。
+
 这个仓库记录 dataset 1 的单条查询延迟测试、QPS 压测模式和当前压测代码。
 
 主要文件：
