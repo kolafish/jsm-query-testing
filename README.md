@@ -4,6 +4,61 @@
 
 新 AWS/EKS TiDB + TiCI 测试集群已创建并完成数据恢复，当前可用于 `jsm_assets2` / `jsm_assets3` 查询验证和压测。
 
+### 登录入口
+
+```bash
+ssh -i /Users/jin/Downloads/michael-eks-us-east-2.pem ec2-user@ec2-3-14-170-197.us-east-2.compute.amazonaws.com
+
+export AWS_PROFILE=atlassian-jsm-tici
+export AWS_REGION=us-east-2
+export KUBECONFIG=/home/ec2-user/.kube/atlassian-jsm-tici
+```
+
+### 启动集群
+
+下面命令只启动新集群的 EC2 nodegroup，不会重新建表或恢复数据。当前压测规模需要 `4` 台 default 节点来承载 `3` 个 TiDB pod。
+
+```bash
+eksctl scale nodegroup --cluster Atlassian-jsm-tici --name node16c32 --nodes 4 --nodes-min 0 --nodes-max 20 --region us-east-2
+eksctl scale nodegroup --cluster Atlassian-jsm-tici --name node-tikv --nodes 3 --nodes-min 0 --nodes-max 20 --region us-east-2
+eksctl scale nodegroup --cluster Atlassian-jsm-tici --name node-tiflash --nodes 3 --nodes-min 0 --nodes-max 20 --region us-east-2
+
+kubectl -n tidb-cluster get pods
+```
+
+### 停止集群
+
+下面命令是停止 compute，不是彻底销毁集群。EKS control plane、EBS/PVC、S3 数据和 Kubernetes 对象会保留；停止后数据库不可访问，重新执行上面的启动命令后 pod 会重新调度。
+
+```bash
+eksctl scale nodegroup --cluster Atlassian-jsm-tici --name node-tiflash --nodes 0 --nodes-min 0 --nodes-max 20 --region us-east-2
+eksctl scale nodegroup --cluster Atlassian-jsm-tici --name node-tikv --nodes 0 --nodes-min 0 --nodes-max 20 --region us-east-2
+eksctl scale nodegroup --cluster Atlassian-jsm-tici --name node16c32 --nodes 0 --nodes-min 0 --nodes-max 20 --region us-east-2
+```
+
+### 访问 TiDB
+
+从 EKS 内部访问：
+
+```bash
+mysql -h tici-demo-s3-tidb -P4000 -uroot -Djsm_assets3
+```
+
+从 console host 访问可以先做 port-forward：
+
+```bash
+kubectl -n tidb-cluster port-forward svc/tici-demo-s3-tidb 4000:4000
+mysql -h 127.0.0.1 -P4000 -uroot -Djsm_assets3
+```
+
+### Grafana
+
+Grafana LoadBalancer:
+
+[http://a2e41aa49d08647d1b55ecd7b146bbf6-38f9eda417a300aa.elb.us-east-2.amazonaws.com:3000](http://a2e41aa49d08647d1b55ecd7b146bbf6-38f9eda417a300aa.elb.us-east-2.amazonaws.com:3000)
+
+### 集群信息
+
 | 项目 | 当前值 |
 |---|---|
 | AWS account | `178851224597` |
@@ -12,15 +67,14 @@
 | Namespace | `tidb-cluster` |
 | TidbCluster | `tici-demo-s3` |
 | S3 bucket | `s3://atlassian-jsm-tici-178851224597-us-east-2` |
-| 初始规模 | `1 TiDB / 3 TiKV / 3 TiFlash` |
 | 数据库 | `jsm_assets2`, `jsm_assets3` |
 
-当前组件状态：
+当前组件规模：
 
 | Component | Replicas | Status |
 |---|---:|---|
 | PD | 1 | Running |
-| TiDB | 1 | Running |
+| TiDB | 3 | Running |
 | TiKV | 3 | Running |
 | TiFlash | 3 | Running |
 | TiCDC | 1 | Running |
@@ -31,9 +85,15 @@
 
 | Node group | Instance type | 当前数量 | 用途 |
 |---|---|---:|---|
-| `node16c32` | `c8i.4xlarge` | 3 | TiDB / PD / TiCI / TiCDC / general |
+| `node16c32` | `c8i.4xlarge` | 4 | TiDB / PD / TiCI / TiCDC / monitor / benchmark client |
 | `node-tikv` | `c8i.4xlarge` | 3 | TiKV |
 | `node-tiflash` | `m8i.4xlarge` | 3 | TiFlash |
+
+TiDB service 连接分布验证：
+
+| Method | Result |
+|---|---|
+| 300 次新连接访问 `tici-demo-s3-tidb:4000` 并查询 `@@hostname` | `tidb-0:102`, `tidb-1:109`, `tidb-2:89` |
 
 数据恢复和索引状态：
 
