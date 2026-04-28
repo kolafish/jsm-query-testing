@@ -2,9 +2,8 @@
 
 This document records the AWS-internal `LIKE` vs `MATCH AGAINST` QPS benchmark for the 10-query corpus derived from `jsm_assets3_uuid_fixed_query_run.md`.
 
-## Scope
+## Workload
 
-- Cluster shape: `6 TiDB / 4 TiKV / 3 TiFlash / 1 TiCDC`
 - Database: `jsm_assets3`
 - TiDB endpoint: `tici-demo-s3-tidb:4000`
 - Benchmark mode: `per-query-pool`
@@ -16,40 +15,96 @@ This document records the AWS-internal `LIKE` vs `MATCH AGAINST` QPS benchmark f
 
 The worker-specific corpus files duplicate the 10 logical queries into independent query slots, so the corpus length equals the requested worker count.
 
-## Result Files
+## Latest Run: 6 TiFlash After FULLTEXT Rebuild
 
-LIKE corpus and results:
+Preparation:
 
-- `bench/assets3_like_vs_match_like_qps_corpus_20workers.json`
-- `bench/assets3_like_vs_match_like_qps_corpus_30workers.json`
-- `bench/assets3_like_vs_match_like_qps_corpus_50workers.json`
-- `bench/assets3_like_vs_match_like_qps_corpus_80workers.json`
-- `bench/assets3_like_vs_match_like_qps_corpus_100workers.json`
-- `bench/results/assets3_like_vs_match_like_per_query_6tidb4tikv_20workers_5min_20260428.json`
-- `bench/results/assets3_like_vs_match_like_per_query_6tidb4tikv_30workers_5min_20260428.json`
-- `bench/results/assets3_like_vs_match_like_per_query_6tidb4tikv_50workers_5min_20260428.json`
-- `bench/results/assets3_like_vs_match_like_per_query_6tidb4tikv_80workers_5min_20260428.json`
-- `bench/results/assets3_like_vs_match_like_per_query_6tidb4tikv_100workers_5min_20260428.json`
+- Scaled TiFlash from `3` to `6` replicas.
+- Scaled `node-tiflash` from `3` to `6` nodes.
+- Dropped and recreated all `jsm_assets3.obj_new` FULLTEXT indexes after scale-out:
+  - `idx_fts_1(text_value_1) WITH PARSER NGRAM`
+  - `idx_fts_4(text_value_4) WITH PARSER NGRAM`
+  - `idx_fts_5(text_value_5) WITH PARSER NGRAM`
+  - `idx_fts_7(text_value_7) WITH PARSER NGRAM`
+  - `idx_fts_20(text_value_20) WITH PARSER NGRAM`
+  - `idx_fts_22(text_value_22) WITH PARSER NGRAM`
+  - `idx_fts_label(label) WITH PARSER NGRAM`
 
-MATCH corpus and results:
+Cluster shape:
 
-- `bench/assets3_like_vs_match_match_qps_corpus_20workers.json`
-- `bench/assets3_like_vs_match_match_qps_corpus_30workers.json`
-- `bench/assets3_like_vs_match_match_qps_corpus_50workers.json`
-- `bench/results/assets3_like_vs_match_match_per_query_6tidb4tikv_20workers_5min_20260428.json`
-- `bench/results/assets3_like_vs_match_match_per_query_6tidb4tikv_30workers_5min_20260428.json`
-- `bench/results/assets3_like_vs_match_match_per_query_6tidb4tikv_50workers_5min_20260428.json`
+- `6 TiDB / 4 TiKV / 6 TiFlash / 1 TiCDC`
 
-## Validation
+Result files:
 
-All completed runs had:
+- LIKE:
+  - `bench/results/assets3_like_vs_match_like_per_query_6tiflash_rebuilt_20workers_5min_20260428.json`
+  - `bench/results/assets3_like_vs_match_like_per_query_6tiflash_rebuilt_30workers_5min_20260428.json`
+  - `bench/results/assets3_like_vs_match_like_per_query_6tiflash_rebuilt_50workers_5min_20260428.json`
+  - `bench/results/assets3_like_vs_match_like_per_query_6tiflash_rebuilt_80workers_5min_20260428.json`
+  - `bench/results/assets3_like_vs_match_like_per_query_6tiflash_rebuilt_100workers_5min_20260428.json`
+- MATCH:
+  - `bench/results/assets3_like_vs_match_match_per_query_6tiflash_rebuilt_20workers_5min_20260428.json`
+  - `bench/results/assets3_like_vs_match_match_per_query_6tiflash_rebuilt_30workers_5min_20260428.json`
+  - `bench/results/assets3_like_vs_match_match_per_query_6tiflash_rebuilt_50workers_5min_20260428.json`
+  - `bench/results/assets3_like_vs_match_match_per_query_6tiflash_rebuilt_80workers_5min_20260428.json`
+  - `bench/results/assets3_like_vs_match_match_per_query_6tiflash_rebuilt_100workers_5min_20260428.json`
 
-- `0` execution errors
-- `0` row-count mismatches
-- `0` warmup row-count mismatches
-- `0` zero-completed query slots
+Validation:
 
-## QPS Summary
+- All completed runs had `0` execution errors.
+- All completed runs had `0` row-count mismatches.
+- All completed runs had `0` warmup row-count mismatches.
+- All completed runs had `0` zero-completed query slots.
+
+| Workers | LIKE QPS | LIKE p50 (ms) | LIKE p95 (ms) | LIKE p99 (ms) | MATCH QPS | MATCH p50 (ms) | MATCH p95 (ms) | MATCH p99 (ms) |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 20 | 168.426 | 13.412 | 807.392 | 2069.140 | 1448.716 | 7.400 | 21.638 | 113.287 |
+| 30 | 218.335 | 14.177 | 1076.277 | 1696.201 | 1227.267 | 12.693 | 50.411 | 141.713 |
+| 50 | 286.084 | 16.503 | 1585.980 | 2760.051 | 1315.689 | 18.344 | 93.049 | 212.377 |
+| 80 | 437.923 | 17.654 | 40.502 | 4269.473 | 1013.220 | 34.844 | 226.415 | 522.544 |
+| 100 | 280.965 | 37.063 | 4299.665 | 6128.032 | 1073.616 | 39.003 | 273.333 | 589.341 |
+
+Latest-run findings:
+
+- `LIKE` peak: `437.923 QPS` at `80` workers.
+- `MATCH` peak: `1448.716 QPS` at `20` workers.
+- Peak-to-peak, `MATCH` reached `3.31x` the `LIKE` throughput after TiFlash scale-out and FULLTEXT index rebuild.
+- `MATCH` stayed above `1000 QPS` through `100` workers, but its best point was still the lowest tested concurrency.
+- `LIKE` remained dominated by one very fast zero-row label query plus a long slow tail; aggregate p95 can look low even when p99 remains multi-second.
+
+Latest peak-run completed counts by logical query:
+
+| Query | LIKE completed at 80 workers | MATCH completed at 20 workers |
+| --- | ---: | ---: |
+| 1. Basic Filters / Query 2 | 581 | 120 |
+| 1. Basic Filters / Query 7 | 127,643 | 71,524 |
+| 2. Full Text Search / Query 2 | 659 | 42,238 |
+| 2. Full Text Search / Query 3 | 663 | 32,042 |
+| 2. Full Text Search / Query 4 | 671 | 4,641 |
+| 2. Full Text Search / Query 5 | 653 | 78,528 |
+| 2. Full Text Search / Query 6 | 699 | 30,816 |
+| 2. Full Text Search / Query 7 | 679 | 61,891 |
+| 4. Relationship Traversal / Depth 1 / Query 4 | 287 | 169 |
+| 5. JSON Attribute Queries / Query 6 | 341 | 114,680 |
+
+## Previous Run: 3 TiFlash Before Rebuild
+
+Cluster shape:
+
+- `6 TiDB / 4 TiKV / 3 TiFlash / 1 TiCDC`
+
+Result files:
+
+- LIKE:
+  - `bench/results/assets3_like_vs_match_like_per_query_6tidb4tikv_20workers_5min_20260428.json`
+  - `bench/results/assets3_like_vs_match_like_per_query_6tidb4tikv_30workers_5min_20260428.json`
+  - `bench/results/assets3_like_vs_match_like_per_query_6tidb4tikv_50workers_5min_20260428.json`
+  - `bench/results/assets3_like_vs_match_like_per_query_6tidb4tikv_80workers_5min_20260428.json`
+  - `bench/results/assets3_like_vs_match_like_per_query_6tidb4tikv_100workers_5min_20260428.json`
+- MATCH:
+  - `bench/results/assets3_like_vs_match_match_per_query_6tidb4tikv_20workers_5min_20260428.json`
+  - `bench/results/assets3_like_vs_match_match_per_query_6tidb4tikv_30workers_5min_20260428.json`
+  - `bench/results/assets3_like_vs_match_match_per_query_6tidb4tikv_50workers_5min_20260428.json`
 
 | Workers | LIKE QPS | LIKE p50 (ms) | LIKE p95 (ms) | LIKE p99 (ms) | MATCH QPS | MATCH p50 (ms) | MATCH p95 (ms) | MATCH p99 (ms) |
 | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -59,28 +114,16 @@ All completed runs had:
 | 80 | 263.738 | 30.978 | 47.562 | 7114.949 | not run | - | - | - |
 | 100 | 353.829 | 29.743 | 42.234 | 9283.692 | not run | - | - | - |
 
-## Findings
+Previous-run findings:
 
 - `LIKE` peak: `353.829 QPS` at `100` workers.
 - `MATCH` peak: `592.830 QPS` at `20` workers.
-- Peak-to-peak, `MATCH` reached `1.68x` the `LIKE` throughput on this cluster.
-- `MATCH 30 workers` dropped to `441.561 QPS`; `MATCH 50 workers` dropped further to `363.723 QPS`, so `MATCH 80/100 workers` were intentionally skipped.
-- `LIKE` kept improving through `100` workers, but the p99 tail latency remained very high because a few slow queries still complete infrequently.
+- `MATCH 50 workers` dropped below `MATCH 30 workers`, so `MATCH 80/100 workers` were intentionally skipped in that run.
 
-## Peak-Run Completed Counts
+## Peak Comparison
 
-The table below aggregates duplicated worker slots back to the original 10 logical queries.
-
-| Query | LIKE completed at 100 workers | MATCH completed at 20 workers |
-| --- | ---: | ---: |
-| 1. Basic Filters / Query 2 | 324 | 99 |
-| 1. Basic Filters / Query 7 | 106,778 | 27,818 |
-| 2. Full Text Search / Query 2 | 365 | 18,675 |
-| 2. Full Text Search / Query 3 | 366 | 18,549 |
-| 2. Full Text Search / Query 4 | 371 | 2,751 |
-| 2. Full Text Search / Query 5 | 365 | 31,417 |
-| 2. Full Text Search / Query 6 | 385 | 16,643 |
-| 2. Full Text Search / Query 7 | 380 | 25,624 |
-| 4. Relationship Traversal / Depth 1 / Query 4 | 175 | 277 |
-| 5. JSON Attribute Queries / Query 6 | 354 | 37,940 |
+| Run | LIKE peak | MATCH peak | MATCH / LIKE |
+| --- | ---: | ---: | ---: |
+| 3 TiFlash before rebuild | 353.829 QPS | 592.830 QPS | 1.68x |
+| 6 TiFlash after FULLTEXT rebuild | 437.923 QPS | 1448.716 QPS | 3.31x |
 

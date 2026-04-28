@@ -1,0 +1,470 @@
+{
+  "generated_at": "2026-04-28T09:15:50Z",
+  "corpus_path": "/bench/assets3_like_vs_match_match_qps_corpus_20workers.json",
+  "mode": "per-query-pool",
+  "database": {
+    "database": "jsm_assets3",
+    "host": "tici-demo-s3-tidb",
+    "port": 4000,
+    "user": "root"
+  },
+  "duration_seconds_per_run": 300,
+  "warmup": [
+    {
+      "id": "1_basic_filters_|_query_2__slot1",
+      "pattern": "1. Basic Filters / Query 2",
+      "description": "basic filter with contains on text_value_22",
+      "latency_ms": 5628.279,
+      "row_count": 28,
+      "expected_row_count": 28,
+      "row_count_match": true
+    },
+    {
+      "id": "1_basic_filters_|_query_7__slot1",
+      "pattern": "1. Basic Filters / Query 7",
+      "description": "wide row fetch with label contains",
+      "latency_ms": 10.414,
+      "row_count": 0,
+      "expected_row_count": 0,
+      "row_count_match": true
+    },
+    {
+      "id": "2_full_text_search_|_query_2__slot1",
+      "pattern": "2. Full Text Search / Query 2",
+      "description": "contains on text_value_1",
+      "latency_ms": 14.115,
+      "row_count": 2,
+      "expected_row_count": 2,
+      "row_count_match": true
+    },
+    {
+      "id": "2_full_text_search_|_query_3__slot1",
+      "pattern": "2. Full Text Search / Query 3",
+      "description": "cross-column contains on text_value_4 or text_value_5",
+      "latency_ms": 11.057,
+      "row_count": 3,
+      "expected_row_count": 3,
+      "row_count_match": true
+    },
+    {
+      "id": "2_full_text_search_|_query_4__slot1",
+      "pattern": "2. Full Text Search / Query 4",
+      "description": "cross-column contains on text_value_4 or text_value_5 plus equality on text_value_10",
+      "latency_ms": 115.422,
+      "row_count": 1000,
+      "expected_row_count": 1000,
+      "row_count_match": true
+    },
+    {
+      "id": "2_full_text_search_|_query_5__slot1",
+      "pattern": "2. Full Text Search / Query 5",
+      "description": "contains on text_value_5",
+      "latency_ms": 7.857,
+      "row_count": 1,
+      "expected_row_count": 1,
+      "row_count_match": true
+    },
+    {
+      "id": "2_full_text_search_|_query_6__slot1",
+      "pattern": "2. Full Text Search / Query 6",
+      "description": "same-column OR contains on text_value_4",
+      "latency_ms": 16.569,
+      "row_count": 4,
+      "expected_row_count": 4,
+      "row_count_match": true
+    },
+    {
+      "id": "2_full_text_search_|_query_7__slot1",
+      "pattern": "2. Full Text Search / Query 7",
+      "description": "contains on text_value_5",
+      "latency_ms": 7.75,
+      "row_count": 1,
+      "expected_row_count": 1,
+      "row_count_match": true
+    },
+    {
+      "id": "4_relationship_traversal_|_depth_1_|_query_4__slot1",
+      "pattern": "4. Relationship Traversal / Depth 1 / Query 4",
+      "description": "relationship traversal with text_value_1 contains candidates",
+      "latency_ms": 1986.873,
+      "row_count": 0,
+      "expected_row_count": 0,
+      "row_count_match": true
+    },
+    {
+      "id": "5_json_attribute_queries_|_query_6__slot1",
+      "pattern": "5. JSON Attribute Queries / Query 6",
+      "description": "json query with contains on text_value_20",
+      "latency_ms": 7.162,
+      "row_count": 0,
+      "expected_row_count": 0,
+      "row_count_match": true
+    },
+    {
+      "id": "1_basic_filters_|_query_2__slot2",
+      "pattern": "1. Basic Filters / Query 2",
+      "description": "basic filter with contains on text_value_22",
+      "latency_ms": 4505.438,
+      "row_count": 28,
+      "expected_row_count": 28,
+      "row_count_match": true
+    },
+    {
+      "id": "1_basic_filters_|_query_7__slot2",
+      "pattern": "1. Basic Filters / Query 7",
+      "description": "wide row fetch with label contains",
+      "latency_ms": 8.282,
+      "row_count": 0,
+      "expected_row_count": 0,
+      "row_count_match": true
+    },
+    {
+      "id": "2_full_text_search_|_query_2__slot2",
+      "pattern": "2. Full Text Search / Query 2",
+      "description": "contains on text_value_1",
+      "latency_ms": 12.892,
+      "row_count": 2,
+      "expected_row_count": 2,
+      "row_count_match": true
+    },
+    {
+      "id": "2_full_text_search_|_query_3__slot2",
+      "pattern": "2. Full Text Search / Query 3",
+      "description": "cross-column contains on text_value_4 or text_value_5",
+      "latency_ms": 10.852,
+      "row_count": 3,
+      "expected_row_count": 3,
+      "row_count_match": true
+    },
+    {
+      "id": "2_full_text_search_|_query_4__slot2",
+      "pattern": "2. Full Text Search / Query 4",
+      "description": "cross-column contains on text_value_4 or text_value_5 plus equality on text_value_10",
+      "latency_ms": 118.301,
+      "row_count": 1000,
+      "expected_row_count": 1000,
+      "row_count_match": true
+    },
+    {
+      "id": "2_full_text_search_|_query_5__slot2",
+      "pattern": "2. Full Text Search / Query 5",
+      "description": "contains on text_value_5",
+      "latency_ms": 8.299,
+      "row_count": 1,
+      "expected_row_count": 1,
+      "row_count_match": true
+    },
+    {
+      "id": "2_full_text_search_|_query_6__slot2",
+      "pattern": "2. Full Text Search / Query 6",
+      "description": "same-column OR contains on text_value_4",
+      "latency_ms": 16.789,
+      "row_count": 4,
+      "expected_row_count": 4,
+      "row_count_match": true
+    },
+    {
+      "id": "2_full_text_search_|_query_7__slot2",
+      "pattern": "2. Full Text Search / Query 7",
+      "description": "contains on text_value_5",
+      "latency_ms": 8.866,
+      "row_count": 1,
+      "expected_row_count": 1,
+      "row_count_match": true
+    },
+    {
+      "id": "4_relationship_traversal_|_depth_1_|_query_4__slot2",
+      "pattern": "4. Relationship Traversal / Depth 1 / Query 4",
+      "description": "relationship traversal with text_value_1 contains candidates",
+      "latency_ms": 2012.705,
+      "row_count": 0,
+      "expected_row_count": 0,
+      "row_count_match": true
+    },
+    {
+      "id": "5_json_attribute_queries_|_query_6__slot2",
+      "pattern": "5. JSON Attribute Queries / Query 6",
+      "description": "json query with contains on text_value_20",
+      "latency_ms": 6.521,
+      "row_count": 0,
+      "expected_row_count": 0,
+      "row_count_match": true
+    }
+  ],
+  "runs": [
+    {
+      "elapsed_seconds": 301.404,
+      "completed": 436649,
+      "errors": 0,
+      "row_count_mismatches": 0,
+      "qps": 1448.716,
+      "p50_ms": 7.4,
+      "p95_ms": 21.638,
+      "p99_ms": 113.28708000000007,
+      "avg_ms": 13.746153198564496,
+      "per_pattern": [
+        {
+          "id": "1_basic_filters_|_query_2__slot1",
+          "pattern": "1. Basic Filters / Query 2",
+          "description": "basic filter with contains on text_value_22",
+          "completed": 60,
+          "qps": 0.199,
+          "p50_ms": 4988.5165,
+          "p95_ms": 5296.096949999999,
+          "p99_ms": 5390.1257399999995,
+          "avg_ms": 5003.015450000003,
+          "weight": 1,
+          "expected_row_count": 28
+        },
+        {
+          "id": "1_basic_filters_|_query_7__slot1",
+          "pattern": "1. Basic Filters / Query 7",
+          "description": "wide row fetch with label contains",
+          "completed": 35264,
+          "qps": 116.999,
+          "p50_ms": 7.314,
+          "p95_ms": 13.297699999999997,
+          "p99_ms": 24.60960000000021,
+          "avg_ms": 8.506356879537217,
+          "weight": 1,
+          "expected_row_count": 0
+        },
+        {
+          "id": "2_full_text_search_|_query_2__slot1",
+          "pattern": "2. Full Text Search / Query 2",
+          "description": "contains on text_value_1",
+          "completed": 21580,
+          "qps": 71.598,
+          "p50_ms": 12.222,
+          "p95_ms": 20.0341,
+          "p99_ms": 43.43896999999995,
+          "avg_ms": 13.901060611677588,
+          "weight": 1,
+          "expected_row_count": 2
+        },
+        {
+          "id": "2_full_text_search_|_query_3__slot1",
+          "pattern": "2. Full Text Search / Query 3",
+          "description": "cross-column contains on text_value_4 or text_value_5",
+          "completed": 8195,
+          "qps": 27.189,
+          "p50_ms": 21.375,
+          "p95_ms": 114.56719999999991,
+          "p99_ms": 238.42199999999994,
+          "avg_ms": 36.60669090909091,
+          "weight": 1,
+          "expected_row_count": 3
+        },
+        {
+          "id": "2_full_text_search_|_query_4__slot1",
+          "pattern": "2. Full Text Search / Query 4",
+          "description": "cross-column contains on text_value_4 or text_value_5 plus equality on text_value_10",
+          "completed": 2276,
+          "qps": 7.551,
+          "p50_ms": 119.101,
+          "p95_ms": 203.1265,
+          "p99_ms": 237.71975,
+          "avg_ms": 131.84650307557092,
+          "weight": 1,
+          "expected_row_count": 1000
+        },
+        {
+          "id": "2_full_text_search_|_query_5__slot1",
+          "pattern": "2. Full Text Search / Query 5",
+          "description": "contains on text_value_5",
+          "completed": 40360,
+          "qps": 133.907,
+          "p50_ms": 6.189,
+          "p95_ms": 12.37609999999999,
+          "p99_ms": 24.470459999999974,
+          "avg_ms": 7.432063577799798,
+          "weight": 1,
+          "expected_row_count": 1
+        },
+        {
+          "id": "2_full_text_search_|_query_6__slot1",
+          "pattern": "2. Full Text Search / Query 6",
+          "description": "same-column OR contains on text_value_4",
+          "completed": 15405,
+          "qps": 51.111,
+          "p50_ms": 17.313,
+          "p95_ms": 29.00079999999999,
+          "p99_ms": 65.53675999999983,
+          "avg_ms": 19.474179097695576,
+          "weight": 1,
+          "expected_row_count": 4
+        },
+        {
+          "id": "2_full_text_search_|_query_7__slot1",
+          "pattern": "2. Full Text Search / Query 7",
+          "description": "contains on text_value_5",
+          "completed": 29405,
+          "qps": 97.56,
+          "p50_ms": 8.263,
+          "p95_ms": 17.027399999999993,
+          "p99_ms": 36.23527999999998,
+          "avg_ms": 10.201573201836396,
+          "weight": 1,
+          "expected_row_count": 1
+        },
+        {
+          "id": "4_relationship_traversal_|_depth_1_|_query_4__slot1",
+          "pattern": "4. Relationship Traversal / Depth 1 / Query 4",
+          "description": "relationship traversal with text_value_1 contains candidates",
+          "completed": 86,
+          "qps": 0.285,
+          "p50_ms": 3575.1885,
+          "p95_ms": 3930.2697500000004,
+          "p99_ms": 4357.3303000000005,
+          "avg_ms": 3490.48846511628,
+          "weight": 1,
+          "expected_row_count": 0
+        },
+        {
+          "id": "5_json_attribute_queries_|_query_6__slot1",
+          "pattern": "5. JSON Attribute Queries / Query 6",
+          "description": "json query with contains on text_value_20",
+          "completed": 57450,
+          "qps": 190.608,
+          "p50_ms": 4.271,
+          "p95_ms": 8.898549999999995,
+          "p99_ms": 17.451360000000072,
+          "avg_ms": 5.22091580504789,
+          "weight": 1,
+          "expected_row_count": 0
+        },
+        {
+          "id": "1_basic_filters_|_query_2__slot2",
+          "pattern": "1. Basic Filters / Query 2",
+          "description": "basic filter with contains on text_value_22",
+          "completed": 60,
+          "qps": 0.199,
+          "p50_ms": 5015.5925,
+          "p95_ms": 5366.80115,
+          "p99_ms": 5437.72105,
+          "avg_ms": 5023.274883333332,
+          "weight": 1,
+          "expected_row_count": 28
+        },
+        {
+          "id": "1_basic_filters_|_query_7__slot2",
+          "pattern": "1. Basic Filters / Query 7",
+          "description": "wide row fetch with label contains",
+          "completed": 36260,
+          "qps": 120.304,
+          "p50_ms": 6.909,
+          "p95_ms": 13.699249999999978,
+          "p99_ms": 26.61004999999998,
+          "avg_ms": 8.272721897407612,
+          "weight": 1,
+          "expected_row_count": 0
+        },
+        {
+          "id": "2_full_text_search_|_query_2__slot2",
+          "pattern": "2. Full Text Search / Query 2",
+          "description": "contains on text_value_1",
+          "completed": 20658,
+          "qps": 68.539,
+          "p50_ms": 12.715,
+          "p95_ms": 20.894449999999992,
+          "p99_ms": 52.36074000000001,
+          "avg_ms": 14.521872543324628,
+          "weight": 1,
+          "expected_row_count": 2
+        },
+        {
+          "id": "2_full_text_search_|_query_3__slot2",
+          "pattern": "2. Full Text Search / Query 3",
+          "description": "cross-column contains on text_value_4 or text_value_5",
+          "completed": 23847,
+          "qps": 79.12,
+          "p50_ms": 10.303,
+          "p95_ms": 21.495,
+          "p99_ms": 56.582560000000186,
+          "avg_ms": 12.579518639661213,
+          "weight": 1,
+          "expected_row_count": 3
+        },
+        {
+          "id": "2_full_text_search_|_query_4__slot2",
+          "pattern": "2. Full Text Search / Query 4",
+          "description": "cross-column contains on text_value_4 or text_value_5 plus equality on text_value_10",
+          "completed": 2365,
+          "qps": 7.847,
+          "p50_ms": 118.44,
+          "p95_ms": 177.9661999999999,
+          "p99_ms": 235.5318000000011,
+          "avg_ms": 126.87158731501027,
+          "weight": 1,
+          "expected_row_count": 1000
+        },
+        {
+          "id": "2_full_text_search_|_query_5__slot2",
+          "pattern": "2. Full Text Search / Query 5",
+          "description": "contains on text_value_5",
+          "completed": 38168,
+          "qps": 126.634,
+          "p50_ms": 6.518,
+          "p95_ms": 13.413600000000006,
+          "p99_ms": 26.836890000000057,
+          "avg_ms": 7.859003982393608,
+          "weight": 1,
+          "expected_row_count": 1
+        },
+        {
+          "id": "2_full_text_search_|_query_6__slot2",
+          "pattern": "2. Full Text Search / Query 6",
+          "description": "same-column OR contains on text_value_4",
+          "completed": 15411,
+          "qps": 51.131,
+          "p50_ms": 17.306,
+          "p95_ms": 29.325499999999998,
+          "p99_ms": 67.10149999999999,
+          "avg_ms": 19.466575433132128,
+          "weight": 1,
+          "expected_row_count": 4
+        },
+        {
+          "id": "2_full_text_search_|_query_7__slot2",
+          "pattern": "2. Full Text Search / Query 7",
+          "description": "contains on text_value_5",
+          "completed": 32486,
+          "qps": 107.782,
+          "p50_ms": 7.868,
+          "p95_ms": 14.421,
+          "p99_ms": 29.44225000000005,
+          "avg_ms": 9.234080773256117,
+          "weight": 1,
+          "expected_row_count": 1
+        },
+        {
+          "id": "4_relationship_traversal_|_depth_1_|_query_4__slot2",
+          "pattern": "4. Relationship Traversal / Depth 1 / Query 4",
+          "description": "relationship traversal with text_value_1 contains candidates",
+          "completed": 83,
+          "qps": 0.275,
+          "p50_ms": 3579.804,
+          "p95_ms": 4678.779599999997,
+          "p99_ms": 5099.586479999998,
+          "avg_ms": 3622.9076024096394,
+          "weight": 1,
+          "expected_row_count": 0
+        },
+        {
+          "id": "5_json_attribute_queries_|_query_6__slot2",
+          "pattern": "5. JSON Attribute Queries / Query 6",
+          "description": "json query with contains on text_value_20",
+          "completed": 57230,
+          "qps": 189.878,
+          "p50_ms": 4.287,
+          "p95_ms": 8.887549999999996,
+          "p99_ms": 17.68790999999998,
+          "avg_ms": 5.240993202865571,
+          "weight": 1,
+          "expected_row_count": 0
+        }
+      ],
+      "concurrency": 20
+    }
+  ]
+}

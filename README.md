@@ -21,7 +21,7 @@ export KUBECONFIG=/home/ec2-user/.kube/atlassian-jsm-tici
 ```bash
 eksctl scale nodegroup --cluster Atlassian-jsm-tici --name node16c32 --nodes 7 --nodes-min 0 --nodes-max 20 --region us-east-2
 eksctl scale nodegroup --cluster Atlassian-jsm-tici --name node-tikv --nodes 4 --nodes-min 0 --nodes-max 20 --region us-east-2
-eksctl scale nodegroup --cluster Atlassian-jsm-tici --name node-tiflash --nodes 3 --nodes-min 0 --nodes-max 20 --region us-east-2
+eksctl scale nodegroup --cluster Atlassian-jsm-tici --name node-tiflash --nodes 6 --nodes-min 0 --nodes-max 20 --region us-east-2
 
 kubectl -n tidb-cluster get pods
 ```
@@ -76,7 +76,7 @@ Grafana LoadBalancer:
 | PD | 1 | Running |
 | TiDB | 6 | Running |
 | TiKV | 4 | Running |
-| TiFlash | 3 | Running |
+| TiFlash | 6 | Running |
 | TiCDC | 1 | Running |
 | TiCI meta | 1 | Running |
 | TiCI worker | 1 | Running |
@@ -87,7 +87,7 @@ Grafana LoadBalancer:
 |---|---|---:|---|
 | `node16c32` | `c8i.4xlarge` | 7 | TiDB / PD / TiCI / TiCDC / monitor / benchmark client |
 | `node-tikv` | `c8i.4xlarge` | 4 | TiKV |
-| `node-tiflash` | `m8i.4xlarge` | 3 | TiFlash |
+| `node-tiflash` | `m8i.4xlarge` | 6 | TiFlash |
 
 TiDB service 连接分布验证：
 
@@ -102,7 +102,7 @@ TiDB service 连接分布验证：
 | BR restore | 已完成，`2026-04-27 08:41:55 UTC` 到 `08:58:58 UTC`，耗时 `17m02s` |
 | Restore source | `s3://atlassian-jsm-tici-178851224597-us-east-2/br-backups/jsm-assets2-assets3-20260427T042546Z` |
 | TiFlash replica | 四张表均 `available=1`, `progress=1` |
-| FULLTEXT indexes | 两个 `obj_new` 表均已重建 `idx_fts_1/4/5/7/20/22/label`，parser 为 `NGRAM` |
+| FULLTEXT indexes | 两个 `obj_new` 表均已重建 `idx_fts_1/4/5/7/20/22/label`，parser 为 `NGRAM`；`jsm_assets3.obj_new` 在 TiFlash 扩到 6 台后再次 drop/recreate |
 | FTS smoke check | `text_value_7 = Fagor` 的 `MATCH` 和 `LIKE` 命中数一致 |
 
 当前表规模：
