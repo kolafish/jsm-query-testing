@@ -132,6 +132,62 @@ Result files:
   - `bench/results/assets3_like_per_query_qps_benchmark_20260422.json`
   - `bench/results/assets3_match_per_query_qps_benchmark_20260422.json`
 
+### Current 6 TiDB / 4 TiKV per-query-pool run
+
+This run was executed on the AWS cluster with `6 TiDB / 4 TiKV / 3 TiFlash / 1 TiCDC`.
+
+Run settings:
+
+- Mode: `per-query-pool`
+- Duration: `300s` per worker point
+- Worker points: `20 / 30 / 50 / 80 / 100`
+- Worker-specific corpus files duplicate the 10 logical queries into independent query slots, so the corpus length equals the requested worker count.
+- `MATCH` runs used `set tidb_enforce_mpp=on` and `set tiflash_hash_join_version=optimized`.
+- All completed runs had `0` errors, `0` row-count mismatches, and no zero-completed query slots.
+
+Result files:
+
+- LIKE:
+  - `bench/results/assets3_like_vs_match_like_per_query_6tidb4tikv_20workers_5min_20260428.json`
+  - `bench/results/assets3_like_vs_match_like_per_query_6tidb4tikv_30workers_5min_20260428.json`
+  - `bench/results/assets3_like_vs_match_like_per_query_6tidb4tikv_50workers_5min_20260428.json`
+  - `bench/results/assets3_like_vs_match_like_per_query_6tidb4tikv_80workers_5min_20260428.json`
+  - `bench/results/assets3_like_vs_match_like_per_query_6tidb4tikv_100workers_5min_20260428.json`
+- MATCH:
+  - `bench/results/assets3_like_vs_match_match_per_query_6tidb4tikv_20workers_5min_20260428.json`
+  - `bench/results/assets3_like_vs_match_match_per_query_6tidb4tikv_30workers_5min_20260428.json`
+  - `bench/results/assets3_like_vs_match_match_per_query_6tidb4tikv_50workers_5min_20260428.json`
+
+| Workers | LIKE QPS | LIKE p50 (ms) | LIKE p95 (ms) | LIKE p99 (ms) | MATCH QPS | MATCH p50 (ms) | MATCH p95 (ms) | MATCH p99 (ms) |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 20 | 162.955 | 13.034 | 1076.288 | 1763.978 | 592.830 | 18.631 | 69.611 | 214.706 |
+| 30 | 193.308 | 16.036 | 1481.551 | 2480.825 | 441.561 | 35.077 | 177.551 | 361.096 |
+| 50 | 343.345 | 13.586 | 25.971 | 3801.591 | 363.723 | 69.455 | 350.828 | 563.993 |
+| 80 | 263.738 | 30.978 | 47.562 | 7114.949 | not run | - | - | - |
+| 100 | 353.829 | 29.743 | 42.234 | 9283.692 | not run | - | - | - |
+
+Current-run peak:
+
+- `LIKE`: `353.829 QPS` at `100` workers
+- `MATCH`: `592.830 QPS` at `20` workers
+- Peak-to-peak, `MATCH` is `1.68x` the `LIKE` throughput on this cluster.
+- `MATCH 50 workers` dropped below `MATCH 30 workers`, so `MATCH 80/100 workers` were intentionally skipped.
+
+Current peak-run completed counts by logical query:
+
+| Query | LIKE completed at 100 workers | MATCH completed at 20 workers |
+| --- | ---: | ---: |
+| 1. Basic Filters / Query 2 | 324 | 99 |
+| 1. Basic Filters / Query 7 | 106,778 | 27,818 |
+| 2. Full Text Search / Query 2 | 365 | 18,675 |
+| 2. Full Text Search / Query 3 | 366 | 18,549 |
+| 2. Full Text Search / Query 4 | 371 | 2,751 |
+| 2. Full Text Search / Query 5 | 365 | 31,417 |
+| 2. Full Text Search / Query 6 | 385 | 16,643 |
+| 2. Full Text Search / Query 7 | 380 | 25,624 |
+| 4. Relationship Traversal / Depth 1 / Query 4 | 175 | 277 |
+| 5. JSON Attribute Queries / Query 6 | 354 | 37,940 |
+
 ### shared-pool
 
 | Concurrency | LIKE QPS | LIKE p95 (ms) | MATCH QPS | MATCH p95 (ms) |
