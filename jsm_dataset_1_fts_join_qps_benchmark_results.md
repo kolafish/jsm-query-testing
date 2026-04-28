@@ -34,6 +34,48 @@ set tiflash_hash_join_version='optimized';
 
 每条 query 权重相同，单条 query 百分比都是 `10%`。
 
+## Current Cluster c=10 5-Minute Run
+
+- 时间：`2026-04-28`
+- 集群：`6 TiDB / 4 TiKV / 6 TiFlash / 1 TiCDC`
+- 数据库：`jsm_assets2`
+- 模式：`shared-pool`
+- 并发：`10`
+- 时长：`300s`
+- session settings:
+
+```sql
+set tidb_enforce_mpp=on;
+set tiflash_hash_join_version='optimized';
+```
+
+- LIKE 结果 JSON：[bench/results/fts_join_like_current_6tidb4tikv6tiflash_c10_5min_20260428.json](/Users/jin/Desktop/jsm-query-latency-tracking/bench/results/fts_join_like_current_6tidb4tikv6tiflash_c10_5min_20260428.json)
+- MATCH 结果 JSON：[bench/results/fts_join_match_current_6tidb4tikv6tiflash_c10_5min_20260428.json](/Users/jin/Desktop/jsm-query-latency-tracking/bench/results/fts_join_match_current_6tidb4tikv6tiflash_c10_5min_20260428.json)
+
+两轮 warmup 都和 expected row count 一致，正式压测 `errors=0`、`row_count_mismatches=0`。
+
+| Type | Completed | QPS | p50 | p95 | p99 | Avg |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| LIKE + JOIN | `14,180` | `47.241` | `208.068ms` | `319.174ms` | `362.158ms` | `211.638ms` |
+| MATCH + JOIN | `3,262` | `10.731` | `50.544ms` | `8,249.624ms` | `8,935.846ms` | `926.777ms` |
+
+这轮 `LIKE + JOIN` 总 QPS 约为 `MATCH + JOIN` 的 `4.40x`。`MATCH + JOIN` 的中位数较低，但尾延迟被少数慢 query 拉高，主要是 `q1 text_value_7 = Fagor`。
+
+| Query | LIKE QPS | LIKE p95 | MATCH QPS | MATCH p95 |
+| --- | ---: | ---: | ---: | ---: |
+| `q1` `text_value_7 = Fagor` | `4.784` | `353.134ms` | `1.118` | `9,019.318ms` |
+| `q4` `text_value_1 ~ "admiral-100"` | `4.831` | `333.412ms` | `1.125` | `253.508ms` |
+| `q5` `text_value_1 ~ "franke-100"` | `4.667` | `343.069ms` | `1.125` | `287.165ms` |
+| `q10` `text_value_1 ~ "admiral-10029"` | `4.484` | `242.959ms` | `1.013` | `91.438ms` |
+| `q6` `text_value_4 ~ "morissette.test"` | `4.648` | `321.586ms` | `1.000` | `367.817ms` |
+| `q7` `text_value_4 ~ "welch.test"` | `4.861` | `241.424ms` | `1.132` | `261.754ms` |
+| `q11` `text_value_4 ~ "maren.heller"` | `4.781` | `240.937ms` | `1.046` | `12.128ms` |
+| `q8` `text_value_5 ~ "royal-simonis"` | `4.544` | `321.096ms` | `1.013` | `55.558ms` |
+| `q9` `text_value_5 ~ "shelby-torp"` | `4.764` | `305.422ms` | `1.069` | `56.353ms` |
+| `q12` `text_value_5 ~ "louise-haley"` | `4.877` | `243.077ms` | `1.089` | `53.895ms` |
+
+Note: 这轮使用 `jsm_assets2` 当前已有的 FULLTEXT 索引状态；本轮没有对 `jsm_assets2.obj_new` 重建 FULLTEXT 索引。
+
 ## 实际 Query 集合
 
 | Query | 列 | Workspace | FTS 条件 | LIKE 条件 | Row Count |

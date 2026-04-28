@@ -1,0 +1,250 @@
+{
+  "generated_at": "2026-04-28T10:02:53Z",
+  "corpus_path": "/bench/fts_join_like_qps_corpus.json",
+  "mode": "shared-pool",
+  "database": {
+    "database": "jsm_assets2",
+    "host": "tici-demo-s3-tidb",
+    "port": 4000,
+    "user": "root"
+  },
+  "duration_seconds_per_run": 300,
+  "warmup": [
+    {
+      "id": "like_join_q1_tv7_fagor_w8",
+      "pattern": "LIKE+JOIN/text_value_7",
+      "description": "workspace 8a65 + STANDARD LIKE full scan on text_value_7 = Fagor",
+      "latency_ms": 148.059,
+      "row_count": 1000,
+      "expected_row_count": 1000,
+      "row_count_match": true
+    },
+    {
+      "id": "like_join_q4_tv1_admiral1000_w8",
+      "pattern": "LIKE+JOIN/text_value_1_ngram",
+      "description": "workspace 8a65 + LIKE on text_value_1 = \"admiral-100\"",
+      "latency_ms": 93.414,
+      "row_count": 1000,
+      "expected_row_count": 1000,
+      "row_count_match": true
+    },
+    {
+      "id": "like_join_q5_tv1_franke1000_w9963",
+      "pattern": "LIKE+JOIN/text_value_1_ngram",
+      "description": "workspace 9963 + LIKE on text_value_1 = \"franke-100\"",
+      "latency_ms": 89.062,
+      "row_count": 1000,
+      "expected_row_count": 1000,
+      "row_count_match": true
+    },
+    {
+      "id": "like_join_q10_tv1_admiral10029_w00ea",
+      "pattern": "LIKE+JOIN/text_value_1_ngram",
+      "description": "workspace 00ea + narrower LIKE on text_value_1 = \"admiral-10029\"",
+      "latency_ms": 80.625,
+      "row_count": 21,
+      "expected_row_count": 21,
+      "row_count_match": true
+    },
+    {
+      "id": "like_join_q6_tv4_morissette_w3b4c",
+      "pattern": "LIKE+JOIN/text_value_4_ngram",
+      "description": "workspace 3b4c + LIKE on text_value_4 = \"morissette.test\"",
+      "latency_ms": 89.19,
+      "row_count": 1000,
+      "expected_row_count": 1000,
+      "row_count_match": true
+    },
+    {
+      "id": "like_join_q7_tv4_welch_w00ea",
+      "pattern": "LIKE+JOIN/text_value_4_ngram",
+      "description": "workspace 00ea + LIKE on text_value_4 = \"welch.test\"",
+      "latency_ms": 65.597,
+      "row_count": 1000,
+      "expected_row_count": 1000,
+      "row_count_match": true
+    },
+    {
+      "id": "like_join_q11_tv4_maren_local_w00ea",
+      "pattern": "LIKE+JOIN/text_value_4_ngram",
+      "description": "workspace 00ea + higher-selectivity LIKE on text_value_4 = \"maren.heller\"",
+      "latency_ms": 65.569,
+      "row_count": 0,
+      "expected_row_count": 0,
+      "row_count_match": true
+    },
+    {
+      "id": "like_join_q8_tv5_royal_w3b4c",
+      "pattern": "LIKE+JOIN/text_value_5_ngram",
+      "description": "workspace 3b4c + LIKE on text_value_5 = \"royal-simonis\"",
+      "latency_ms": 83.285,
+      "row_count": 12,
+      "expected_row_count": 12,
+      "row_count_match": true
+    },
+    {
+      "id": "like_join_q9_tv5_shelby_wcafd",
+      "pattern": "LIKE+JOIN/text_value_5_ngram",
+      "description": "workspace cafd + LIKE on text_value_5 = \"shelby-torp\"",
+      "latency_ms": 80.958,
+      "row_count": 31,
+      "expected_row_count": 31,
+      "row_count_match": true
+    },
+    {
+      "id": "like_join_q12_tv5_louise_haley_w00ea",
+      "pattern": "LIKE+JOIN/text_value_5_ngram",
+      "description": "workspace 00ea + higher-selectivity LIKE on text_value_5 = \"louise-haley\"",
+      "latency_ms": 62.31,
+      "row_count": 8,
+      "expected_row_count": 8,
+      "row_count_match": true
+    }
+  ],
+  "runs": [
+    {
+      "elapsed_seconds": 300.161,
+      "completed": 14180,
+      "errors": 0,
+      "row_count_mismatches": 0,
+      "qps": 47.241,
+      "p50_ms": 208.06799999999998,
+      "p95_ms": 319.17445,
+      "p99_ms": 362.15843999999987,
+      "avg_ms": 211.63777912552885,
+      "per_pattern": [
+        {
+          "id": "like_join_q1_tv7_fagor_w8",
+          "pattern": "LIKE+JOIN/text_value_7",
+          "description": "workspace 8a65 + STANDARD LIKE full scan on text_value_7 = Fagor",
+          "completed": 1436,
+          "qps": 4.784,
+          "p50_ms": 269.908,
+          "p95_ms": 353.1335,
+          "p99_ms": 417.3372500000004,
+          "avg_ms": 272.5833669916432,
+          "weight": 1,
+          "expected_row_count": 1000
+        },
+        {
+          "id": "like_join_q4_tv1_admiral1000_w8",
+          "pattern": "LIKE+JOIN/text_value_1_ngram",
+          "description": "workspace 8a65 + LIKE on text_value_1 = \"admiral-100\"",
+          "completed": 1450,
+          "qps": 4.831,
+          "p50_ms": 242.67649999999998,
+          "p95_ms": 333.41215,
+          "p99_ms": 367.22615999999994,
+          "avg_ms": 246.56602482758646,
+          "weight": 1,
+          "expected_row_count": 1000
+        },
+        {
+          "id": "like_join_q5_tv1_franke1000_w9963",
+          "pattern": "LIKE+JOIN/text_value_1_ngram",
+          "description": "workspace 9963 + LIKE on text_value_1 = \"franke-100\"",
+          "completed": 1401,
+          "qps": 4.667,
+          "p50_ms": 249.2,
+          "p95_ms": 343.069,
+          "p99_ms": 375.991,
+          "avg_ms": 253.7973483226265,
+          "weight": 1,
+          "expected_row_count": 1000
+        },
+        {
+          "id": "like_join_q10_tv1_admiral10029_w00ea",
+          "pattern": "LIKE+JOIN/text_value_1_ngram",
+          "description": "workspace 00ea + narrower LIKE on text_value_1 = \"admiral-10029\"",
+          "completed": 1346,
+          "qps": 4.484,
+          "p50_ms": 163.736,
+          "p95_ms": 242.95850000000002,
+          "p99_ms": 275.65014999999994,
+          "avg_ms": 167.36424219910842,
+          "weight": 1,
+          "expected_row_count": 21
+        },
+        {
+          "id": "like_join_q6_tv4_morissette_w3b4c",
+          "pattern": "LIKE+JOIN/text_value_4_ngram",
+          "description": "workspace 3b4c + LIKE on text_value_4 = \"morissette.test\"",
+          "completed": 1395,
+          "qps": 4.648,
+          "p50_ms": 228.465,
+          "p95_ms": 321.5857,
+          "p99_ms": 367.01146,
+          "avg_ms": 232.75589462365642,
+          "weight": 1,
+          "expected_row_count": 1000
+        },
+        {
+          "id": "like_join_q7_tv4_welch_w00ea",
+          "pattern": "LIKE+JOIN/text_value_4_ngram",
+          "description": "workspace 00ea + LIKE on text_value_4 = \"welch.test\"",
+          "completed": 1459,
+          "qps": 4.861,
+          "p50_ms": 162.512,
+          "p95_ms": 241.42350000000002,
+          "p99_ms": 272.6327200000001,
+          "avg_ms": 167.2855476353666,
+          "weight": 1,
+          "expected_row_count": 1000
+        },
+        {
+          "id": "like_join_q11_tv4_maren_local_w00ea",
+          "pattern": "LIKE+JOIN/text_value_4_ngram",
+          "description": "workspace 00ea + higher-selectivity LIKE on text_value_4 = \"maren.heller\"",
+          "completed": 1435,
+          "qps": 4.781,
+          "p50_ms": 160.916,
+          "p95_ms": 240.9366,
+          "p99_ms": 273.7873000000001,
+          "avg_ms": 165.66128013937274,
+          "weight": 1,
+          "expected_row_count": 0
+        },
+        {
+          "id": "like_join_q8_tv5_royal_w3b4c",
+          "pattern": "LIKE+JOIN/text_value_5_ngram",
+          "description": "workspace 3b4c + LIKE on text_value_5 = \"royal-simonis\"",
+          "completed": 1364,
+          "qps": 4.544,
+          "p50_ms": 220.34449999999998,
+          "p95_ms": 321.0965,
+          "p99_ms": 355.5686699999999,
+          "avg_ms": 223.82904912023437,
+          "weight": 1,
+          "expected_row_count": 12
+        },
+        {
+          "id": "like_join_q9_tv5_shelby_wcafd",
+          "pattern": "LIKE+JOIN/text_value_5_ngram",
+          "description": "workspace cafd + LIKE on text_value_5 = \"shelby-torp\"",
+          "completed": 1430,
+          "qps": 4.764,
+          "p50_ms": 218.24,
+          "p95_ms": 305.4216,
+          "p99_ms": 345.12867000000006,
+          "avg_ms": 221.23596503496535,
+          "weight": 1,
+          "expected_row_count": 31
+        },
+        {
+          "id": "like_join_q12_tv5_louise_haley_w00ea",
+          "pattern": "LIKE+JOIN/text_value_5_ngram",
+          "description": "workspace 00ea + higher-selectivity LIKE on text_value_5 = \"louise-haley\"",
+          "completed": 1464,
+          "qps": 4.877,
+          "p50_ms": 161.439,
+          "p95_ms": 243.07674999999995,
+          "p99_ms": 279.8496399999999,
+          "avg_ms": 166.0332137978142,
+          "weight": 1,
+          "expected_row_count": 8
+        }
+      ],
+      "concurrency": 10
+    }
+  ]
+}

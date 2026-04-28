@@ -1,0 +1,250 @@
+{
+  "generated_at": "2026-04-28T10:08:11Z",
+  "corpus_path": "/bench/fts_join_qps_corpus.json",
+  "mode": "shared-pool",
+  "database": {
+    "database": "jsm_assets2",
+    "host": "tici-demo-s3-tidb",
+    "port": 4000,
+    "user": "root"
+  },
+  "duration_seconds_per_run": 300,
+  "warmup": [
+    {
+      "id": "fts_join_q1_tv7_fagor_w8",
+      "pattern": "FTS+JOIN/text_value_7",
+      "description": "workspace 8a65 + STANDARD FTS on text_value_7 = Fagor",
+      "latency_ms": 1758.152,
+      "row_count": 1000,
+      "expected_row_count": 1000,
+      "row_count_match": true
+    },
+    {
+      "id": "fts_join_q4_tv1_admiral1000_w8",
+      "pattern": "FTS+JOIN/text_value_1_ngram",
+      "description": "workspace 8a65 + NGRAM phrase on text_value_1 = \"admiral-100\"",
+      "latency_ms": 44.917,
+      "row_count": 1000,
+      "expected_row_count": 1000,
+      "row_count_match": true
+    },
+    {
+      "id": "fts_join_q5_tv1_franke1000_w9963",
+      "pattern": "FTS+JOIN/text_value_1_ngram",
+      "description": "workspace 9963 + NGRAM phrase on text_value_1 = \"franke-100\"",
+      "latency_ms": 63.904,
+      "row_count": 1000,
+      "expected_row_count": 1000,
+      "row_count_match": true
+    },
+    {
+      "id": "fts_join_q10_tv1_admiral10029_w00ea",
+      "pattern": "FTS+JOIN/text_value_1_ngram",
+      "description": "workspace 00ea + narrower NGRAM phrase on text_value_1 = \"admiral-10029\"",
+      "latency_ms": 19.964,
+      "row_count": 21,
+      "expected_row_count": 21,
+      "row_count_match": true
+    },
+    {
+      "id": "fts_join_q6_tv4_morissette_w3b4c",
+      "pattern": "FTS+JOIN/text_value_4_ngram",
+      "description": "workspace 3b4c + NGRAM phrase on text_value_4 = \"morissette.test\"",
+      "latency_ms": 65.05,
+      "row_count": 1000,
+      "expected_row_count": 1000,
+      "row_count_match": true
+    },
+    {
+      "id": "fts_join_q7_tv4_welch_w00ea",
+      "pattern": "FTS+JOIN/text_value_4_ngram",
+      "description": "workspace 00ea + NGRAM phrase on text_value_4 = \"welch.test\"",
+      "latency_ms": 144.28,
+      "row_count": 1000,
+      "expected_row_count": 1000,
+      "row_count_match": true
+    },
+    {
+      "id": "fts_join_q11_tv4_maren_local_w00ea",
+      "pattern": "FTS+JOIN/text_value_4_ngram",
+      "description": "workspace 00ea + higher-selectivity NGRAM phrase on text_value_4 = \"maren.heller\"",
+      "latency_ms": 10.161,
+      "row_count": 0,
+      "expected_row_count": 0,
+      "row_count_match": true
+    },
+    {
+      "id": "fts_join_q8_tv5_royal_w3b4c",
+      "pattern": "FTS+JOIN/text_value_5_ngram",
+      "description": "workspace 3b4c + NGRAM phrase on text_value_5 = \"royal-simonis\"",
+      "latency_ms": 15.416,
+      "row_count": 12,
+      "expected_row_count": 12,
+      "row_count_match": true
+    },
+    {
+      "id": "fts_join_q9_tv5_shelby_wcafd",
+      "pattern": "FTS+JOIN/text_value_5_ngram",
+      "description": "workspace cafd + NGRAM phrase on text_value_5 = \"shelby-torp\"",
+      "latency_ms": 20.405,
+      "row_count": 31,
+      "expected_row_count": 31,
+      "row_count_match": true
+    },
+    {
+      "id": "fts_join_q12_tv5_louise_haley_w00ea",
+      "pattern": "FTS+JOIN/text_value_5_ngram",
+      "description": "workspace 00ea + higher-selectivity NGRAM phrase on text_value_5 = \"louise-haley\"",
+      "latency_ms": 12.588,
+      "row_count": 8,
+      "expected_row_count": 8,
+      "row_count_match": true
+    }
+  ],
+  "runs": [
+    {
+      "elapsed_seconds": 303.991,
+      "completed": 3262,
+      "errors": 0,
+      "row_count_mismatches": 0,
+      "qps": 10.731,
+      "p50_ms": 50.544,
+      "p95_ms": 8249.624249999999,
+      "p99_ms": 8935.84577,
+      "avg_ms": 926.7772734518686,
+      "per_pattern": [
+        {
+          "id": "fts_join_q1_tv7_fagor_w8",
+          "pattern": "FTS+JOIN/text_value_7",
+          "description": "workspace 8a65 + STANDARD FTS on text_value_7 = Fagor",
+          "completed": 340,
+          "qps": 1.118,
+          "p50_ms": 8239.0845,
+          "p95_ms": 9019.317900000002,
+          "p99_ms": 9163.885740000002,
+          "avg_ms": 8166.171261764698,
+          "weight": 1,
+          "expected_row_count": 1000
+        },
+        {
+          "id": "fts_join_q4_tv1_admiral1000_w8",
+          "pattern": "FTS+JOIN/text_value_1_ngram",
+          "description": "workspace 8a65 + NGRAM phrase on text_value_1 = \"admiral-100\"",
+          "completed": 342,
+          "qps": 1.125,
+          "p50_ms": 156.635,
+          "p95_ms": 253.50789999999998,
+          "p99_ms": 275.6488799999998,
+          "avg_ms": 141.19206432748544,
+          "weight": 1,
+          "expected_row_count": 1000
+        },
+        {
+          "id": "fts_join_q5_tv1_franke1000_w9963",
+          "pattern": "FTS+JOIN/text_value_1_ngram",
+          "description": "workspace 9963 + NGRAM phrase on text_value_1 = \"franke-100\"",
+          "completed": 342,
+          "qps": 1.125,
+          "p50_ms": 145.7395,
+          "p95_ms": 287.16450000000003,
+          "p99_ms": 313.74619999999993,
+          "avg_ms": 146.12003216374268,
+          "weight": 1,
+          "expected_row_count": 1000
+        },
+        {
+          "id": "fts_join_q10_tv1_admiral10029_w00ea",
+          "pattern": "FTS+JOIN/text_value_1_ngram",
+          "description": "workspace 00ea + narrower NGRAM phrase on text_value_1 = \"admiral-10029\"",
+          "completed": 308,
+          "qps": 1.013,
+          "p50_ms": 49.9215,
+          "p95_ms": 91.43769999999998,
+          "p99_ms": 102.6709,
+          "avg_ms": 49.11898701298701,
+          "weight": 1,
+          "expected_row_count": 21
+        },
+        {
+          "id": "fts_join_q6_tv4_morissette_w3b4c",
+          "pattern": "FTS+JOIN/text_value_4_ngram",
+          "description": "workspace 3b4c + NGRAM phrase on text_value_4 = \"morissette.test\"",
+          "completed": 304,
+          "qps": 1,
+          "p50_ms": 209.1125,
+          "p95_ms": 367.81724999999994,
+          "p99_ms": 411.76850999999965,
+          "avg_ms": 203.62064473684208,
+          "weight": 1,
+          "expected_row_count": 1000
+        },
+        {
+          "id": "fts_join_q7_tv4_welch_w00ea",
+          "pattern": "FTS+JOIN/text_value_4_ngram",
+          "description": "workspace 00ea + NGRAM phrase on text_value_4 = \"welch.test\"",
+          "completed": 344,
+          "qps": 1.132,
+          "p50_ms": 108.64750000000001,
+          "p95_ms": 261.7537,
+          "p99_ms": 346.11271999999985,
+          "avg_ms": 110.75038372093032,
+          "weight": 1,
+          "expected_row_count": 1000
+        },
+        {
+          "id": "fts_join_q11_tv4_maren_local_w00ea",
+          "pattern": "FTS+JOIN/text_value_4_ngram",
+          "description": "workspace 00ea + higher-selectivity NGRAM phrase on text_value_4 = \"maren.heller\"",
+          "completed": 318,
+          "qps": 1.046,
+          "p50_ms": 9.637,
+          "p95_ms": 12.12835,
+          "p99_ms": 13.629999999999999,
+          "avg_ms": 9.841896226415097,
+          "weight": 1,
+          "expected_row_count": 0
+        },
+        {
+          "id": "fts_join_q8_tv5_royal_w3b4c",
+          "pattern": "FTS+JOIN/text_value_5_ngram",
+          "description": "workspace 3b4c + NGRAM phrase on text_value_5 = \"royal-simonis\"",
+          "completed": 308,
+          "qps": 1.013,
+          "p50_ms": 33.378,
+          "p95_ms": 55.558049999999994,
+          "p99_ms": 59.33195,
+          "avg_ms": 31.444590909090905,
+          "weight": 1,
+          "expected_row_count": 12
+        },
+        {
+          "id": "fts_join_q9_tv5_shelby_wcafd",
+          "pattern": "FTS+JOIN/text_value_5_ngram",
+          "description": "workspace cafd + NGRAM phrase on text_value_5 = \"shelby-torp\"",
+          "completed": 325,
+          "qps": 1.069,
+          "p50_ms": 31.477,
+          "p95_ms": 56.35300000000001,
+          "p99_ms": 69.20155999999997,
+          "avg_ms": 32.21273538461537,
+          "weight": 1,
+          "expected_row_count": 31
+        },
+        {
+          "id": "fts_join_q12_tv5_louise_haley_w00ea",
+          "pattern": "FTS+JOIN/text_value_5_ngram",
+          "description": "workspace 00ea + higher-selectivity NGRAM phrase on text_value_5 = \"louise-haley\"",
+          "completed": 331,
+          "qps": 1.089,
+          "p50_ms": 31.04,
+          "p95_ms": 53.8955,
+          "p99_ms": 59.6936,
+          "avg_ms": 30.142743202416913,
+          "weight": 1,
+          "expected_row_count": 8
+        }
+      ],
+      "concurrency": 10
+    }
+  ]
+}
