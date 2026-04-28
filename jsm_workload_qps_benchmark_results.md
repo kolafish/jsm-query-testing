@@ -8,15 +8,16 @@ This document records the AWS-internal QPS benchmark for the materialized `/User
 - TiDB endpoint: `tici-demo-s3-tidb:4000`
 - Benchmark mode: `shared-pool`, weighted by the materialized query weights
 - Run duration: `600s` per concurrency level, with `15s` pause between levels
-- Current cluster shape: `3 TiDB`, `3 TiKV`, `3 TiFlash`, `1 TiCDC`
-- Current result JSON files: `bench/results/workload_qps_shared_3tidb_c*_600s_20260428.json`
+- Current cluster shape: `6 TiDB`, `4 TiKV`, `3 TiFlash`, `1 TiCDC`
+- Current result JSON files: `bench/results/workload_qps_shared_6tidb4tikv_c*_600s_20260428.json`
 
 ## Run Configurations
 
-| Run | Cluster shape | Default nodegroup | Duration | Result files |
+| Run | Cluster shape | Nodegroups | Duration | Result files |
 | --- | --- | --- | --- | --- |
-| Previous 1 TiDB run | `1 TiDB / 3 TiKV / 3 TiFlash / 1 TiCDC` | `node16c32=3` | `600s` per concurrency | `bench/results/workload_qps_shared_c*_600s_20260428.json` |
-| Current 3 TiDB run | `3 TiDB / 3 TiKV / 3 TiFlash / 1 TiCDC` | `node16c32=4` | `600s` per concurrency | `bench/results/workload_qps_shared_3tidb_c*_600s_20260428.json` |
+| 1 TiDB run | `1 TiDB / 3 TiKV / 3 TiFlash / 1 TiCDC` | `node16c32=3`, `node-tikv=3`, `node-tiflash=3` | `600s` per concurrency | `bench/results/workload_qps_shared_c*_600s_20260428.json` |
+| 3 TiDB run | `3 TiDB / 3 TiKV / 3 TiFlash / 1 TiCDC` | `node16c32=4`, `node-tikv=3`, `node-tiflash=3` | `600s` per concurrency | `bench/results/workload_qps_shared_3tidb_c*_600s_20260428.json` |
+| 6 TiDB / 4 TiKV run | `6 TiDB / 4 TiKV / 3 TiFlash / 1 TiCDC` | `node16c32=7`, `node-tikv=4`, `node-tiflash=3` | `600s` per concurrency | `bench/results/workload_qps_shared_6tidb4tikv_c*_600s_20260428.json` |
 
 ## Result Validation
 
@@ -24,11 +25,66 @@ All checked result files met the expected benchmark correctness criteria:
 
 | Run set | Files checked | Query patterns per file | Errors | Row-count mismatches | Zero-completed query patterns |
 | --- | ---: | ---: | ---: | ---: | ---: |
+| 6 TiDB / 4 TiKV 600s | 5 | 49 | 0 | 0 | 0 |
 | 3 TiDB 600s | 5 | 49 | 0 | 0 | 0 |
 | 1 TiDB 600s | 5 | 49 | 0 | 0 | 0 |
 | 1 TiDB 60s smoke ramp | 5 | 49 | 0 | 0 | 0 |
 
-## 3 TiDB 10-Minute Run
+## 6 TiDB / 4 TiKV 10-Minute Run
+
+| Concurrency | Completed | QPS | Avg ms | P50 ms | P95 ms | P99 ms | Errors | Mismatches |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 50 | 9,533,013 | 15884.60 | 3.15 | 1.56 | 8.26 | 19.55 | 0 | 0 |
+| 100 | 11,528,809 | 19209.75 | 5.20 | 1.76 | 15.07 | 54.23 | 0 | 0 |
+| 200 | 13,863,110 | 23090.57 | 8.65 | 3.65 | 28.27 | 91.28 | 0 | 0 |
+| 350 | 14,568,397 | 24262.40 | 14.41 | 6.49 | 50.34 | 129.64 | 0 | 0 |
+| 500 | 14,613,995 | 24322.82 | 20.52 | 11.21 | 65.53 | 146.83 | 0 | 0 |
+
+## Findings
+
+- Peak throughput in the current run was at `500` clients: `24322.82 QPS`; `350` clients was effectively the same at `24262.40 QPS`.
+- Compared with the 3 TiDB run, QPS improved by `1.31x` to `1.65x` depending on concurrency.
+- Compared with the 1 TiDB run, the current run improved QPS by `2.81x` to `6.14x` depending on concurrency.
+- New TiDB connections were evenly distributed across six TiDB pods before the run: `103 / 94 / 98 / 102 / 91 / 112` over 600 connection attempts.
+- This run started soon after adding the fourth TiKV. At the `100` client check, the new TiKV had begun receiving regions and leaders but was not yet balanced with the older TiKV nodes. Treat this run as "scale-out immediately followed by benchmark", not a post-rebalance steady-state TiKV result.
+- During the `100` client check, TiDB CPU was spread across all six TiDB pods, TiFlash CPU was active on all three TiFlash pods, and the benchmark pod was around `1.1` CPU core. The benchmark client was not CPU-bound.
+
+## QPS Comparison
+
+| Concurrency | 1 TiDB / 3 TiKV QPS | 3 TiDB / 3 TiKV QPS | 6 TiDB / 4 TiKV QPS | vs 3 TiDB | 6 TiDB P95 ms |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 50 | 5661.59 | 12163.00 | 15884.60 | 1.31x | 8.26 |
+| 100 | 5525.04 | 14943.23 | 19209.75 | 1.29x | 15.07 |
+| 200 | 5001.71 | 15373.72 | 23090.57 | 1.50x | 28.27 |
+| 350 | 4362.19 | 15139.13 | 24262.40 | 1.60x | 50.34 |
+| 500 | 3959.89 | 14710.67 | 24322.82 | 1.65x | 65.53 |
+
+## Query Mix At 500 Clients
+
+| Pattern | Queries | Weight | Completed | QPS |
+| --- | ---: | ---: | ---: | ---: |
+| Schema/metadata queries | 27 | 2,322,110 | 14,060,967 | 23402.38 |
+| obj_new queries | 15 | 50,297 | 303,926 | 505.84 |
+| obj_relationship (original) queries | 2 | 20,803 | 125,760 | 209.31 |
+| obj_relationship_new queries | 3 | 19,553 | 117,994 | 196.38 |
+| FTS (MATCH) | 2 | 863 | 5,348 | 8.90 |
+
+## Slowest Queries At 500 Clients
+
+| Query | Pattern | Completed | QPS | P50 ms | P95 ms | P99 ms |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| obj_new_queries_q14 | obj_new queries | 2,672 | 4.45 | 1212.02 | 1744.03 | 1919.91 |
+| obj_new_queries_q11 | obj_new queries | 3,437 | 5.72 | 1216.34 | 1734.39 | 1953.89 |
+| obj_new_queries_q12 | obj_new queries | 3,229 | 5.37 | 1212.85 | 1734.03 | 1930.50 |
+| obj_new_queries_q15 | obj_new queries | 2,518 | 4.19 | 268.47 | 1077.34 | 1668.82 |
+| obj_new_queries_q10 | obj_new queries | 5,297 | 8.82 | 225.22 | 899.34 | 1619.81 |
+| fts_match_q2 | FTS (MATCH) | 2,659 | 4.43 | 87.36 | 290.01 | 480.09 |
+| obj_new_queries_q13 | obj_new queries | 2,712 | 4.51 | 87.40 | 280.12 | 463.30 |
+| obj_new_queries_q5 | obj_new queries | 10,133 | 16.86 | 150.81 | 259.84 | 308.77 |
+| fts_match_q1 | FTS (MATCH) | 2,689 | 4.47 | 42.19 | 255.56 | 419.14 |
+| obj_relationship_new_queries_q4 | obj_relationship_new queries | 8,223 | 13.69 | 135.42 | 238.84 | 285.12 |
+
+## Previous 3 TiDB 10-Minute Run
 
 | Concurrency | Completed | QPS | Avg ms | P50 ms | P95 ms | P99 ms | Errors | Mismatches |
 | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -37,49 +93,6 @@ All checked result files met the expected benchmark correctness criteria:
 | 200 | 9,225,998 | 15373.72 | 13.00 | 8.54 | 35.41 | 72.93 | 0 | 0 |
 | 350 | 9,084,878 | 15139.13 | 23.11 | 15.47 | 63.16 | 126.77 | 0 | 0 |
 | 500 | 8,831,063 | 14710.67 | 33.95 | 23.60 | 90.83 | 172.11 | 0 | 0 |
-
-## Findings
-
-- Peak throughput in the 3 TiDB run was at `200` clients: `15373.72 QPS`.
-- `100`, `200`, and `350` clients all stayed near `15k QPS`; `500` clients dropped slightly to `14710.67 QPS` while tail latency continued to increase.
-- Compared with the 1 TiDB run, QPS improved by `2.15x` to `3.71x` depending on concurrency, and p95 latency dropped materially at every concurrency level.
-- The Kubernetes service distributes new TiDB connections across all three TiDB pods. A 300-connection sample returned `tidb-0:102`, `tidb-1:109`, `tidb-2:89`; during benchmark, `cluster_processlist` at `200` clients showed `80 / 70 / 56` root sessions across the three TiDB pods.
-- During the `200` client run, a point-in-time `kubectl top pod` snapshot showed TiDB around `12.8 / 11.7 / 10.4` CPU cores, TiFlash around `7.6 / 7.2 / 6.3` CPU cores, the hottest TiKV pods around `8.5` CPU cores, and the benchmark pod around `0.72` CPU core. The benchmark client was not CPU-bound.
-
-## 1 TiDB vs 3 TiDB
-
-| Concurrency | 1 TiDB QPS | 3 TiDB QPS | QPS ratio | 1 TiDB P95 ms | 3 TiDB P95 ms |
-| ---: | ---: | ---: | ---: | ---: | ---: |
-| 50 | 5661.59 | 12163.00 | 2.15x | 24.75 | 9.30 |
-| 100 | 5525.04 | 14943.23 | 2.70x | 46.56 | 18.83 |
-| 200 | 5001.71 | 15373.72 | 3.07x | 101.44 | 35.41 |
-| 350 | 4362.19 | 15139.13 | 3.47x | 193.28 | 63.16 |
-| 500 | 3959.89 | 14710.67 | 3.71x | 297.36 | 90.83 |
-
-## Query Mix At 500 Clients
-
-| Pattern | Queries | Weight | Completed | QPS |
-| --- | ---: | ---: | ---: | ---: |
-| Schema/metadata queries | 27 | 2,322,110 | 8,496,554 | 14153.44 |
-| obj_new queries | 15 | 50,297 | 183,750 | 306.09 |
-| obj_relationship (original) queries | 2 | 20,803 | 75,933 | 126.49 |
-| obj_relationship_new queries | 3 | 19,553 | 71,614 | 119.29 |
-| FTS (MATCH) | 2 | 863 | 3,212 | 5.35 |
-
-## Slowest Queries At 500 Clients
-
-| Query | Pattern | Completed | QPS | P50 ms | P95 ms | P99 ms |
-| --- | --- | ---: | ---: | ---: | ---: | ---: |
-| obj_new_queries_q11 | obj_new queries | 2,064 | 3.44 | 623.06 | 1067.94 | 1279.82 |
-| obj_new_queries_q12 | obj_new queries | 1,933 | 3.22 | 608.33 | 1023.02 | 1210.78 |
-| obj_new_queries_q14 | obj_new queries | 1,577 | 2.63 | 604.49 | 1004.27 | 1243.04 |
-| obj_new_queries_q10 | obj_new queries | 3,224 | 5.37 | 191.38 | 485.25 | 701.40 |
-| obj_new_queries_q15 | obj_new queries | 1,557 | 2.59 | 201.19 | 477.23 | 791.25 |
-| schema_metadata_queries_q3 | Schema/metadata queries | 229,502 | 382.30 | 88.33 | 293.98 | 459.10 |
-| fts_match_q2 | FTS (MATCH) | 1,594 | 2.65 | 44.89 | 162.38 | 246.86 |
-| schema_metadata_queries_q17 | Schema/metadata queries | 12,192 | 20.31 | 47.16 | 158.09 | 268.55 |
-| obj_new_queries_q5 | obj_new queries | 6,156 | 10.26 | 50.26 | 153.03 | 245.34 |
-| obj_new_queries_q13 | obj_new queries | 1,651 | 2.75 | 45.36 | 149.92 | 232.78 |
 
 ## Previous 1 TiDB 10-Minute Run
 
@@ -104,4 +117,4 @@ All checked result files met the expected benchmark correctness criteria:
 ## Notes
 
 - The shared-pool query mix is weight-driven, so the workload is dominated by schema/metadata queries. Use `per-query-pool` mode if each query should have independent worker pressure.
-- The 3 TiDB run shifts the saturation point upward: QPS stays near `15k` through `350` clients, while the 1 TiDB run started degrading after `50-100` clients.
+- Scaling TiDB continues to move the saturation point upward for this workload. The 6 TiDB run stayed near or above `23k QPS` from `200` through `500` clients.

@@ -16,11 +16,11 @@ export KUBECONFIG=/home/ec2-user/.kube/atlassian-jsm-tici
 
 ### 启动集群
 
-下面命令只启动新集群的 EC2 nodegroup，不会重新建表或恢复数据。当前压测规模需要 `4` 台 default 节点来承载 `3` 个 TiDB pod。
+下面命令只启动新集群的 EC2 nodegroup，不会重新建表或恢复数据。当前压测规模需要 `7` 台 default 节点来承载 `6` 个 TiDB pod 和监控/压测客户端等通用组件。
 
 ```bash
-eksctl scale nodegroup --cluster Atlassian-jsm-tici --name node16c32 --nodes 4 --nodes-min 0 --nodes-max 20 --region us-east-2
-eksctl scale nodegroup --cluster Atlassian-jsm-tici --name node-tikv --nodes 3 --nodes-min 0 --nodes-max 20 --region us-east-2
+eksctl scale nodegroup --cluster Atlassian-jsm-tici --name node16c32 --nodes 7 --nodes-min 0 --nodes-max 20 --region us-east-2
+eksctl scale nodegroup --cluster Atlassian-jsm-tici --name node-tikv --nodes 4 --nodes-min 0 --nodes-max 20 --region us-east-2
 eksctl scale nodegroup --cluster Atlassian-jsm-tici --name node-tiflash --nodes 3 --nodes-min 0 --nodes-max 20 --region us-east-2
 
 kubectl -n tidb-cluster get pods
@@ -74,8 +74,8 @@ Grafana LoadBalancer:
 | Component | Replicas | Status |
 |---|---:|---|
 | PD | 1 | Running |
-| TiDB | 3 | Running |
-| TiKV | 3 | Running |
+| TiDB | 6 | Running |
+| TiKV | 4 | Running |
 | TiFlash | 3 | Running |
 | TiCDC | 1 | Running |
 | TiCI meta | 1 | Running |
@@ -85,15 +85,15 @@ Grafana LoadBalancer:
 
 | Node group | Instance type | 当前数量 | 用途 |
 |---|---|---:|---|
-| `node16c32` | `c8i.4xlarge` | 4 | TiDB / PD / TiCI / TiCDC / monitor / benchmark client |
-| `node-tikv` | `c8i.4xlarge` | 3 | TiKV |
+| `node16c32` | `c8i.4xlarge` | 7 | TiDB / PD / TiCI / TiCDC / monitor / benchmark client |
+| `node-tikv` | `c8i.4xlarge` | 4 | TiKV |
 | `node-tiflash` | `m8i.4xlarge` | 3 | TiFlash |
 
 TiDB service 连接分布验证：
 
 | Method | Result |
 |---|---|
-| 300 次新连接访问 `tici-demo-s3-tidb:4000` 并查询 `@@hostname` | `tidb-0:102`, `tidb-1:109`, `tidb-2:89` |
+| 600 次新连接访问 `tici-demo-s3-tidb:4000` 并查询 `@@hostname` | `tidb-0:103`, `tidb-1:94`, `tidb-2:98`, `tidb-3:102`, `tidb-4:91`, `tidb-5:112` |
 
 数据恢复和索引状态：
 
