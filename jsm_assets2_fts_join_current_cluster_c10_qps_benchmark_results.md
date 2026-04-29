@@ -40,6 +40,42 @@ Latest-run findings:
 - At concurrency `50`, `LIKE + JOIN` was `6.31x` the throughput of `MATCH + JOIN`.
 - `MATCH + JOIN` had much higher tail latency in this run. Several MATCH warmup queries took about `8.5s` to `10.6s`, and the benchmark p99 reached `10.777s` at concurrency `50`.
 
+## TiDB mpp-10287 Image Rerun
+
+After the latest run above, TiDB was temporarily changed from:
+
+- Previous TiDB image: `gcr.io/pingcap-public/dbaas/tidb:v8.5.6-20260423-93f2dfb`
+- Test TiDB image: `gcr.io/pingcap-public/dbaas/tidb:v8.5.6-20260410-mpp-10287-dev`
+
+Only the `MATCH + JOIN` corpus was rerun. TiKV, TiFlash, FULLTEXT indexes, corpus, session settings, and cluster size stayed the same.
+
+- Result JSON: [bench/results/fts_join_match_tidb_mpp10287_10tidb6tikv30tiflash_c10_30_50_5min_20260429.json](/Users/jin/Desktop/jsm-query-latency-tracking/bench/results/fts_join_match_tidb_mpp10287_10tidb6tikv30tiflash_c10_30_50_5min_20260429.json)
+- Validation: `0` warmup row-count mismatches, `0` execution errors, `0` benchmark row-count mismatches, and `0` zero-completed query patterns.
+- Rollback target after validation: `gcr.io/pingcap-public/dbaas/tidb:v8.5.6-20260423-93f2dfb`
+
+| Concurrency | Previous MATCH QPS | mpp-10287 MATCH QPS | Speedup | Previous p95 | mpp-10287 p95 | Previous p99 | mpp-10287 p99 |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 10 | `15.512` | `75.025` | `4.84x` | `1,541.900ms` | `693.192ms` | `1,922.084ms` | `777.942ms` |
+| 30 | `20.723` | `119.697` | `5.78x` | `3,856.806ms` | `1,099.735ms` | `5,387.293ms` | `1,274.730ms` |
+| 50 | `21.062` | `123.316` | `5.85x` | `6,877.328ms` | `1,334.778ms` | `10,776.704ms` | `1,540.078ms` |
+
+At concurrency `50`, the mpp-10287 image brought `MATCH + JOIN` close to the same throughput range as `LIKE + JOIN` from the previous section: `123.316 QPS` vs `132.832 QPS`.
+
+### mpp-10287 Per Query Result At Concurrency 50
+
+| Query | MATCH QPS | MATCH p50 | MATCH p95 | MATCH p99 |
+| --- | ---: | ---: | ---: | ---: |
+| `q1` `text_value_7 = Fagor` | `12.422` | `1,331.304ms` | `1,613.265ms` | `1,790.365ms` |
+| `q4` `text_value_1 ~ "admiral-100"` | `12.223` | `335.138ms` | `542.563ms` | `680.642ms` |
+| `q5` `text_value_1 ~ "franke-100"` | `12.266` | `346.741ms` | `553.009ms` | `667.636ms` |
+| `q10` `text_value_1 ~ "admiral-10029"` | `12.067` | `196.064ms` | `346.504ms` | `452.545ms` |
+| `q6` `text_value_4 ~ "morissette.test"` | `12.402` | `373.758ms` | `621.855ms` | `757.792ms` |
+| `q7` `text_value_4 ~ "welch.test"` | `12.073` | `196.988ms` | `355.987ms` | `466.102ms` |
+| `q11` `text_value_4 ~ "maren.heller"` | `12.409` | `198.070ms` | `349.475ms` | `464.491ms` |
+| `q8` `text_value_5 ~ "royal-simonis"` | `12.535` | `362.473ms` | `586.460ms` | `747.763ms` |
+| `q9` `text_value_5 ~ "shelby-torp"` | `12.342` | `340.835ms` | `594.616ms` | `746.558ms` |
+| `q12` `text_value_5 ~ "louise-haley"` | `12.578` | `197.362ms` | `352.460ms` | `478.851ms` |
+
 ## Per Query Result At Concurrency 50
 
 | Query | LIKE QPS | LIKE p95 | LIKE p99 | MATCH QPS | MATCH p95 | MATCH p99 |
