@@ -1,50 +1,137 @@
 # jsm_assets4 Query Sample Run vs PingCAP Report
 
-Run time: 2026-05-08T07:17:04.390471+00:00
+Run time: 2026-05-08T08:32:13.548172+00:00
 
 Source report: `/Users/jin/Downloads/full_report_for_pingcap.md`.
 
 Notes:
 - The source report contains normalized SQL with placeholders, so this run materialized representative parameter sets from `jsm_assets4`.
-- Each runnable query uses up to three sampled parameter sets. Rows are fetched to the client; latency is client-observed SQL execution plus fetch time.
+- Each runnable query uses up to 10 sampled parameter sets. Rows are fetched to the client; latency is client-observed SQL execution plus fetch time.
 - Wide object queries are represented as `SELECT o.*` / `SELECT obj.*`; predicate, ordering, and limit shape are preserved.
 - Queries whose referenced tables are absent from `jsm_assets4` are marked skipped.
+- Grafana: [http://a2e41aa49d08647d1b55ecd7b146bbf6-38f9eda417a300aa.elb.us-east-2.amazonaws.com:3000](http://a2e41aa49d08647d1b55ecd7b146bbf6-38f9eda417a300aa.elb.us-east-2.amazonaws.com:3000)
 
 ## Summary
 
 | Query | Source avg | Source max | Samples | OK | Rows avg | jsm_assets4 avg | jsm_assets4 p50 | jsm_assets4 max | Comparison | Status |
 |---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|
 | 1 | 2.7ms | 518.3ms | 0 | 0 | None | None | None | None | n/a | skipped |
-| 2 | 320.8ms | 14332.3ms | 3 | 3 | 600 | 297.2 | 294.0 | 307.5 | 1.08x faster | ok |
+| 2 | 320.8ms | 14332.3ms | 10 | 10 | 600 | 341.1 | 327.0 | 421.8 | 1.06x source | ok |
 | 3 | 36.3ms | 8652.6ms | 0 | 0 | None | None | None | None | n/a | skipped |
-| 4 | 11882.9ms | 34102.7ms | 3 | 3 | 1000 | 516.5 | 520.3 | 535.5 | 23.01x faster | ok |
-| 5 | 29101.7ms | 60034.6ms | 3 | 3 | 1000 | 545.8 | 511.6 | 622.1 | 53.32x faster | ok |
-| 6 | 44.8ms | 927.9ms | 3 | 3 | 50 | 615.2 | 586.2 | 751.3 | 13.73x source | ok |
-| 7 | 8.7ms | 487.0ms | 3 | 3 | 35 | 256.7 | 251.5 | 267.2 | 29.51x source | ok |
-| 8 | 16983.6ms | 32291.9ms | 3 | 3 | 85.3 | 7311.3 | 8295.4 | 10450.6 | 2.32x faster | ok |
-| 9 | 28.1ms | 10778.1ms | 3 | 3 | 24 | 264.6 | 269.0 | 270.2 | 9.42x source | ok |
-| 10 | 41204.1ms | 51112.0ms | 3 | 3 | 863.7 | 4044.0 | 4201.1 | 5189.5 | 10.19x faster | ok |
-| 11 | 17.0ms | 228.7ms | 3 | 3 | 1 | 259.7 | 258.1 | 263.1 | 15.28x source | ok |
+| 4 | 11882.9ms | 34102.7ms | 10 | 10 | 1000 | 433.3 | 457.9 | 546.0 | 27.42x faster | ok |
+| 5 | 29101.7ms | 60034.6ms | 10 | 10 | 1000 | 549.2 | 487.7 | 875.9 | 52.99x faster | ok |
+| 6 | 44.8ms | 927.9ms | 10 | 10 | 50 | 358.6 | 283.6 | 753.3 | 8.00x source | ok |
+| 7 | 8.7ms | 487.0ms | 10 | 10 | 35 | 270.6 | 256.2 | 309.0 | 31.10x source | ok |
+| 8 | 16983.6ms | 32291.9ms | 10 | 10 | 35.5 | 1675.0 | 1285.7 | 3959.4 | 10.14x faster | ok |
+| 9 | 28.1ms | 10778.1ms | 10 | 10 | 24 | 262.2 | 256.0 | 309.3 | 9.33x source | ok |
+| 10 | 41204.1ms | 51112.0ms | 10 | 10 | 1000 | 1028.3 | 894.4 | 2559.3 | 40.07x faster | ok |
+| 11 | 17.0ms | 228.7ms | 10 | 10 | 1 | 275.8 | 261.1 | 306.6 | 16.22x source | ok |
 | 12 | 10.2ms | 473.9ms | 0 | 0 | None | None | None | None | n/a | skipped |
-| 13 | 29.8ms | 6157.8ms | 3 | 3 | 175 | 272.7 | 257.1 | 304.1 | 9.15x source | ok |
-| 14 | 28809.4ms | 45421.2ms | 3 | 3 | 1000 | 396.6 | 415.1 | 428.4 | 72.64x faster | ok |
-| 15 | 24650.8ms | 42060.9ms | 3 | 3 | 1000 | 371.2 | 365.4 | 383.9 | 66.41x faster | ok |
-| 16 | 47800.9ms | 60019.8ms | 3 | 3 | 1000 | 2181.1 | 2545.5 | 2584.0 | 21.92x faster | ok |
-| 17 | 29564.9ms | 37139.7ms | 3 | 3 | 1000 | 577.0 | 467.9 | 801.9 | 51.24x faster | ok |
-| 18 | 3.7ms | 325.7ms | 3 | 3 | 5 | 262.3 | 263.8 | 278.3 | 70.89x source | ok |
-| 19 | 39798.6ms | 60018.5ms | 3 | 3 | 1000 | 384.7 | 386.1 | 417.7 | 103.45x faster | ok |
-| 20 | 17.8ms | 5900.3ms | 3 | 3 | 1 | 284.9 | 280.6 | 306.6 | 16.01x source | ok |
-| 21 | 23577.6ms | 30859.8ms | 3 | 3 | 1000 | 4802.1 | 854.3 | 13053.8 | 4.91x faster | ok |
-| 22 | 25.9ms | 233.2ms | 3 | 3 | 20 | 352.1 | 272.2 | 512.2 | 13.59x source | ok |
-| 23 | 33550.1ms | 35378.6ms | 3 | 3 | 863.7 | 406.0 | 359.2 | 513.2 | 82.64x faster | ok |
-| 24 | 60085.2ms | 60085.2ms | 3 | 3 | 1000 | 1754.4 | 1724.6 | 1906.4 | 34.25x faster | ok |
-| 25 | 59691.1ms | 59691.1ms | 3 | 3 | 1000 | 1467.3 | 1007.5 | 2401.1 | 40.68x faster | ok |
+| 13 | 29.8ms | 6157.8ms | 10 | 10 | 175 | 276.6 | 259.0 | 353.9 | 9.28x source | ok |
+| 14 | 28809.4ms | 45421.2ms | 10 | 10 | 1000 | 325.8 | 325.9 | 341.3 | 88.43x faster | ok |
+| 15 | 24650.8ms | 42060.9ms | 10 | 10 | 1000 | 330.5 | 332.6 | 351.7 | 74.59x faster | ok |
+| 16 | 47800.9ms | 60019.8ms | 10 | 10 | 1000 | 1294.8 | 1255.3 | 1544.5 | 36.92x faster | ok |
+| 17 | 29564.9ms | 37139.7ms | 10 | 10 | 1000 | 434.2 | 407.6 | 650.1 | 68.09x faster | ok |
+| 18 | 3.7ms | 325.7ms | 10 | 10 | 5 | 248.4 | 244.9 | 265.6 | 67.14x source | ok |
+| 19 | 39798.6ms | 60018.5ms | 10 | 10 | 1000 | 351.5 | 340.3 | 394.4 | 113.23x faster | ok |
+| 20 | 17.8ms | 5900.3ms | 10 | 10 | 1 | 264.1 | 249.9 | 332.3 | 14.84x source | ok |
+| 21 | 23577.6ms | 30859.8ms | 10 | 10 | 1000 | 650.5 | 493.1 | 1598.1 | 36.25x faster | ok |
+| 22 | 25.9ms | 233.2ms | 10 | 10 | 20 | 300.9 | 275.5 | 525.3 | 11.62x source | ok |
+| 23 | 33550.1ms | 35378.6ms | 10 | 10 | 1000 | 400.3 | 406.4 | 471.1 | 83.81x faster | ok |
+| 24 | 60085.2ms | 60085.2ms | 10 | 10 | 1000 | 1724.5 | 1736.9 | 1907.7 | 34.84x faster | ok |
+| 25 | 59691.1ms | 59691.1ms | 10 | 10 | 1000 | 1563.7 | 1423.7 | 2997.0 | 38.17x faster | ok |
 
 ## Skipped Queries
 
 - Query #1: cdm_type_obj_type_attr is not present in jsm_assets4.
 - Query #3: cdm_type_obj_type, cdm_type_obj_schema, and obj_schema_owner are not present in jsm_assets4.
 - Query #12: cdm_type_ref_type, cdm_type_obj_schema, and obj_schema_owner are not present in jsm_assets4.
+
+## Concurrent Runs
+
+Worker assignment is per query class. For concurrency 22, each runnable query class gets one worker. For concurrency 69, workers are assigned round-robin across the 22 runnable query classes.
+
+| Concurrency | Query classes | Duration s | Ops | OK | Errors | QPS | Avg ms | P95 ms | Max ms |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 22 | 22 | 120 | 4207 | 4207 | 0 | 34.68 | 625.5 | 1589.4 | 5488.3 |
+| 69 | 22 | 120 | 5103 | 5103 | 0 | 41.64 | 1622.7 | 4279.8 | 12496.4 |
+
+### Grafana / Prometheus Resource Metrics
+
+CPU and memory values below are pulled from the Grafana Prometheus datasource for each run window. CPU capacity percentage assumes the current scale: TiDB 3 x 16 cores, TiKV 4 x 16 cores, TiFlash 6 x 16 cores.
+
+#### Concurrency 22
+
+- Window: `2026-05-08T08:27:01.518918+00:00` to `2026-05-08T08:29:02.817925+00:00`
+- Grafana time range: [http://a2e41aa49d08647d1b55ecd7b146bbf6-38f9eda417a300aa.elb.us-east-2.amazonaws.com:3000?from=1778228821519&to=1778228942817](http://a2e41aa49d08647d1b55ecd7b146bbf6-38f9eda417a300aa.elb.us-east-2.amazonaws.com:3000?from=1778228821519&to=1778228942817)
+
+| Component | Replicas | CPU avg cores | CPU max cores | CPU max % capacity | Mem avg GiB | Mem max GiB | Note |
+|---|---:|---:|---:|---:|---:|---:|---|
+| tidb | 3 | 4.05 | 5.80 | 12.1% | 10.82 | 11.21 |  |
+| tikv | 4 | 20.91 | 29.27 | 45.7% | 73.35 | 73.62 |  |
+| tiflash | 6 | 44.01 | 55.71 | 58.0% | 40.40 | 44.31 | TiFlash proxy process CPU metric |
+
+| Query | Workers | Ops | OK | Errors | Avg ms | P95 ms | Max ms | Avg rows |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 2 | 1 | 266 | 266 | 0 | 447.6 | 745.9 | 1172.4 | 600 |
+| 4 | 1 | 134 | 134 | 0 | 895.4 | 1429.2 | 1879.3 | 1000 |
+| 5 | 1 | 121 | 121 | 0 | 991.6 | 1471.0 | 1920.9 | 1000 |
+| 6 | 1 | 268 | 268 | 0 | 444.3 | 740.4 | 967.9 | 50 |
+| 7 | 1 | 324 | 324 | 0 | 367.5 | 669.8 | 949.3 | 35 |
+| 8 | 1 | 44 | 44 | 0 | 2724.3 | 5270.5 | 5488.3 | 38.5 |
+| 9 | 1 | 326 | 326 | 0 | 366.0 | 646.5 | 1058.7 | 24 |
+| 10 | 1 | 118 | 118 | 0 | 1011.8 | 1389.9 | 1534.5 | 1000 |
+| 11 | 1 | 284 | 284 | 0 | 419.1 | 723.5 | 991.8 | 1 |
+| 13 | 1 | 318 | 318 | 0 | 375.3 | 667.9 | 894.8 | 175 |
+| 14 | 1 | 157 | 157 | 0 | 764.2 | 1254.8 | 1768.5 | 1000 |
+| 15 | 1 | 156 | 156 | 0 | 769.1 | 1263.7 | 1690.2 | 1000 |
+| 16 | 1 | 69 | 69 | 0 | 1737.3 | 2122.4 | 2296.6 | 1000 |
+| 17 | 1 | 149 | 149 | 0 | 805.3 | 1207.2 | 1780.7 | 1000 |
+| 18 | 1 | 332 | 332 | 0 | 358.6 | 648.0 | 1066.7 | 5 |
+| 19 | 1 | 157 | 157 | 0 | 764.2 | 1220.4 | 1366.7 | 1000 |
+| 20 | 1 | 328 | 328 | 0 | 363.0 | 647.3 | 890.4 | 1 |
+| 21 | 1 | 97 | 97 | 0 | 1237.0 | 1913.5 | 2226.1 | 1000 |
+| 22 | 1 | 273 | 273 | 0 | 436.0 | 757.6 | 966.5 | 20 |
+| 23 | 1 | 148 | 148 | 0 | 810.7 | 1263.3 | 1788.3 | 1000 |
+| 24 | 1 | 70 | 70 | 0 | 1718.7 | 2220.8 | 2493.1 | 1000 |
+| 25 | 1 | 68 | 68 | 0 | 1764.0 | 2197.1 | 2565.4 | 1000 |
+
+#### Concurrency 69
+
+- Window: `2026-05-08T08:29:36.934331+00:00` to `2026-05-08T08:31:39.482223+00:00`
+- Grafana time range: [http://a2e41aa49d08647d1b55ecd7b146bbf6-38f9eda417a300aa.elb.us-east-2.amazonaws.com:3000?from=1778228976934&to=1778229099482](http://a2e41aa49d08647d1b55ecd7b146bbf6-38f9eda417a300aa.elb.us-east-2.amazonaws.com:3000?from=1778228976934&to=1778229099482)
+
+| Component | Replicas | CPU avg cores | CPU max cores | CPU max % capacity | Mem avg GiB | Mem max GiB | Note |
+|---|---:|---:|---:|---:|---:|---:|---|
+| tidb | 3 | 5.99 | 8.47 | 17.6% | 13.15 | 14.82 |  |
+| tikv | 4 | 25.03 | 32.80 | 51.3% | 73.66 | 74.56 |  |
+| tiflash | 6 | 56.35 | 76.71 | 79.9% | 49.45 | 57.42 | TiFlash proxy process CPU metric |
+
+| Query | Workers | Ops | OK | Errors | Avg ms | P95 ms | Max ms | Avg rows |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 2 | 4 | 461 | 461 | 0 | 1035.7 | 1751.1 | 2473.3 | 600 |
+| 4 | 4 | 161 | 161 | 0 | 2974.6 | 5348.3 | 6800.7 | 1000 |
+| 5 | 4 | 144 | 144 | 0 | 3314.6 | 5150.1 | 5849.4 | 1000 |
+| 6 | 3 | 352 | 352 | 0 | 1015.3 | 1711.8 | 2085.5 | 50 |
+| 7 | 3 | 415 | 415 | 0 | 864.0 | 1528.9 | 1836.6 | 35 |
+| 8 | 3 | 63 | 63 | 0 | 5776.8 | 10518.2 | 12496.4 | 35.5 |
+| 9 | 3 | 407 | 407 | 0 | 881.5 | 1525.7 | 1826.9 | 24 |
+| 10 | 3 | 137 | 137 | 0 | 2630.7 | 3442.1 | 3804.3 | 1000 |
+| 11 | 3 | 374 | 374 | 0 | 957.2 | 1611.3 | 2071.2 | 1 |
+| 13 | 3 | 399 | 399 | 0 | 899.6 | 1688.0 | 2503.2 | 175 |
+| 14 | 3 | 114 | 114 | 0 | 3189.2 | 5271.9 | 5958.1 | 1000 |
+| 15 | 3 | 105 | 105 | 0 | 3429.4 | 7115.7 | 8412.1 | 1000 |
+| 16 | 3 | 93 | 93 | 0 | 3846.5 | 5257.0 | 6067.2 | 1000 |
+| 17 | 3 | 147 | 147 | 0 | 2467.9 | 3225.0 | 3503.5 | 1000 |
+| 18 | 3 | 425 | 425 | 0 | 846.1 | 1508.5 | 1831.6 | 5 |
+| 19 | 3 | 126 | 126 | 0 | 2864.7 | 4718.5 | 6554.9 | 1000 |
+| 20 | 3 | 420 | 420 | 0 | 854.5 | 1516.9 | 1830.2 | 1 |
+| 21 | 3 | 66 | 66 | 0 | 5511.9 | 8901.5 | 9842.9 | 1000 |
+| 22 | 3 | 360 | 360 | 0 | 995.6 | 1677.2 | 2074.5 | 20 |
+| 23 | 3 | 147 | 147 | 0 | 2448.7 | 3358.8 | 3662.9 | 1000 |
+| 24 | 3 | 91 | 91 | 0 | 3992.6 | 5036.1 | 5127.6 | 1000 |
+| 25 | 3 | 96 | 96 | 0 | 3771.3 | 5306.8 | 5928.0 | 1000 |
+
 
 ## Per-Query Details
 
@@ -65,15 +152,22 @@ Notes:
 
 | Sample | Params | Rows | Latency ms | Status | Error |
 |---|---|---:|---:|---|---|
-| s1 | workspace=9963b35f-9397-48ec-9403-adab57aef265, object_ids=25 | 600 | 294.0 | ok |  |
-| s2 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, object_ids=25 | 600 | 307.5 | ok |  |
-| s3 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, object_ids=25 | 600 | 290.0 | ok |  |
+| s1 | workspace=9963b35f-9397-48ec-9403-adab57aef265, object_ids=25 | 600 | 288.3 | ok |  |
+| s2 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, object_ids=25 | 600 | 311.6 | ok |  |
+| s3 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, object_ids=25 | 600 | 304.6 | ok |  |
+| s4 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, object_ids=25 | 600 | 359.4 | ok |  |
+| s5 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, object_ids=25 | 600 | 317.1 | ok |  |
+| s6 | workspace=183afe88-bcf4-48a6-a9ef-65420b7b819c, object_ids=25 | 600 | 314.9 | ok |  |
+| s7 | workspace=718915aa-f8e9-4bbc-b1dc-ba720f1296e2, object_ids=25 | 600 | 340.3 | ok |  |
+| s8 | workspace=23f639f1-fae8-48b0-8518-da3b7c80be57, object_ids=25 | 600 | 336.9 | ok |  |
+| s9 | workspace=82e47cda-f6dc-4999-b9fa-dc813435ec51, object_ids=25 | 600 | 416.1 | ok |  |
+| s10 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, object_ids=25 | 600 | 421.8 | ok |  |
 
 <details>
 <summary>Representative SQL</summary>
 
 ```sql
-SELECT obj_relationship.workspace_id, obj_relationship.partition_id, obj_relationship.id, obj_relationship.object_id, obj_relationship.referenced_object_id, obj_relationship.object_type_attribute_id, obj_relationship.object_type_id, obj_relationship.referenced_object_type_id FROM obj_relationship_new obj_relationship WHERE obj_relationship.object_id IN (0x3f40fcbc926f42b5bc20da730309ad2b, 0xdda88265669e4c48b0e6e00af26a20c4, 0xb860827c2cf8478cb3c2c115ae3bf4fa, 0xe72f1c09f4bf481c9bb3c8787ecfdf61, 0x0477290f213745cba2e49a3b9c1063a1, 0x938c72ebbd0247f28af2954b87d4273a, 0xffeb740095474907b5a72a955a278dad, 0xa6f6de4e2a3849f696714170101b496e, 0x5089b29d482041bbae70c5a77ce430a0, 0xa2229702ab934cf6b294af60a9388f78, 0x09c34f9d3286446b932bda694bc00661, 0x3e3cdffbb97744aaafbd5ad8e6969184, 0xf43118e74278426895fae3b56ca33809, 0xe526c08a86454a008df483c9cc8584b6, 0x8421fd2b2d334669b1a8a4bbb0cd68ac, 0x3393824a3c524fe190a2fd9b63827d5d, 0x6a2b115700b443f69fc96e5240d7e731, 0x14e5fc0828a44d3fbe5613d3fd959d77, 0xa9ecfe3fd9924e5da0cc5b4cc7c7a2ad, 0x6c41d3d4711f464e915bbd068c8aea04, 0x45ca7e3ea94945258d3d2810999d1691, 0xeb2be313812541ab9ed12d1aeff51da9, 0xc58af05080a9422bb11e6268f605458a, 0xec59a60d7cf44607be26aa4708fc51a6, 0xf1c7050361584bdcb89ec23996a3a7ca);
+SELECT obj_relationship.workspace_id, obj_relationship.partition_id, obj_relationship.id, obj_relationship.object_id, obj_relationship.referenced_object_id, obj_relationship.object_type_attribute_id, obj_relationship.object_type_id, obj_relationship.referenced_object_type_id FROM obj_relationship_new obj_relationship WHERE obj_relationship.object_id IN (0x5779bf118e9e45af85ffac6fd8a66ba0, 0x025095f5ca334fb5a8e23c5130096794, 0x12d3fc269787450db2ea7d31be651243, 0x172fdae3fba8423d94a5afbac76e0b89, 0x6c05c3878019479fa92aa972f4c4bf81, 0xbcf747e4d6d2495586383729190a0b60, 0xa072dd6f4250419abebb48de330d4a8d, 0xc5a636046c194885825e961ff4ec9736, 0xb289372d3ad24a05b7f12ac74bcca523, 0xcb402fbdf53249b888a3f76c18a4d161, 0xa349b98534aa4cbba24169ff153eb598, 0xeb56893462c749838ad268ac0c4c0e93, 0x6ed5b0b06b6c466eafd4b72e1992c83c, 0xc77a0fc5b3774d40b140c6f6d41644d8, 0x2446f69946644ee48e124aba704ab0b1, 0x8efcf2c3febf40e290b0895984473d01, 0x9a0a4be0944c4fa29bffdde57fcf217a, 0xd4436827f1e546f0b76600c808892b10, 0xd431693ce3c5413094c922ac204097f0, 0x0b95d04f18c2415781727201c349e488, 0xd072a9cd66ab44f8b4ed00f37b3d27c3, 0x7eb84ec125864f32994423ae9b853bc5, 0x843414e494004979a90f501f8fa54182, 0xe46bbcff0dfe4f828d076ec4b9dc9258, 0x7e5b9d54546d43b59acc88505a389231);
 ```
 
 </details>
@@ -95,15 +189,22 @@ SELECT obj_relationship.workspace_id, obj_relationship.partition_id, obj_relatio
 
 | Sample | Params | Rows | Latency ms | Status | Error |
 |---|---|---:|---:|---|---|
-| s1 | workspace=9963b35f-9397-48ec-9403-adab57aef265, obj_types=5 | 1000 | 493.8 | ok |  |
-| s2 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_types=5 | 1000 | 535.5 | ok |  |
-| s3 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, obj_types=5 | 1000 | 520.3 | ok |  |
+| s1 | workspace=9963b35f-9397-48ec-9403-adab57aef265, obj_types=5 | 1000 | 478.4 | ok |  |
+| s2 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_types=5 | 1000 | 546.0 | ok |  |
+| s3 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, obj_types=5 | 1000 | 457.0 | ok |  |
+| s4 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, obj_types=5 | 1000 | 445.8 | ok |  |
+| s5 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_types=5 | 1000 | 458.9 | ok |  |
+| s6 | workspace=183afe88-bcf4-48a6-a9ef-65420b7b819c, obj_types=5 | 1000 | 407.3 | ok |  |
+| s7 | workspace=718915aa-f8e9-4bbc-b1dc-ba720f1296e2, obj_types=5 | 1000 | 461.5 | ok |  |
+| s8 | workspace=23f639f1-fae8-48b0-8518-da3b7c80be57, obj_types=5 | 1000 | 463.4 | ok |  |
+| s9 | workspace=82e47cda-f6dc-4999-b9fa-dc813435ec51, obj_types=5 | 1000 | 308.4 | ok |  |
+| s10 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_types=5 | 1000 | 306.2 | ok |  |
 
 <details>
 <summary>Representative SQL</summary>
 
 ```sql
-SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='9963b35f-9397-48ec-9403-adab57aef265' AND (o.obj_type_id IN (0xc803e991dc8d4c96a8180a05c3a7ee7b, 0x79d1215ce2a04ecaa29b257eec19bb8d, 0xcaa0b57b5bca42d780f67b3831e81978, 0xf1e422765cd348969fee51389a43a639, 0xe9b4640efde64a4baba2d402fb8d3f93) AND ((o.numeric_value_5 IS NOT NULL AND o.obj_type_id = 0xc803e991dc8d4c96a8180a05c3a7ee7b) OR (o.numeric_value_5 IS NOT NULL AND o.obj_type_id = 0x79d1215ce2a04ecaa29b257eec19bb8d) OR (o.numeric_value_5 IS NOT NULL AND o.obj_type_id = 0xcaa0b57b5bca42d780f67b3831e81978) OR (o.numeric_value_5 IS NOT NULL AND o.obj_type_id = 0xf1e422765cd348969fee51389a43a639) OR (o.numeric_value_5 IS NOT NULL AND o.obj_type_id = 0xe9b4640efde64a4baba2d402fb8d3f93))) ORDER BY o.label ASC LIMIT 1000 OFFSET 0;
+SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='9963b35f-9397-48ec-9403-adab57aef265' AND (o.obj_type_id IN (0xc803e991dc8d4c96a8180a05c3a7ee7b, 0xe9b4640efde64a4baba2d402fb8d3f93, 0xf1e422765cd348969fee51389a43a639, 0xcaa0b57b5bca42d780f67b3831e81978, 0x79d1215ce2a04ecaa29b257eec19bb8d) AND ((o.numeric_value_5 IS NOT NULL AND o.obj_type_id = 0xc803e991dc8d4c96a8180a05c3a7ee7b) OR (o.numeric_value_5 IS NOT NULL AND o.obj_type_id = 0xe9b4640efde64a4baba2d402fb8d3f93) OR (o.numeric_value_5 IS NOT NULL AND o.obj_type_id = 0xf1e422765cd348969fee51389a43a639) OR (o.numeric_value_5 IS NOT NULL AND o.obj_type_id = 0xcaa0b57b5bca42d780f67b3831e81978) OR (o.numeric_value_5 IS NOT NULL AND o.obj_type_id = 0x79d1215ce2a04ecaa29b257eec19bb8d))) ORDER BY o.label ASC LIMIT 1000 OFFSET 0;
 ```
 
 </details>
@@ -117,9 +218,16 @@ SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='9963b35f-93
 
 | Sample | Params | Rows | Latency ms | Status | Error |
 |---|---|---:|---:|---|---|
-| s1 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_type_branches=5 | 1000 | 503.8 | ok |  |
-| s2 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, obj_type_branches=5 | 1000 | 511.6 | ok |  |
-| s3 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, obj_type_branches=5 | 1000 | 622.1 | ok |  |
+| s1 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_type_branches=5 | 1000 | 492.9 | ok |  |
+| s2 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, obj_type_branches=5 | 1000 | 473.5 | ok |  |
+| s3 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, obj_type_branches=5 | 1000 | 424.0 | ok |  |
+| s4 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type_branches=5 | 1000 | 483.0 | ok |  |
+| s5 | workspace=183afe88-bcf4-48a6-a9ef-65420b7b819c, obj_type_branches=5 | 1000 | 492.4 | ok |  |
+| s6 | workspace=718915aa-f8e9-4bbc-b1dc-ba720f1296e2, obj_type_branches=5 | 1000 | 477.3 | ok |  |
+| s7 | workspace=23f639f1-fae8-48b0-8518-da3b7c80be57, obj_type_branches=5 | 1000 | 481.6 | ok |  |
+| s8 | workspace=82e47cda-f6dc-4999-b9fa-dc813435ec51, obj_type_branches=5 | 1000 | 540.5 | ok |  |
+| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type_branches=5 | 1000 | 751.2 | ok |  |
+| s10 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_type_branches=5 | 1000 | 875.9 | ok |  |
 
 <details>
 <summary>Representative SQL</summary>
@@ -139,9 +247,16 @@ SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='8a6526e6-cd
 
 | Sample | Params | Rows | Latency ms | Status | Error |
 |---|---|---:|---:|---|---|
-| s1 | workspace=9963b35f-9397-48ec-9403-adab57aef265, ids=50 | 50 | 751.3 | ok |  |
-| s2 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, ids=50 | 50 | 586.2 | ok |  |
-| s3 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, ids=50 | 50 | 508.1 | ok |  |
+| s1 | workspace=9963b35f-9397-48ec-9403-adab57aef265, ids=50 | 50 | 753.3 | ok |  |
+| s2 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, ids=50 | 50 | 504.4 | ok |  |
+| s3 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, ids=50 | 50 | 302.6 | ok |  |
+| s4 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, ids=50 | 50 | 284.7 | ok |  |
+| s5 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, ids=50 | 50 | 278.4 | ok |  |
+| s6 | workspace=183afe88-bcf4-48a6-a9ef-65420b7b819c, ids=50 | 50 | 352.7 | ok |  |
+| s7 | workspace=718915aa-f8e9-4bbc-b1dc-ba720f1296e2, ids=50 | 50 | 276.4 | ok |  |
+| s8 | workspace=23f639f1-fae8-48b0-8518-da3b7c80be57, ids=50 | 50 | 274.7 | ok |  |
+| s9 | workspace=82e47cda-f6dc-4999-b9fa-dc813435ec51, ids=50 | 50 | 276.0 | ok |  |
+| s10 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, ids=50 | 50 | 282.6 | ok |  |
 
 <details>
 <summary>Representative SQL</summary>
@@ -161,15 +276,22 @@ SELECT obj.* FROM obj_new obj WHERE obj.id IN (0x687c943e75034b308ad0a7200437bd6
 
 | Sample | Params | Rows | Latency ms | Status | Error |
 |---|---|---:|---:|---|---|
-| s1 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, obj_type=89a756f6-0201-4cda-bec2-e6496b1d0018 | 35 | 267.2 | ok |  |
-| s2 | workspace=9963b35f-9397-48ec-9403-adab57aef265, obj_type=e9b4640e-fde6-4a4b-aba2-d402fb8d3f93 | 35 | 251.5 | ok |  |
-| s3 | workspace=9963b35f-9397-48ec-9403-adab57aef265, obj_type=caa0b57b-5bca-42d7-80f6-7b3831e81978 | 35 | 251.5 | ok |  |
+| s1 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_type=29ba27b2-e117-4ca3-a054-1b8e84c15d4e | 35 | 304.1 | ok |  |
+| s2 | workspace=718915aa-f8e9-4bbc-b1dc-ba720f1296e2, obj_type=e7afe364-c8d5-413e-b80c-eb69477bba57 | 35 | 309.0 | ok |  |
+| s3 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, obj_type=451aed8b-a883-4ee3-8d40-5f6881afa983 | 35 | 305.6 | ok |  |
+| s4 | workspace=9963b35f-9397-48ec-9403-adab57aef265, obj_type=caa0b57b-5bca-42d7-80f6-7b3831e81978 | 35 | 247.9 | ok |  |
+| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c | 35 | 250.0 | ok |  |
+| s6 | workspace=9963b35f-9397-48ec-9403-adab57aef265, obj_type=e9b4640e-fde6-4a4b-aba2-d402fb8d3f93 | 35 | 249.2 | ok |  |
+| s7 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, obj_type=ca0a6a3f-120d-4e81-a73a-35dc434b9590 | 35 | 277.3 | ok |  |
+| s8 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_type=1bfa019c-a216-4e97-b433-31fe25d01325 | 35 | 261.9 | ok |  |
+| s9 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, obj_type=89a756f6-0201-4cda-bec2-e6496b1d0018 | 35 | 250.5 | ok |  |
+| s10 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=0a79f4d5-1527-4f18-b770-be668a5fb0ad | 35 | 250.2 | ok |  |
 
 <details>
 <summary>Representative SQL</summary>
 
 ```sql
-SELECT otae1_0.id, otae1_0.additional_value, otae1_0.aql, otae1_0.created, otae1_0.default_type_id, otae1_0.deleted_at, otae1_0.description, otae1_0.external_id, otae1_0.group_id_type_value, otae1_0.hidden, otae1_0.include_child_object_types, otae1_0.is_deleted, otae1_0.label, otae1_0.maximum_cardinality, otae1_0.minimum_cardinality, otae1_0.name, otae1_0.object_type_id, otae1_0.ota_position, otae1_0.options, otae1_0.pending, otae1_0.reference_object_type_id, otae1_0.reference_type_id, otae1_0.regex_validation, otae1_0.removable, otae1_0.sequential_id, otae1_0.suffix, otae1_0.summable, otae1_0.type, otae1_0.type_value, otae1_0.unique_attribute, otae1_0.updated, otae1_0.workspace_id FROM obj_type_attr otae1_0 LEFT JOIN obj_type ot1_0 ON ot1_0.id = otae1_0.object_type_id AND ot1_0.workspace_id = 'cafd5188-8a63-44e7-b4a9-e885c9664b9c' AND ot1_0.is_deleted = 0 AND ot1_0.is_deleted = 0 WHERE otae1_0.workspace_id = 'cafd5188-8a63-44e7-b4a9-e885c9664b9c' AND otae1_0.is_deleted = 0 AND ot1_0.id IN (0x89a756f602014cdabec2e6496b1d0018);
+SELECT otae1_0.id, otae1_0.additional_value, otae1_0.aql, otae1_0.created, otae1_0.default_type_id, otae1_0.deleted_at, otae1_0.description, otae1_0.external_id, otae1_0.group_id_type_value, otae1_0.hidden, otae1_0.include_child_object_types, otae1_0.is_deleted, otae1_0.label, otae1_0.maximum_cardinality, otae1_0.minimum_cardinality, otae1_0.name, otae1_0.object_type_id, otae1_0.ota_position, otae1_0.options, otae1_0.pending, otae1_0.reference_object_type_id, otae1_0.reference_type_id, otae1_0.regex_validation, otae1_0.removable, otae1_0.sequential_id, otae1_0.suffix, otae1_0.summable, otae1_0.type, otae1_0.type_value, otae1_0.unique_attribute, otae1_0.updated, otae1_0.workspace_id FROM obj_type_attr otae1_0 LEFT JOIN obj_type ot1_0 ON ot1_0.id = otae1_0.object_type_id AND ot1_0.workspace_id = '8a6526e6-cd57-4216-bac6-358a6177d221' AND ot1_0.is_deleted = 0 AND ot1_0.is_deleted = 0 WHERE otae1_0.workspace_id = '8a6526e6-cd57-4216-bac6-358a6177d221' AND otae1_0.is_deleted = 0 AND ot1_0.id IN (0x29ba27b2e1174ca3a0541b8e84c15d4e);
 ```
 
 </details>
@@ -183,15 +305,22 @@ SELECT otae1_0.id, otae1_0.additional_value, otae1_0.aql, otae1_0.created, otae1
 
 | Sample | Params | Rows | Latency ms | Status | Error |
 |---|---|---:|---:|---|---|
-| s1 | workspace=9963b35f-9397-48ec-9403-adab57aef265, obj_type=c803e991-dc8d-4c96-a818-0a05c3a7ee7b, text_value_22=⁣Operational⁣ | 36 | 10450.6 | ok |  |
-| s2 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_type=29ba27b2-e117-4ca3-a054-1b8e84c15d4e, text_value_22=⁣Operational⁣ | 200 | 3187.8 | ok |  |
-| s3 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, obj_type=427ac8ba-5626-4168-99e6-0708472a9a7b, text_value_22=⁣Defined⁣ | 20 | 8295.4 | ok |  |
+| s1 | workspace=9963b35f-9397-48ec-9403-adab57aef265, obj_type=f1e42276-5cd3-4896-9fee-51389a43a639, text_value_22=⁣Operational⁣ | 35 | 2856.5 | ok |  |
+| s2 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_type=29ba27b2-e117-4ca3-a054-1b8e84c15d4e, text_value_22=⁣Operational⁣ | 200 | 3959.4 | ok |  |
+| s3 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, obj_type=451aed8b-a883-4ee3-8d40-5f6881afa983, text_value_22=⁣Retired⁣ | 19 | 1805.7 | ok |  |
+| s4 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, obj_type=eefa73e0-11da-4486-8024-fddfc52baef8, text_value_22=⁣Retired⁣ | 22 | 2007.9 | ok |  |
+| s5 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=c30b5368-dba0-4929-bc3d-dff93d45b5c2, text_value_22=⁣Retired⁣ | 13 | 1322.6 | ok |  |
+| s6 | workspace=183afe88-bcf4-48a6-a9ef-65420b7b819c, obj_type=eff9228f-d04b-4f0f-8812-29f29500c8f5, text_value_22=⁣Approved⁣ | 14 | 1248.7 | ok |  |
+| s7 | workspace=718915aa-f8e9-4bbc-b1dc-ba720f1296e2, obj_type=28bb55ff-511b-4479-ab66-9f0707da95c1, text_value_22=⁣Retired⁣ | 9 | 1175.0 | ok |  |
+| s8 | workspace=23f639f1-fae8-48b0-8518-da3b7c80be57, obj_type=a8439325-6f3b-4715-bdcb-9c132779da43, text_value_22=⁣Retired⁣ | 2 | 1033.8 | ok |  |
+| s9 | workspace=82e47cda-f6dc-4999-b9fa-dc813435ec51, obj_type=3fb90e7e-add4-4003-b4cc-47d4b439a0c6, text_value_22=⁣Approved⁣ | 38 | 672.8 | ok |  |
+| s10 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_22=⁣Approved⁣ | 3 | 667.1 | ok |  |
 
 <details>
 <summary>Representative SQL</summary>
 
 ```sql
-SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='9963b35f-9397-48ec-9403-adab57aef265' AND (o.obj_type_id IN (0xf1e422765cd348969fee51389a43a639, 0x79d1215ce2a04ecaa29b257eec19bb8d, 0xe9b4640efde64a4baba2d402fb8d3f93, 0xcaa0b57b5bca42d780f67b3831e81978, 0xc803e991dc8d4c96a8180a05c3a7ee7b) AND (o.obj_type_id = 0xc803e991dc8d4c96a8180a05c3a7ee7b) AND (o.text_value_23 = '􏿿' AND MATCH(o.text_value_22) AGAINST ('"⁣Operational⁣"' IN BOOLEAN MODE) AND o.text_value_22 LIKE '%⁣Operational⁣%' AND o.text_value_22 != '' AND o.text_value_9 = 'Siemens' AND (o.numeric_value_3 = 47.000000000000000000000000000000 OR o.numeric_value_1 = 284.000000000000000000000000000000))) ORDER BY o.label ASC LIMIT 1000 OFFSET 0;
+SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='9963b35f-9397-48ec-9403-adab57aef265' AND (o.obj_type_id IN (0xcaa0b57b5bca42d780f67b3831e81978, 0xe9b4640efde64a4baba2d402fb8d3f93, 0x79d1215ce2a04ecaa29b257eec19bb8d, 0xf1e422765cd348969fee51389a43a639, 0xc803e991dc8d4c96a8180a05c3a7ee7b) AND (o.obj_type_id = 0xf1e422765cd348969fee51389a43a639) AND (o.text_value_23 = '􏿿' AND MATCH(o.text_value_22) AGAINST ('"⁣Operational⁣"' IN BOOLEAN MODE) AND o.text_value_22 LIKE '%⁣Operational⁣%' AND o.text_value_22 != '' AND o.text_value_9 = 'Amana' AND (o.numeric_value_3 = 8.000000000000000000000000000000 OR o.numeric_value_1 = 312.000000000000000000000000000000))) ORDER BY o.label ASC LIMIT 1000 OFFSET 0;
 ```
 
 </details>
@@ -205,15 +334,22 @@ SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='9963b35f-93
 
 | Sample | Params | Rows | Latency ms | Status | Error |
 |---|---|---:|---:|---|---|
-| s1 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, object_id=e924cd02-dd14-4a20-9f43-6fa1eb207f14 | 24 | 269.0 | ok |  |
-| s2 | workspace=9963b35f-9397-48ec-9403-adab57aef265, object_id=bbc3d110-0746-4491-8206-12ba77b7c56e | 24 | 254.7 | ok |  |
-| s3 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, object_id=c3e6036a-54be-4ed5-a51d-f5542fb86088 | 24 | 270.2 | ok |  |
+| s1 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, object_id=ff118159-4364-48be-a450-4dd73ec2700f | 24 | 255.3 | ok |  |
+| s2 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, object_id=bf7a3350-c58b-4f43-8604-571d1be16d0c | 24 | 260.6 | ok |  |
+| s3 | workspace=183afe88-bcf4-48a6-a9ef-65420b7b819c, object_id=62254102-9427-4206-b6de-86b88773c7a2 | 24 | 253.4 | ok |  |
+| s4 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, object_id=dcd38928-db62-4fe9-81b1-5a8383620c10 | 24 | 256.7 | ok |  |
+| s5 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, object_id=5acfd937-3988-428f-a186-6adc59e45952 | 24 | 253.0 | ok |  |
+| s6 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, object_id=3b012215-72ce-4b45-8f09-eb2734709841 | 24 | 249.7 | ok |  |
+| s7 | workspace=9963b35f-9397-48ec-9403-adab57aef265, object_id=06c4e1ac-7174-4437-be57-bdf51ca88033 | 24 | 309.3 | ok |  |
+| s8 | workspace=9963b35f-9397-48ec-9403-adab57aef265, object_id=7fa0d9a8-d639-43c6-a092-c167846c09e7 | 24 | 257.5 | ok |  |
+| s9 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, object_id=855ab1d1-e006-42bf-87e7-90b7525665c2 | 24 | 249.9 | ok |  |
+| s10 | workspace=23f639f1-fae8-48b0-8518-da3b7c80be57, object_id=0f51d2df-b5bd-4bb4-bf6f-c85cb5cbf797 | 24 | 277.1 | ok |  |
 
 <details>
 <summary>Representative SQL</summary>
 
 ```sql
-SELECT obj_relationship.workspace_id, obj_relationship.partition_id, obj_relationship.id, obj_relationship.object_id, obj_relationship.referenced_object_id, obj_relationship.object_type_attribute_id, obj_relationship.object_type_id, obj_relationship.referenced_object_type_id FROM obj_relationship_new obj_relationship WHERE obj_relationship.object_id = 0xe924cd02dd144a209f436fa1eb207f14;
+SELECT obj_relationship.workspace_id, obj_relationship.partition_id, obj_relationship.id, obj_relationship.object_id, obj_relationship.referenced_object_id, obj_relationship.object_type_attribute_id, obj_relationship.object_type_id, obj_relationship.referenced_object_type_id FROM obj_relationship_new obj_relationship WHERE obj_relationship.object_id = 0xff118159436448bea4504dd73ec2700f;
 ```
 
 </details>
@@ -227,15 +363,22 @@ SELECT obj_relationship.workspace_id, obj_relationship.partition_id, obj_relatio
 
 | Sample | Params | Rows | Latency ms | Status | Error |
 |---|---|---:|---:|---|---|
-| s1 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=05f273ff-2221-45a4-9742-dd58bb38be3e, json_terms=4 | 591 | 5189.5 | ok |  |
-| s2 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=0a79f4d5-1527-4f18-b770-be668a5fb0ad, json_terms=4 | 1000 | 4201.1 | ok |  |
-| s3 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=33516f75-3dd9-43d6-b121-a8bf408c69be, json_terms=4 | 1000 | 2741.5 | ok |  |
+| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, json_terms=4 | 1000 | 2559.3 | ok |  |
+| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, json_terms=4 | 1000 | 913.7 | ok |  |
+| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=7d9ffc8b-03a9-4ef6-9bbf-b2e5f939ba14, json_terms=4 | 1000 | 875.0 | ok |  |
+| s4 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, json_terms=4 | 1000 | 871.2 | ok |  |
+| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, json_terms=4 | 1000 | 696.2 | ok |  |
+| s6 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=05f273ff-2221-45a4-9742-dd58bb38be3e, json_terms=4 | 1000 | 835.5 | ok |  |
+| s7 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=0a79f4d5-1527-4f18-b770-be668a5fb0ad, json_terms=4 | 1000 | 942.0 | ok |  |
+| s8 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=33516f75-3dd9-43d6-b121-a8bf408c69be, json_terms=4 | 1000 | 934.0 | ok |  |
+| s9 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=c30b5368-dba0-4929-bc3d-dff93d45b5c2, json_terms=4 | 1000 | 716.5 | ok |  |
+| s10 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=d05f4480-7ba4-4f69-9764-9ee42ce5f6ef, json_terms=4 | 1000 | 939.7 | ok |  |
 
 <details>
 <summary>Representative SQL</summary>
 
 ```sql
-SELECT o.* FROM obj_new o WHERE o.workspace_id='134fa09e-62e8-4b23-be76-d1b2d01845cc' AND (o.obj_type_id=0x05f273ff222145a49742dd58bb38be3e AND (JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$."adaac18e-cd3f-4fb6-8125-0ae7a7a2397b"', JSON_ARRAY('61b1c51cd2e64c0071db7e9c'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$."adaac18e-cd3f-4fb6-8125-0ae7a7a2397b"', JSON_ARRAY('61b1bc52d5986c006aa92795'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$."adaac18e-cd3f-4fb6-8125-0ae7a7a2397b"', JSON_ARRAY('61b1907cd5986c006aa73474'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$."adaac18e-cd3f-4fb6-8125-0ae7a7a2397b"', JSON_ARRAY('61b1c8eaef18ca0071f59a87')))) AND o.obj_type_id=0x05f273ff222145a49742dd58bb38be3e) ORDER BY o.label ASC LIMIT 1000 OFFSET 0;
+SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND (JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$."305e045b-affd-4a0d-9c42-6198a29d9be1"', JSON_ARRAY('jira-group14'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$."305e045b-affd-4a0d-9c42-6198a29d9be1"', JSON_ARRAY('jira-group18'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$."93a28091-1d1d-4a99-956f-56655d771eb1"', JSON_ARRAY('61b1bb67ef18ca0071f4e3ce'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$."305e045b-affd-4a0d-9c42-6198a29d9be1"', JSON_ARRAY('jira-group1')))) AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0) ORDER BY o.label ASC LIMIT 1000 OFFSET 0;
 ```
 
 </details>
@@ -249,9 +392,16 @@ SELECT o.* FROM obj_new o WHERE o.workspace_id='134fa09e-62e8-4b23-be76-d1b2d018
 
 | Sample | Params | Rows | Latency ms | Status | Error |
 |---|---|---:|---:|---|---|
-| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=1 | 1 | 263.1 | ok |  |
-| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=2 | 1 | 258.1 | ok |  |
-| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=3 | 1 | 257.8 | ok |  |
+| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=1 | 1 | 303.6 | ok |  |
+| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=2 | 1 | 306.6 | ok |  |
+| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=3 | 1 | 305.5 | ok |  |
+| s4 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=4 | 1 | 261.4 | ok |  |
+| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=5 | 1 | 259.3 | ok |  |
+| s6 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=6 | 1 | 257.7 | ok |  |
+| s7 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=7 | 1 | 260.9 | ok |  |
+| s8 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=8 | 1 | 257.6 | ok |  |
+| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=9 | 1 | 257.8 | ok |  |
+| s10 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=10 | 1 | 288.0 | ok |  |
 
 <details>
 <summary>Representative SQL</summary>
@@ -279,9 +429,16 @@ SELECT obj.* FROM obj_new obj WHERE obj.workspace_id='00eaf117-fdd6-4176-9926-45
 
 | Sample | Params | Rows | Latency ms | Status | Error |
 |---|---|---:|---:|---|---|
-| s1 | workspace=9963b35f-9397-48ec-9403-adab57aef265, obj_types=5 | 175 | 304.1 | ok |  |
-| s2 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_types=5 | 175 | 256.9 | ok |  |
-| s3 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, obj_types=5 | 175 | 257.1 | ok |  |
+| s1 | workspace=9963b35f-9397-48ec-9403-adab57aef265, obj_types=5 | 175 | 306.9 | ok |  |
+| s2 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_types=5 | 175 | 258.6 | ok |  |
+| s3 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, obj_types=5 | 175 | 259.4 | ok |  |
+| s4 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, obj_types=5 | 175 | 301.2 | ok |  |
+| s5 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_types=5 | 175 | 260.0 | ok |  |
+| s6 | workspace=183afe88-bcf4-48a6-a9ef-65420b7b819c, obj_types=5 | 175 | 254.6 | ok |  |
+| s7 | workspace=718915aa-f8e9-4bbc-b1dc-ba720f1296e2, obj_types=5 | 175 | 258.0 | ok |  |
+| s8 | workspace=23f639f1-fae8-48b0-8518-da3b7c80be57, obj_types=5 | 175 | 256.4 | ok |  |
+| s9 | workspace=82e47cda-f6dc-4999-b9fa-dc813435ec51, obj_types=5 | 175 | 256.6 | ok |  |
+| s10 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_types=5 | 175 | 353.9 | ok |  |
 
 <details>
 <summary>Representative SQL</summary>
@@ -301,15 +458,22 @@ SELECT otae1_0.id, otae1_0.additional_value, otae1_0.aql, otae1_0.created, otae1
 
 | Sample | Params | Rows | Latency ms | Status | Error |
 |---|---|---:|---:|---|---|
-| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, text_value_8=Sharp | 1000 | 428.4 | ok |  |
-| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_8=LG | 1000 | 415.1 | ok |  |
-| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_8=LG | 1000 | 346.3 | ok |  |
+| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=􏿿 | 1000 | 319.0 | ok |  |
+| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=KitchenAid | 1000 | 334.5 | ok |  |
+| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_8=􏿿 | 1000 | 331.1 | ok |  |
+| s4 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, text_value_8=􏿿 | 1000 | 341.3 | ok |  |
+| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=􏿿 | 1000 | 322.2 | ok |  |
+| s6 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, text_value_8=􏿿 | 1000 | 307.3 | ok |  |
+| s7 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=Admiral | 1000 | 324.8 | ok |  |
+| s8 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=􏿿 | 1000 | 327.0 | ok |  |
+| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=7d9ffc8b-03a9-4ef6-9bbf-b2e5f939ba14, text_value_8=􏿿 | 1000 | 321.3 | ok |  |
+| s10 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=Electrolux | 1000 | 329.2 | ok |  |
 
 <details>
 <summary>Representative SQL</summary>
 
 ```sql
-SELECT o.sequential_id, o.text_value_8 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707 AND ((NOT o.text_value_7_lower = '__not_sharp__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707)  AND (o.text_value_8='Sharp' AND o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707)) ORDER BY o.text_value_8 ASC LIMIT 1000 OFFSET 0;
+SELECT o.sequential_id, o.text_value_8 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_franke__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_8='􏿿' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.text_value_8 ASC LIMIT 1000 OFFSET 0;
 ```
 
 </details>
@@ -323,15 +487,22 @@ SELECT o.sequential_id, o.text_value_8 FROM obj_new o WHERE o.workspace_id='00ea
 
 | Sample | Params | Rows | Latency ms | Status | Error |
 |---|---|---:|---:|---|---|
-| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, text_value_8=Sharp | 1000 | 365.4 | ok |  |
-| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_8=LG | 1000 | 364.3 | ok |  |
-| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_8=LG | 1000 | 383.9 | ok |  |
+| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=􏿿 | 1000 | 325.9 | ok |  |
+| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=KitchenAid | 1000 | 334.0 | ok |  |
+| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_8=􏿿 | 1000 | 351.7 | ok |  |
+| s4 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, text_value_8=􏿿 | 1000 | 331.2 | ok |  |
+| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=􏿿 | 1000 | 300.3 | ok |  |
+| s6 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, text_value_8=􏿿 | 1000 | 311.9 | ok |  |
+| s7 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=Admiral | 1000 | 339.4 | ok |  |
+| s8 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=􏿿 | 1000 | 327.7 | ok |  |
+| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=7d9ffc8b-03a9-4ef6-9bbf-b2e5f939ba14, text_value_8=􏿿 | 1000 | 334.3 | ok |  |
+| s10 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=Electrolux | 1000 | 348.6 | ok |  |
 
 <details>
 <summary>Representative SQL</summary>
 
 ```sql
-SELECT o.sequential_id, o.text_value_1 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707 AND ((NOT o.text_value_7_lower = '__not_sharp__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707)  AND (o.text_value_8='Sharp' AND o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0;
+SELECT o.sequential_id, o.text_value_1 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_franke__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_8='􏿿' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0;
 ```
 
 </details>
@@ -345,15 +516,22 @@ SELECT o.sequential_id, o.text_value_1 FROM obj_new o WHERE o.workspace_id='00ea
 
 | Sample | Params | Rows | Latency ms | Status | Error |
 |---|---|---:|---:|---|---|
-| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, text_value_16=􏿿 | 1000 | 2584.0 | ok |  |
-| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_16=􏿿 | 1000 | 2545.5 | ok |  |
-| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_16=Amana | 1000 | 1413.8 | ok |  |
+| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_16=Samsung | 1000 | 1275.9 | ok |  |
+| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_16=Blue Star | 1000 | 1128.7 | ok |  |
+| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_16=LG | 1000 | 1231.8 | ok |  |
+| s4 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, text_value_16=Samsung | 1000 | 1386.7 | ok |  |
+| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_16=􏿿 | 1000 | 1544.5 | ok |  |
+| s6 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, text_value_16=Fagor | 1000 | 1207.3 | ok |  |
+| s7 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_16=Amana | 1000 | 1285.3 | ok |  |
+| s8 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_16=􏿿 | 1000 | 1474.0 | ok |  |
+| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=7d9ffc8b-03a9-4ef6-9bbf-b2e5f939ba14, text_value_16=Franke | 1000 | 1179.4 | ok |  |
+| s10 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_16=Electrolux | 1000 | 1234.7 | ok |  |
 
 <details>
 <summary>Representative SQL</summary>
 
 ```sql
-SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707 AND ((NOT o.text_value_7_lower = '__not_sharp__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707)  AND (o.text_value_16='􏿿' AND o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0;
+SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_franke__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_16='Samsung' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0;
 ```
 
 </details>
@@ -367,15 +545,22 @@ SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b
 
 | Sample | Params | Rows | Latency ms | Status | Error |
 |---|---|---:|---:|---|---|
-| s1 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=05f273ff-2221-45a4-9742-dd58bb38be3e, json_terms=8 | 1000 | 801.9 | ok |  |
-| s2 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=0a79f4d5-1527-4f18-b770-be668a5fb0ad, json_terms=8 | 1000 | 461.3 | ok |  |
-| s3 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=33516f75-3dd9-43d6-b121-a8bf408c69be, json_terms=8 | 1000 | 467.9 | ok |  |
+| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, json_terms=8 | 1000 | 356.4 | ok |  |
+| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, json_terms=8 | 1000 | 383.5 | ok |  |
+| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=7d9ffc8b-03a9-4ef6-9bbf-b2e5f939ba14, json_terms=8 | 1000 | 379.0 | ok |  |
+| s4 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, json_terms=8 | 1000 | 315.3 | ok |  |
+| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, json_terms=8 | 1000 | 323.5 | ok |  |
+| s6 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=05f273ff-2221-45a4-9742-dd58bb38be3e, json_terms=8 | 1000 | 476.8 | ok |  |
+| s7 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=0a79f4d5-1527-4f18-b770-be668a5fb0ad, json_terms=8 | 1000 | 431.8 | ok |  |
+| s8 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=33516f75-3dd9-43d6-b121-a8bf408c69be, json_terms=8 | 1000 | 592.5 | ok |  |
+| s9 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=c30b5368-dba0-4929-bc3d-dff93d45b5c2, json_terms=8 | 1000 | 433.6 | ok |  |
+| s10 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=d05f4480-7ba4-4f69-9764-9ee42ce5f6ef, json_terms=8 | 1000 | 650.1 | ok |  |
 
 <details>
 <summary>Representative SQL</summary>
 
 ```sql
-SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='134fa09e-62e8-4b23-be76-d1b2d01845cc' AND (o.obj_type_id=0x05f273ff222145a49742dd58bb38be3e AND (JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$."adaac18e-cd3f-4fb6-8125-0ae7a7a2397b"', JSON_ARRAY('61b1c51cd2e64c0071db7e9c'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$."adaac18e-cd3f-4fb6-8125-0ae7a7a2397b"', JSON_ARRAY('61b1bc52d5986c006aa92795'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$."adaac18e-cd3f-4fb6-8125-0ae7a7a2397b"', JSON_ARRAY('61b1907cd5986c006aa73474'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$."adaac18e-cd3f-4fb6-8125-0ae7a7a2397b"', JSON_ARRAY('61b1c8eaef18ca0071f59a87'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$."adaac18e-cd3f-4fb6-8125-0ae7a7a2397b"', JSON_ARRAY('61b1b777fe9f3000681d6680'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$."adaac18e-cd3f-4fb6-8125-0ae7a7a2397b"', JSON_ARRAY('61b1b998744c4d00698946ed'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$."adaac18e-cd3f-4fb6-8125-0ae7a7a2397b"', JSON_ARRAY('61b1bd3a657a05007060e81f'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$."adaac18e-cd3f-4fb6-8125-0ae7a7a2397b"', JSON_ARRAY('61b1bc692278e7006b9449e0')))) AND o.obj_type_id=0x05f273ff222145a49742dd58bb38be3e) ORDER BY o.label ASC LIMIT 1000 OFFSET 0;
+SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND (JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$."305e045b-affd-4a0d-9c42-6198a29d9be1"', JSON_ARRAY('jira-group14'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$."305e045b-affd-4a0d-9c42-6198a29d9be1"', JSON_ARRAY('jira-group18'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$."93a28091-1d1d-4a99-956f-56655d771eb1"', JSON_ARRAY('61b1bb67ef18ca0071f4e3ce'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$."305e045b-affd-4a0d-9c42-6198a29d9be1"', JSON_ARRAY('jira-group1'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$."305e045b-affd-4a0d-9c42-6198a29d9be1"', JSON_ARRAY('jira-group9'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$."93a28091-1d1d-4a99-956f-56655d771eb1"', JSON_ARRAY('61b192a0c15977006a48b222'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$."93a28091-1d1d-4a99-956f-56655d771eb1"', JSON_ARRAY('61b1b8013618cd006f5b08ea'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$."93a28091-1d1d-4a99-956f-56655d771eb1"', JSON_ARRAY('61b192f5d5986c006aa74cdb')))) AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0) ORDER BY o.label ASC LIMIT 1000 OFFSET 0;
 ```
 
 </details>
@@ -389,9 +574,16 @@ SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='134fa09e-62
 
 | Sample | Params | Rows | Latency ms | Status | Error |
 |---|---|---:|---:|---|---|
-| s1 | workspace=9963b35f-9397-48ec-9403-adab57aef265, obj_types=5 | 5 | 244.8 | ok |  |
-| s2 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_types=5 | 5 | 263.8 | ok |  |
-| s3 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, obj_types=5 | 5 | 278.3 | ok |  |
+| s1 | workspace=9963b35f-9397-48ec-9403-adab57aef265, obj_types=5 | 5 | 262.8 | ok |  |
+| s2 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_types=5 | 5 | 243.1 | ok |  |
+| s3 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, obj_types=5 | 5 | 244.4 | ok |  |
+| s4 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, obj_types=5 | 5 | 244.6 | ok |  |
+| s5 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_types=5 | 5 | 241.9 | ok |  |
+| s6 | workspace=183afe88-bcf4-48a6-a9ef-65420b7b819c, obj_types=5 | 5 | 246.4 | ok |  |
+| s7 | workspace=718915aa-f8e9-4bbc-b1dc-ba720f1296e2, obj_types=5 | 5 | 245.2 | ok |  |
+| s8 | workspace=23f639f1-fae8-48b0-8518-da3b7c80be57, obj_types=5 | 5 | 246.3 | ok |  |
+| s9 | workspace=82e47cda-f6dc-4999-b9fa-dc813435ec51, obj_types=5 | 5 | 265.6 | ok |  |
+| s10 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_types=5 | 5 | 243.6 | ok |  |
 
 <details>
 <summary>Representative SQL</summary>
@@ -411,15 +603,22 @@ SELECT ote1_0.* FROM obj_type ote1_0 WHERE ote1_0.workspace_id='9963b35f-9397-48
 
 | Sample | Params | Rows | Latency ms | Status | Error |
 |---|---|---:|---:|---|---|
-| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, text_value_16=􏿿 | 1000 | 417.7 | ok |  |
-| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_16=􏿿 | 1000 | 386.1 | ok |  |
-| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_16=Amana | 1000 | 350.2 | ok |  |
+| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_16=Samsung | 1000 | 347.6 | ok |  |
+| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_16=Blue Star | 1000 | 334.8 | ok |  |
+| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_16=LG | 1000 | 333.7 | ok |  |
+| s4 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, text_value_16=Samsung | 1000 | 390.9 | ok |  |
+| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_16=􏿿 | 1000 | 328.4 | ok |  |
+| s6 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, text_value_16=Fagor | 1000 | 370.4 | ok |  |
+| s7 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_16=Amana | 1000 | 336.7 | ok |  |
+| s8 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_16=􏿿 | 1000 | 334.5 | ok |  |
+| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=7d9ffc8b-03a9-4ef6-9bbf-b2e5f939ba14, text_value_16=Franke | 1000 | 394.4 | ok |  |
+| s10 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_16=Electrolux | 1000 | 343.9 | ok |  |
 
 <details>
 <summary>Representative SQL</summary>
 
 ```sql
-SELECT o.sequential_id, o.numeric_value_4 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707 AND ((NOT o.text_value_7_lower = '__not_sharp__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707)  AND (o.text_value_16='􏿿' AND o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0;
+SELECT o.sequential_id, o.numeric_value_4 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_franke__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_16='Samsung' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0;
 ```
 
 </details>
@@ -433,9 +632,16 @@ SELECT o.sequential_id, o.numeric_value_4 FROM obj_new o WHERE o.workspace_id='0
 
 | Sample | Params | Rows | Latency ms | Status | Error |
 |---|---|---:|---:|---|---|
-| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=1 | 1 | 280.6 | ok |  |
-| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=2 | 1 | 306.6 | ok |  |
-| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=3 | 1 | 267.4 | ok |  |
+| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=1 | 1 | 247.8 | ok |  |
+| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=2 | 1 | 297.8 | ok |  |
+| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=3 | 1 | 245.8 | ok |  |
+| s4 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=4 | 1 | 244.6 | ok |  |
+| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=5 | 1 | 245.6 | ok |  |
+| s6 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=6 | 1 | 262.6 | ok |  |
+| s7 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=7 | 1 | 332.3 | ok |  |
+| s8 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=8 | 1 | 244.2 | ok |  |
+| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=9 | 1 | 268.2 | ok |  |
+| s10 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=10 | 1 | 252.0 | ok |  |
 
 <details>
 <summary>Representative SQL</summary>
@@ -455,15 +661,22 @@ SELECT otae1_0.id, otae1_0.additional_value, otae1_0.aql, otae1_0.created, otae1
 
 | Sample | Params | Rows | Latency ms | Status | Error |
 |---|---|---:|---:|---|---|
-| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=Bosch, sub_text_value_8=􏿿 | 1000 | 13053.8 | ok |  |
-| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=Bosch, sub_text_value_8=􏿿 | 1000 | 854.3 | ok |  |
-| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=KitchenAid, sub_text_value_8=􏿿 | 1000 | 498.3 | ok |  |
+| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=Bosch, sub_text_value_8=􏿿 | 1000 | 1598.1 | ok |  |
+| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=Bosch, sub_text_value_8=􏿿 | 1000 | 479.1 | ok |  |
+| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=KitchenAid, sub_text_value_8=􏿿 | 1000 | 493.2 | ok |  |
+| s4 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=􏿿, sub_text_value_8=􏿿 | 1000 | 493.1 | ok |  |
+| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=􏿿, sub_text_value_8=􏿿 | 1000 | 546.2 | ok |  |
+| s6 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=􏿿, sub_text_value_8=􏿿 | 1000 | 485.6 | ok |  |
+| s7 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=Franke, sub_text_value_8=􏿿 | 1000 | 473.2 | ok |  |
+| s8 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=Electrolux, sub_text_value_8=􏿿 | 1000 | 725.2 | ok |  |
+| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=􏿿, sub_text_value_8=􏿿 | 1000 | 729.7 | ok |  |
+| s10 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=IKEA, sub_text_value_8=􏿿 | 1000 | 481.6 | ok |  |
 
 <details>
 <summary>Representative SQL</summary>
 
 ```sql
-SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id IN (0x266009e95e414bafab14eef7ffe5f2e0, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0xfa8499385ed14c6089b9adb37223c21c) AND (o.text_value_24='Bosch' AND o.obj_type_id IN (0x266009e95e414bafab14eef7ffe5f2e0, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0xfa8499385ed14c6089b9adb37223c21c)) AND EXISTS (SELECT 1 FROM obj_relationship_new subr INNER JOIN obj_new subo1 ON subr.object_id=subo1.id AND subo1.obj_type_id IN (0x266009e95e414bafab14eef7ffe5f2e0, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0xfa8499385ed14c6089b9adb37223c21c) WHERE o.id=subr.referenced_object_id AND subo1.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND subo1.text_value_8='􏿿')) ORDER BY o.label ASC LIMIT 1000 OFFSET 0;
+SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id IN (0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14) AND (o.text_value_24='Bosch' AND o.obj_type_id IN (0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14)) AND EXISTS (SELECT 1 FROM obj_relationship_new subr INNER JOIN obj_new subo1 ON subr.object_id=subo1.id AND subo1.obj_type_id IN (0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14) WHERE o.id=subr.referenced_object_id AND subo1.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND subo1.text_value_8='􏿿')) ORDER BY o.label ASC LIMIT 1000 OFFSET 0;
 ```
 
 </details>
@@ -477,9 +690,16 @@ SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fd
 
 | Sample | Params | Rows | Latency ms | Status | Error |
 |---|---|---:|---:|---|---|
-| s1 | workspace=9963b35f-9397-48ec-9403-adab57aef265, partition_id=1, sequential_ids=20 | 20 | 512.2 | ok |  |
-| s2 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, partition_id=1, sequential_ids=20 | 20 | 271.9 | ok |  |
-| s3 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, partition_id=1, sequential_ids=20 | 20 | 272.2 | ok |  |
+| s1 | workspace=9963b35f-9397-48ec-9403-adab57aef265, partition_id=1, sequential_ids=20 | 20 | 525.3 | ok |  |
+| s2 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, partition_id=1, sequential_ids=20 | 20 | 273.8 | ok |  |
+| s3 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, partition_id=1, sequential_ids=20 | 20 | 280.7 | ok |  |
+| s4 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, partition_id=1, sequential_ids=20 | 20 | 275.3 | ok |  |
+| s5 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, partition_id=1, sequential_ids=20 | 20 | 275.7 | ok |  |
+| s6 | workspace=183afe88-bcf4-48a6-a9ef-65420b7b819c, partition_id=1, sequential_ids=20 | 20 | 287.0 | ok |  |
+| s7 | workspace=718915aa-f8e9-4bbc-b1dc-ba720f1296e2, partition_id=1, sequential_ids=20 | 20 | 286.1 | ok |  |
+| s8 | workspace=23f639f1-fae8-48b0-8518-da3b7c80be57, partition_id=1, sequential_ids=20 | 20 | 270.0 | ok |  |
+| s9 | workspace=82e47cda-f6dc-4999-b9fa-dc813435ec51, partition_id=1, sequential_ids=20 | 20 | 266.8 | ok |  |
+| s10 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, partition_id=1, sequential_ids=20 | 20 | 268.4 | ok |  |
 
 <details>
 <summary>Representative SQL</summary>
@@ -499,15 +719,22 @@ SELECT obj.* FROM obj_new obj WHERE obj.workspace_id='9963b35f-9397-48ec-9403-ad
 
 | Sample | Params | Rows | Latency ms | Status | Error |
 |---|---|---:|---:|---|---|
-| s1 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=05f273ff-2221-45a4-9742-dd58bb38be3e, json_terms=4 | 591 | 513.2 | ok |  |
-| s2 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=0a79f4d5-1527-4f18-b770-be668a5fb0ad, json_terms=4 | 1000 | 359.2 | ok |  |
-| s3 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=33516f75-3dd9-43d6-b121-a8bf408c69be, json_terms=4 | 1000 | 345.5 | ok |  |
+| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, json_terms=4 | 1000 | 307.7 | ok |  |
+| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, json_terms=4 | 1000 | 366.0 | ok |  |
+| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=7d9ffc8b-03a9-4ef6-9bbf-b2e5f939ba14, json_terms=4 | 1000 | 353.9 | ok |  |
+| s4 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, json_terms=4 | 1000 | 357.4 | ok |  |
+| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, json_terms=4 | 1000 | 306.2 | ok |  |
+| s6 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=05f273ff-2221-45a4-9742-dd58bb38be3e, json_terms=4 | 1000 | 460.9 | ok |  |
+| s7 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=0a79f4d5-1527-4f18-b770-be668a5fb0ad, json_terms=4 | 1000 | 463.3 | ok |  |
+| s8 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=33516f75-3dd9-43d6-b121-a8bf408c69be, json_terms=4 | 1000 | 446.7 | ok |  |
+| s9 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=c30b5368-dba0-4929-bc3d-dff93d45b5c2, json_terms=4 | 1000 | 471.1 | ok |  |
+| s10 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=d05f4480-7ba4-4f69-9764-9ee42ce5f6ef, json_terms=4 | 1000 | 469.8 | ok |  |
 
 <details>
 <summary>Representative SQL</summary>
 
 ```sql
-SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='134fa09e-62e8-4b23-be76-d1b2d01845cc' AND (o.obj_type_id=0x05f273ff222145a49742dd58bb38be3e AND (JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$."adaac18e-cd3f-4fb6-8125-0ae7a7a2397b"', JSON_ARRAY('61b1c51cd2e64c0071db7e9c'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$."adaac18e-cd3f-4fb6-8125-0ae7a7a2397b"', JSON_ARRAY('61b1bc52d5986c006aa92795'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$."adaac18e-cd3f-4fb6-8125-0ae7a7a2397b"', JSON_ARRAY('61b1907cd5986c006aa73474'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$."adaac18e-cd3f-4fb6-8125-0ae7a7a2397b"', JSON_ARRAY('61b1c8eaef18ca0071f59a87')))) AND o.obj_type_id=0x05f273ff222145a49742dd58bb38be3e) ORDER BY o.label ASC LIMIT 1000 OFFSET 0;
+SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND (JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$."305e045b-affd-4a0d-9c42-6198a29d9be1"', JSON_ARRAY('jira-group14'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$."305e045b-affd-4a0d-9c42-6198a29d9be1"', JSON_ARRAY('jira-group18'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$."93a28091-1d1d-4a99-956f-56655d771eb1"', JSON_ARRAY('61b1bb67ef18ca0071f4e3ce'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$."305e045b-affd-4a0d-9c42-6198a29d9be1"', JSON_ARRAY('jira-group1')))) AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0) ORDER BY o.label ASC LIMIT 1000 OFFSET 0;
 ```
 
 </details>
@@ -521,15 +748,22 @@ SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='134fa09e-62
 
 | Sample | Params | Rows | Latency ms | Status | Error |
 |---|---|---:|---:|---|---|
-| s1 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, depth3_label=Blue Star-158044 | 1000 | 1632.3 | ok |  |
-| s2 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, depth3_label=Admiral-22554 | 1000 | 1906.4 | ok |  |
-| s3 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, depth3_label=Sharp-51542 | 1000 | 1724.6 | ok |  |
+| s1 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, depth3_label=LG-52576 | 1000 | 1442.2 | ok |  |
+| s2 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, depth3_label=Samsung-514085 | 1000 | 1824.3 | ok |  |
+| s3 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, depth3_label=Admiral-16098 | 1000 | 1775.4 | ok |  |
+| s4 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, depth3_label=Admiral-282336 | 1000 | 1757.1 | ok |  |
+| s5 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, depth3_label=LG-360191 | 1000 | 1708.1 | ok |  |
+| s6 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, depth3_label=Blue Star-562402 | 1000 | 1645.0 | ok |  |
+| s7 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, depth3_label=Whirlpool-509861 | 1000 | 1907.7 | ok |  |
+| s8 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, depth3_label=LG-52576 | 1000 | 1718.9 | ok |  |
+| s9 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, depth3_label=Samsung-514085 | 1000 | 1711.4 | ok |  |
+| s10 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, depth3_label=Admiral-16098 | 1000 | 1754.9 | ok |  |
 
 <details>
 <summary>Representative SQL</summary>
 
 ```sql
-SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='8a6526e6-cd57-4216-bac6-358a6177d221' AND (o.obj_type_id IN (0x29ba27b2e1174ca3a0541b8e84c15d4e, 0xad3f4feadb96456da7bffc4cd63f05f4, 0x81790b7da4ec44de85e1c94e50c497a7, 0x1d9d47a406e14befa85e456dcec5b67b, 0x1bfa019ca2164e97b43331fe25d01325) AND EXISTS (SELECT 1 FROM obj_relationship_new subr INNER JOIN obj_new subo1 ON subr.referenced_object_id=subo1.id WHERE o.id=subr.object_id AND subo1.workspace_id='8a6526e6-cd57-4216-bac6-358a6177d221' AND EXISTS (SELECT 1 FROM obj_relationship_new subr1 INNER JOIN obj_new subo2 ON subr1.referenced_object_id=subo2.id WHERE subo1.id=subr1.object_id AND subo2.workspace_id='8a6526e6-cd57-4216-bac6-358a6177d221' AND EXISTS (SELECT 1 FROM obj_relationship_new subr2 INNER JOIN obj_new subo3 ON subr2.referenced_object_id=subo3.id WHERE subo2.id=subr2.object_id AND subo3.workspace_id='8a6526e6-cd57-4216-bac6-358a6177d221' AND subo3.label='Blue Star-158044')))) ORDER BY o.label ASC LIMIT 1000 OFFSET 0;
+SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='8a6526e6-cd57-4216-bac6-358a6177d221' AND (o.obj_type_id IN (0x81790b7da4ec44de85e1c94e50c497a7, 0x1d9d47a406e14befa85e456dcec5b67b, 0x1bfa019ca2164e97b43331fe25d01325, 0x29ba27b2e1174ca3a0541b8e84c15d4e, 0xad3f4feadb96456da7bffc4cd63f05f4) AND EXISTS (SELECT 1 FROM obj_relationship_new subr INNER JOIN obj_new subo1 ON subr.referenced_object_id=subo1.id WHERE o.id=subr.object_id AND subo1.workspace_id='8a6526e6-cd57-4216-bac6-358a6177d221' AND EXISTS (SELECT 1 FROM obj_relationship_new subr1 INNER JOIN obj_new subo2 ON subr1.referenced_object_id=subo2.id WHERE subo1.id=subr1.object_id AND subo2.workspace_id='8a6526e6-cd57-4216-bac6-358a6177d221' AND EXISTS (SELECT 1 FROM obj_relationship_new subr2 INNER JOIN obj_new subo3 ON subr2.referenced_object_id=subo3.id WHERE subo2.id=subr2.object_id AND subo3.workspace_id='8a6526e6-cd57-4216-bac6-358a6177d221' AND subo3.label='LG-52576')))) ORDER BY o.label ASC LIMIT 1000 OFFSET 0;
 ```
 
 </details>
@@ -543,15 +777,23 @@ SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='8a6526e6-cd
 
 | Sample | Params | Rows | Latency ms | Status | Error |
 |---|---|---:|---:|---|---|
-| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, text_value_8=Sharp | 1000 | 2401.1 | ok |  |
-| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_8=LG | 1000 | 1007.5 | ok |  |
-| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_8=LG | 1000 | 993.3 | ok |  |
+| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=􏿿 | 1000 | 2997.0 | ok |  |
+| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=KitchenAid | 1000 | 1436.0 | ok |  |
+| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_8=􏿿 | 1000 | 1470.1 | ok |  |
+| s4 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, text_value_8=􏿿 | 1000 | 1514.9 | ok |  |
+| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=􏿿 | 1000 | 1265.7 | ok |  |
+| s6 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, text_value_8=􏿿 | 1000 | 1308.7 | ok |  |
+| s7 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=Admiral | 1000 | 1373.9 | ok |  |
+| s8 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=􏿿 | 1000 | 1459.0 | ok |  |
+| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=7d9ffc8b-03a9-4ef6-9bbf-b2e5f939ba14, text_value_8=􏿿 | 1000 | 1400.8 | ok |  |
+| s10 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=Electrolux | 1000 | 1411.3 | ok |  |
 
 <details>
 <summary>Representative SQL</summary>
 
 ```sql
-SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707 AND ((NOT o.text_value_7_lower = '__not_sharp__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707)  AND (o.text_value_8='Sharp' AND o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0;
+SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_franke__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_8='􏿿' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0;
 ```
 
 </details>
+

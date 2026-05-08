@@ -9,12 +9,15 @@ query shapes, and writes JSON plus a markdown comparison.
 from __future__ import annotations
 
 import argparse
+import concurrent.futures
 import datetime as dt
 import json
 import math
 import re
 import statistics
 import time
+import urllib.parse
+import urllib.request
 from collections import defaultdict
 from decimal import Decimal
 from pathlib import Path
@@ -27,6 +30,10 @@ REPORT = Path("/Users/jin/Downloads/full_report_for_pingcap.md")
 OUT_MD = Path("pingcap_report_jsm_assets4_query_sample_comparison.md")
 OUT_JSON = Path("bench/results/pingcap_report_jsm_assets4_query_sample_comparison.json")
 DB = "jsm_assets4"
+DEFAULT_GRAFANA_URL = (
+    "http://a2e41aa49d08647d1b55ecd7b146bbf6-38f9eda417a300aa."
+    "elb.us-east-2.amazonaws.com:3000"
+)
 
 MISSING_TABLES = {
     1: "cdm_type_obj_type_attr is not present in jsm_assets4",
@@ -129,15 +136,15 @@ def fetchall(cur, sql: str, params: tuple[Any, ...] = ()) -> list[dict[str, Any]
     return list(cur.fetchall())
 
 
-def top_workspaces(cur) -> list[str]:
+def top_workspaces(cur, limit: int) -> list[str]:
     rows = fetchall(
         cur,
-        """
+        f"""
         SELECT workspace_id, COUNT(*) cnt
         FROM obj_new
         GROUP BY workspace_id
         ORDER BY cnt DESC
-        LIMIT 6
+        LIMIT {limit}
         """,
     )
     return [r["workspace_id"] for r in rows]
@@ -247,12 +254,12 @@ def pick_json_group(groups: dict[tuple[str, bytes], list[tuple[str, str]]], min_
     return candidates[offset % len(candidates)]
 
 
-def build_queries(cur) -> dict[int, list[dict[str, Any]]]:
-    workspaces = top_workspaces(cur)
+def build_queries(cur, sample_limit: int = 10) -> dict[int, list[dict[str, Any]]]:
+    workspaces = top_workspaces(cur, max(sample_limit * 3, 10))
     variants: dict[int, list[dict[str, Any]]] = defaultdict(list)
 
     # Query #2: relationship object_id IN (...)
-    for i, ws in enumerate(workspaces[:3], 1):
+    for i, ws in enumerate(workspaces[:sample_limit], 1):
         rows = fetchall(
             cur,
             """
@@ -279,12 +286,12 @@ def build_queries(cur) -> dict[int, list[dict[str, Any]]]:
     # Query #9: relationship object_id point lookup.
     rows = fetchall(
         cur,
-        """
+        f"""
         SELECT object_id, workspace_id, COUNT(*) cnt
         FROM obj_relationship_new
         GROUP BY object_id, workspace_id
         ORDER BY cnt DESC
-        LIMIT 3
+        LIMIT {sample_limit}
         """,
     )
     for i, r in enumerate(rows, 1):
@@ -298,7 +305,7 @@ def build_queries(cur) -> dict[int, list[dict[str, Any]]]:
         )
 
     # Query #4: label-ordered numeric_value_5 IS NOT NULL with five obj types.
-    for i, ws in enumerate(workspaces[:3], 1):
+    for i, ws in enumerate(workspaces[:sample_limit], 1):
         types = object_types(cur, ws, "numeric_value_5 IS NOT NULL", 5)
         if len(types) >= 2:
             ors = " OR ".join(
@@ -317,7 +324,7 @@ def build_queries(cur) -> dict[int, list[dict[str, Any]]]:
 
     # JSON queries #5/#10/#17/#23.
     json_groups = sample_json_groups(cur, workspaces)
-    for i in range(3):
+    for i in range(sample_limit):
         group = pick_json_group(json_groups, 4, i)
         if not group:
             break
@@ -356,16 +363,23 @@ def build_queries(cur) -> dict[int, list[dict[str, Any]]]:
     for (ws, obj_type), pairs in json_groups.items():
         if len(pairs) >= 1:
             by_ws[ws].append((obj_type, pairs))
-    for i, ws in enumerate([w for w in workspaces if len(by_ws[w]) >= 2][:3], 1):
+    eligible_json_workspaces = [w for w in workspaces if len(by_ws[w]) >= 2]
+    for i in range(sample_limit):
+        if not eligible_json_workspaces:
+            break
+        ws = eligible_json_workspaces[i % len(eligible_json_workspaces)]
+        branch_groups = by_ws[ws]
+        rotate = (i // len(eligible_json_workspaces)) % len(branch_groups)
+        rotated_groups = branch_groups[rotate:] + branch_groups[:rotate]
         branches = []
-        for obj_type, pairs in by_ws[ws][:5]:
+        for obj_type, pairs in rotated_groups[:5]:
             branches.append(
                 f"({json_condition('o', pairs[:4])} AND o.obj_type_id={bin_hex(obj_type)})"
             )
-        types = [x[0] for x in by_ws[ws][:5]]
+        types = [x[0] for x in rotated_groups[:5]]
         variants[5].append(
             {
-                "sample": f"s{i}",
+                "sample": f"s{i+1}",
                 "params": f"workspace={ws}, obj_type_branches={len(branches)}",
                 "sql": f"SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id={sql_quote(ws)} "
                 f"AND (o.obj_type_id IN ({obj_type_list(types)}) AND ({' OR '.join(branches)})) "
@@ -374,7 +388,7 @@ def build_queries(cur) -> dict[int, list[dict[str, Any]]]:
         )
 
     # Query #8: FTS + selective post filters.
-    for i, ws in enumerate(workspaces[:3], 1):
+    for i, ws in enumerate(workspaces[:sample_limit], 1):
         rows = fetchall(
             cur,
             """
@@ -414,7 +428,7 @@ def build_queries(cur) -> dict[int, list[dict[str, Any]]]:
             )
 
     # Query #6: wide fetch by id IN (...).
-    for i, ws in enumerate(workspaces[:3], 1):
+    for i, ws in enumerate(workspaces[:sample_limit], 1):
         rows = fetchall(cur, "SELECT id FROM obj_new WHERE workspace_id=%s LIMIT 50", (ws,))
         ids = [r["id"] for r in rows]
         if ids:
@@ -429,12 +443,12 @@ def build_queries(cur) -> dict[int, list[dict[str, Any]]]:
     # Query #11: wide fetch by workspace + sequential_id.
     rows = fetchall(
         cur,
-        """
+        f"""
         SELECT workspace_id, sequential_id
         FROM obj_new
         WHERE sequential_id IS NOT NULL
         ORDER BY workspace_id, sequential_id
-        LIMIT 3
+        LIMIT {sample_limit}
         """,
     )
     for i, r in enumerate(rows, 1):
@@ -448,7 +462,7 @@ def build_queries(cur) -> dict[int, list[dict[str, Any]]]:
         )
 
     # Query #22: wide fetch by workspace + partition + sequential_id IN (...).
-    for i, ws in enumerate(workspaces[:3], 1):
+    for i, ws in enumerate(workspaces[:sample_limit], 1):
         rows = fetchall(
             cur,
             """
@@ -476,13 +490,13 @@ def build_queries(cur) -> dict[int, list[dict[str, Any]]]:
     # Metadata queries #7/#13/#18/#20.
     rows = fetchall(
         cur,
-        """
+        f"""
         SELECT workspace_id, object_type_id, COUNT(*) cnt
         FROM obj_type_attr
         WHERE is_deleted=0
         GROUP BY workspace_id, object_type_id
         ORDER BY cnt DESC
-        LIMIT 3
+        LIMIT {sample_limit}
         """,
     )
     for i, r in enumerate(rows, 1):
@@ -498,7 +512,7 @@ def build_queries(cur) -> dict[int, list[dict[str, Any]]]:
                 f"AND otae1_0.is_deleted = 0 AND ot1_0.id IN ({bin_hex(r['object_type_id'])})",
             }
         )
-    for i, ws in enumerate(workspaces[:3], 1):
+    for i, ws in enumerate(workspaces[:sample_limit], 1):
         rows = fetchall(
             cur,
             """
@@ -533,12 +547,12 @@ def build_queries(cur) -> dict[int, list[dict[str, Any]]]:
             )
     rows = fetchall(
         cur,
-        """
+        f"""
         SELECT workspace_id, sequential_id
         FROM obj_type_attr
         WHERE is_deleted=0 AND sequential_id IS NOT NULL
         ORDER BY workspace_id, sequential_id
-        LIMIT 3
+        LIMIT {sample_limit}
         """,
     )
     for i, r in enumerate(rows, 1):
@@ -555,13 +569,13 @@ def build_queries(cur) -> dict[int, list[dict[str, Any]]]:
     # text_value_7 lower-index fanout queries #14/#15/#16/#19/#25.
     text_rows = fetchall(
         cur,
-        """
+        f"""
         SELECT workspace_id, obj_type_id, text_value_7, text_value_8, text_value_16
         FROM obj_new
         WHERE text_value_7 IS NOT NULL AND text_value_7 != ''
           AND text_value_8 IS NOT NULL AND text_value_8 != ''
           AND text_value_16 IS NOT NULL AND text_value_16 != ''
-        LIMIT 3
+        LIMIT {sample_limit}
         """,
     )
     for i, r in enumerate(text_rows, 1):
@@ -621,10 +635,10 @@ def build_queries(cur) -> dict[int, list[dict[str, Any]]]:
     # Query #21 relationship exists depth 1.
     rel_rows = fetchall(
         cur,
-        """
+        f"""
         SELECT r.workspace_id, r.object_id, r.referenced_object_id
         FROM obj_relationship_new r
-        LIMIT 20
+        LIMIT {sample_limit * 10}
         """,
     )
     count = 0
@@ -662,20 +676,20 @@ def build_queries(cur) -> dict[int, list[dict[str, Any]]]:
                 f"ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
             }
         )
-        if count >= 3:
+        if count >= sample_limit:
             break
 
     # Query #24 relationship exists depth 3.
     chain_rows = fetchall(
         cur,
-        """
+        f"""
         SELECT r0.workspace_id, r0.object_id AS start_id, o3.label AS label3
         FROM obj_relationship_new r0
         JOIN obj_relationship_new r1 ON r1.object_id = r0.referenced_object_id AND r1.workspace_id = r0.workspace_id
         JOIN obj_relationship_new r2 ON r2.object_id = r1.referenced_object_id AND r2.workspace_id = r0.workspace_id
         JOIN obj_new o3 ON o3.id = r2.referenced_object_id AND o3.workspace_id = r0.workspace_id
         WHERE o3.label IS NOT NULL
-        LIMIT 3
+        LIMIT {sample_limit}
         """,
     )
     for i, r in enumerate(chain_rows, 1):
@@ -741,6 +755,200 @@ def ratio_text(measured: float | None, source: float | None) -> str:
     return f"{1 / ratio:.2f}x faster"
 
 
+def percentile(values: list[float], p: float) -> float | None:
+    if not values:
+        return None
+    values = sorted(values)
+    idx = min(len(values) - 1, max(0, math.ceil(len(values) * p) - 1))
+    return values[idx]
+
+
+def fmt_num(value: Any, digits: int = 1) -> str:
+    if value is None:
+        return ""
+    if isinstance(value, (int, float)):
+        return f"{value:.{digits}f}"
+    return str(value)
+
+
+def summarize_latencies(latencies: list[float], rows: list[int]) -> dict[str, Any]:
+    return {
+        "avg_ms": round(statistics.mean(latencies), 1) if latencies else None,
+        "p50_ms": round(statistics.median(latencies), 1) if latencies else None,
+        "p95_ms": round(percentile(latencies, 0.95), 1) if latencies else None,
+        "max_ms": round(max(latencies), 1) if latencies else None,
+        "avg_rows": round(statistics.mean(rows), 1) if rows else None,
+    }
+
+
+def run_worker(worker_id: int, qid: int, samples: list[dict[str, Any]], deadline: float, args: argparse.Namespace):
+    conn = connect(args)
+    ops: list[dict[str, Any]] = []
+    sample_idx = 0
+    try:
+        while time.time() < deadline:
+            sample = samples[sample_idx % len(samples)]
+            sample_idx += 1
+            status, rows, elapsed, error = run_sql(conn, sample["sql"])
+            ops.append(
+                {
+                    "worker_id": worker_id,
+                    "query_id": qid,
+                    "sample": sample["sample"],
+                    "status": status,
+                    "rows": rows,
+                    "latency_ms": round(elapsed, 1) if elapsed is not None else None,
+                    "error": error,
+                }
+            )
+    finally:
+        conn.close()
+    return ops
+
+
+def run_concurrency_level(
+    level: int,
+    variants: dict[int, list[dict[str, Any]]],
+    args: argparse.Namespace,
+) -> dict[str, Any]:
+    runnable = sorted(qid for qid, samples in variants.items() if qid not in MISSING_TABLES and samples)
+    assignments = [runnable[i % len(runnable)] for i in range(level)]
+    start_wall = dt.datetime.now(dt.timezone.utc)
+    start_epoch = time.time()
+    deadline = start_epoch + args.concurrency_duration
+    print(f"concurrency={level} start runnable_query_classes={len(runnable)} duration_s={args.concurrency_duration}")
+    all_ops: list[dict[str, Any]] = []
+    with concurrent.futures.ThreadPoolExecutor(max_workers=level) as pool:
+        futures = [
+            pool.submit(run_worker, i + 1, qid, variants[qid][: args.samples], deadline, args)
+            for i, qid in enumerate(assignments)
+        ]
+        for fut in concurrent.futures.as_completed(futures):
+            all_ops.extend(fut.result())
+    end_epoch = time.time()
+    end_wall = dt.datetime.now(dt.timezone.utc)
+    ok = [op for op in all_ops if op["status"] == "ok"]
+    latencies = [op["latency_ms"] for op in ok if op.get("latency_ms") is not None]
+    rows = [op["rows"] for op in ok if op.get("rows") is not None]
+    by_query: dict[str, dict[str, Any]] = {}
+    for qid in runnable:
+        qops = [op for op in all_ops if op["query_id"] == qid]
+        qok = [op for op in qops if op["status"] == "ok"]
+        qlat = [op["latency_ms"] for op in qok if op.get("latency_ms") is not None]
+        qrows = [op["rows"] for op in qok if op.get("rows") is not None]
+        qsummary = summarize_latencies(qlat, qrows)
+        qsummary.update(
+            {
+                "ops": len(qops),
+                "ok": len(qok),
+                "errors": len(qops) - len(qok),
+                "workers": assignments.count(qid),
+            }
+        )
+        by_query[str(qid)] = qsummary
+    summary = summarize_latencies(latencies, rows)
+    summary.update(
+        {
+            "concurrency": level,
+            "query_classes": len(runnable),
+            "ops": len(all_ops),
+            "ok": len(ok),
+            "errors": len(all_ops) - len(ok),
+            "elapsed_s": round(end_epoch - start_epoch, 1),
+            "qps": round(len(ok) / (end_epoch - start_epoch), 2) if end_epoch > start_epoch else None,
+        }
+    )
+    print(
+        f"concurrency={level} done ops={summary['ops']} ok={summary['ok']} "
+        f"errors={summary['errors']} qps={summary['qps']} avg_ms={summary['avg_ms']}"
+    )
+    return {
+        "concurrency": level,
+        "duration_s": args.concurrency_duration,
+        "start_time": start_wall.isoformat(),
+        "end_time": end_wall.isoformat(),
+        "start_epoch": start_epoch,
+        "end_epoch": end_epoch,
+        "worker_assignment": {str(qid): assignments.count(qid) for qid in runnable},
+        "summary": summary,
+        "by_query": by_query,
+    }
+
+
+def prometheus_query_range(url: str, query: str, start: float, end: float, step: int = 15) -> list[float]:
+    params = urllib.parse.urlencode({"query": query, "start": start, "end": end, "step": step})
+    with urllib.request.urlopen(f"{url.rstrip('/')}/api/v1/query_range?{params}", timeout=30) as resp:
+        payload = json.loads(resp.read())
+    if payload.get("status") != "success":
+        raise RuntimeError(payload)
+    values: list[float] = []
+    for series in payload["data"]["result"]:
+        for _, value in series.get("values", []):
+            try:
+                values.append(float(value))
+            except (TypeError, ValueError):
+                continue
+    return values
+
+
+def collect_prometheus_metrics(url: str, start: float, end: float) -> dict[str, dict[str, Any]]:
+    queries = {
+        "tidb": {
+            "cpu_query": 'sum(rate(process_cpu_seconds_total{component="tidb"}[1m]))',
+            "mem_query": 'sum(process_resident_memory_bytes{component="tidb"})',
+            "capacity_cores": 48,
+            "replicas": 3,
+        },
+        "tikv": {
+            "cpu_query": 'sum(rate(process_cpu_seconds_total{component="tikv"}[1m]))',
+            "mem_query": 'sum(process_resident_memory_bytes{component="tikv"})',
+            "capacity_cores": 64,
+            "replicas": 4,
+        },
+        "tiflash": {
+            "cpu_query": "sum(rate(tiflash_proxy_process_cpu_seconds_total[1m]))",
+            "mem_query": 'sum(tiflash_process_rss_by_type_bytes{component="tiflash"})',
+            "capacity_cores": 96,
+            "replicas": 6,
+            "cpu_note": "TiFlash proxy process CPU metric",
+        },
+    }
+    out: dict[str, dict[str, Any]] = {}
+    for component, spec in queries.items():
+        cpu_values = prometheus_query_range(url, spec["cpu_query"], start, end)
+        mem_values = prometheus_query_range(url, spec["mem_query"], start, end)
+        cpu_avg = statistics.mean(cpu_values) if cpu_values else None
+        cpu_max = max(cpu_values) if cpu_values else None
+        mem_avg = statistics.mean(mem_values) / (1024**3) if mem_values else None
+        mem_max = max(mem_values) / (1024**3) if mem_values else None
+        capacity = spec["capacity_cores"]
+        out[component] = {
+            "replicas": spec["replicas"],
+            "cpu_avg_cores": round(cpu_avg, 2) if cpu_avg is not None else None,
+            "cpu_max_cores": round(cpu_max, 2) if cpu_max is not None else None,
+            "cpu_max_pct": round(cpu_max / capacity * 100, 1) if cpu_max is not None else None,
+            "mem_avg_gib": round(mem_avg, 2) if mem_avg is not None else None,
+            "mem_max_gib": round(mem_max, 2) if mem_max is not None else None,
+            "note": spec.get("cpu_note", ""),
+        }
+    return out
+
+
+def run_concurrency_suite(variants: dict[int, list[dict[str, Any]]], args: argparse.Namespace) -> list[dict[str, Any]]:
+    runs = []
+    for level in args.concurrency_levels:
+        run = run_concurrency_level(level, variants, args)
+        if args.prometheus_url:
+            try:
+                run["metrics"] = collect_prometheus_metrics(args.prometheus_url, run["start_epoch"], run["end_epoch"])
+            except Exception as exc:  # noqa: BLE001
+                run["metrics_error"] = f"{type(exc).__name__}: {exc}"
+        runs.append(run)
+        if args.concurrency_pause > 0:
+            time.sleep(args.concurrency_pause)
+    return runs
+
+
 def write_markdown(results: dict[str, Any], out: Path) -> None:
     metrics = results["source_metrics"]
     lines = [
@@ -752,24 +960,25 @@ def write_markdown(results: dict[str, Any], out: Path) -> None:
         "",
         "Notes:",
         "- The source report contains normalized SQL with placeholders, so this run materialized representative parameter sets from `jsm_assets4`.",
-        "- Each runnable query uses up to three sampled parameter sets. Rows are fetched to the client; latency is client-observed SQL execution plus fetch time.",
+        f"- Each runnable query uses up to {results['sample_limit']} sampled parameter sets. Rows are fetched to the client; latency is client-observed SQL execution plus fetch time.",
         "- Wide object queries are represented as `SELECT o.*` / `SELECT obj.*`; predicate, ordering, and limit shape are preserved.",
         "- Queries whose referenced tables are absent from `jsm_assets4` are marked skipped.",
+        f"- Grafana: [{results['grafana_url']}]({results['grafana_url']})",
         "",
         "## Summary",
         "",
-        "| Query | Source tables | Source avg | Source max | Samples | OK | Rows avg | jsm_assets4 avg | jsm_assets4 p50 | jsm_assets4 max | Comparison | Status |",
-        "|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---|---|",
+        "| Query | Source avg | Source max | Samples | OK | Rows avg | jsm_assets4 avg | jsm_assets4 p50 | jsm_assets4 max | Comparison | Status |",
+        "|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|",
     ]
     for qid in range(1, 26):
         q = results["queries"].get(str(qid), {})
-        src = metrics.get(qid, {})
+        src = metrics.get(qid) or metrics.get(str(qid), {})
         summary = q.get("summary", {})
         source_avg_ms = ms_from_source(src.get("source_avg_latency", ""))
         comp = ratio_text(summary.get("avg_ms"), source_avg_ms)
         status = q.get("status", "")
         lines.append(
-            f"| {qid} | {src.get('tables','')} | {src.get('source_avg_latency','')} | "
+            f"| {qid} | {src.get('source_avg_latency','')} | "
             f"{src.get('source_max_latency','')} | {summary.get('runs',0)} | {summary.get('ok',0)} | "
             f"{summary.get('avg_rows','')} | {summary.get('avg_ms','')} | {summary.get('p50_ms','')} | "
             f"{summary.get('max_ms','')} | {comp} | {status} |"
@@ -781,12 +990,71 @@ def write_markdown(results: dict[str, Any], out: Path) -> None:
             lines.append(f"- Query #{q['query_id']}: {q['reason']}.")
     else:
         lines.append("- None.")
+    if results.get("concurrency_runs"):
+        lines += [
+            "",
+            "## Concurrent Runs",
+            "",
+            "Worker assignment is per query class. For concurrency 22, each runnable query class gets one worker. For concurrency 69, workers are assigned round-robin across the 22 runnable query classes.",
+            "",
+            "| Concurrency | Query classes | Duration s | Ops | OK | Errors | QPS | Avg ms | P95 ms | Max ms |",
+            "|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
+        ]
+        for run in results["concurrency_runs"]:
+            s = run["summary"]
+            lines.append(
+                f"| {s['concurrency']} | {s['query_classes']} | {run['duration_s']} | {s['ops']} | {s['ok']} | "
+                f"{s['errors']} | {s['qps']} | {s['avg_ms']} | {s['p95_ms']} | {s['max_ms']} |"
+            )
+        lines += ["", "### Grafana / Prometheus Resource Metrics", ""]
+        lines.append(
+            "CPU and memory values below are pulled from the Grafana Prometheus datasource for each run window. CPU capacity percentage assumes the current scale: TiDB 3 x 16 cores, TiKV 4 x 16 cores, TiFlash 6 x 16 cores."
+        )
+        lines.append("")
+        for run in results["concurrency_runs"]:
+            start_ms = int(run["start_epoch"] * 1000)
+            end_ms = int(run["end_epoch"] * 1000)
+            grafana_link = f"{results['grafana_url']}?from={start_ms}&to={end_ms}"
+            lines += [
+                f"#### Concurrency {run['concurrency']}",
+                "",
+                f"- Window: `{run['start_time']}` to `{run['end_time']}`",
+                f"- Grafana time range: [{grafana_link}]({grafana_link})",
+            ]
+            if run.get("metrics_error"):
+                lines.append(f"- Metrics error: `{run['metrics_error']}`")
+                lines.append("")
+                continue
+            lines += [
+                "",
+                "| Component | Replicas | CPU avg cores | CPU max cores | CPU max % capacity | Mem avg GiB | Mem max GiB | Note |",
+                "|---|---:|---:|---:|---:|---:|---:|---|",
+            ]
+            for component in ["tidb", "tikv", "tiflash"]:
+                m = run.get("metrics", {}).get(component, {})
+                lines.append(
+                    f"| {component} | {m.get('replicas','')} | {fmt_num(m.get('cpu_avg_cores'), 2)} | "
+                    f"{fmt_num(m.get('cpu_max_cores'), 2)} | {fmt_num(m.get('cpu_max_pct'), 1)}% | "
+                    f"{fmt_num(m.get('mem_avg_gib'), 2)} | {fmt_num(m.get('mem_max_gib'), 2)} | {m.get('note','')} |"
+                )
+            lines += [
+                "",
+                "| Query | Workers | Ops | OK | Errors | Avg ms | P95 ms | Max ms | Avg rows |",
+                "|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
+            ]
+            for qid in sorted(run["by_query"], key=lambda x: int(x)):
+                q = run["by_query"][qid]
+                lines.append(
+                    f"| {qid} | {q['workers']} | {q['ops']} | {q['ok']} | {q['errors']} | "
+                    f"{q['avg_ms']} | {q['p95_ms']} | {q['max_ms']} | {q['avg_rows']} |"
+                )
+            lines.append("")
     lines += ["", "## Per-Query Details", ""]
     for qid in range(1, 26):
         q = results["queries"].get(str(qid))
         if not q:
             continue
-        src = metrics.get(qid, {})
+        src = metrics.get(qid) or metrics.get(str(qid), {})
         lines += [
             f"### Query #{qid}",
             "",
@@ -832,6 +1100,12 @@ def main() -> None:
     parser.add_argument("--user", default="root")
     parser.add_argument("--read-timeout", type=int, default=120)
     parser.add_argument("--limit-query", type=int, default=0)
+    parser.add_argument("--samples", type=int, default=10)
+    parser.add_argument("--concurrency-levels", type=int, nargs="*", default=[])
+    parser.add_argument("--concurrency-duration", type=int, default=120)
+    parser.add_argument("--concurrency-pause", type=int, default=30)
+    parser.add_argument("--prometheus-url", default="http://127.0.0.1:19090")
+    parser.add_argument("--grafana-url", default=DEFAULT_GRAFANA_URL)
     args = parser.parse_args()
 
     report_text = REPORT.read_text()
@@ -840,7 +1114,7 @@ def main() -> None:
     conn = connect(args)
     cur = conn.cursor(pymysql.cursors.DictCursor)
     try:
-        variants = build_queries(cur)
+        variants = build_queries(cur, args.samples)
     finally:
         cur.close()
 
@@ -870,7 +1144,7 @@ def main() -> None:
                 }
                 continue
             executed = []
-            for sample in samples[:3]:
+            for sample in samples[: args.samples]:
                 status, rows, elapsed, error = run_sql(run_conn, sample["sql"])
                 item = dict(sample)
                 item.update(
@@ -893,12 +1167,19 @@ def main() -> None:
         run_conn.close()
         conn.close()
 
+    concurrency_runs = []
+    if args.concurrency_levels and not args.limit_query:
+        concurrency_runs = run_concurrency_suite(variants, args)
+
     results = {
         "run_time": dt.datetime.now(dt.timezone.utc).isoformat(),
         "database": DB,
         "source_report": str(REPORT),
+        "sample_limit": args.samples,
+        "grafana_url": args.grafana_url,
         "source_metrics": source_metrics,
         "queries": queries,
+        "concurrency_runs": concurrency_runs,
     }
     OUT_JSON.parent.mkdir(parents=True, exist_ok=True)
     OUT_JSON.write_text(json.dumps(results, indent=2, default=str))
