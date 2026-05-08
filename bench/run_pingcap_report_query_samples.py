@@ -1039,14 +1039,29 @@ def write_markdown(results: dict[str, Any], out: Path) -> None:
                 )
             lines += [
                 "",
-                "| Query | Workers | Ops | OK | Errors | Avg ms | P95 ms | Max ms | Avg rows |",
-                "|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
+                "Grafana panel screenshots:",
+                "",
+                f"![TiDB CPU/Memory - concurrency {run['concurrency']}](images/jsm_assets4_concurrency{run['concurrency']}_tidb_cpu_memory.png)",
+                "",
+                f"![TiKV CPU/Memory - concurrency {run['concurrency']}](images/jsm_assets4_concurrency{run['concurrency']}_tikv_cpu_memory.png)",
+                "",
+                f"![TiFlash CPU - concurrency {run['concurrency']}](images/jsm_assets4_concurrency{run['concurrency']}_tiflash_cpu.png)",
+                "",
+                f"![TiFlash Memory - concurrency {run['concurrency']}](images/jsm_assets4_concurrency{run['concurrency']}_tiflash_memory.png)",
+                "",
+                "| Query | Workers | Ops | OK | Errors | Source avg | Source max | Run avg ms | vs source avg | P95 ms | Max ms | Avg rows |",
+                "|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|",
             ]
             for qid in sorted(run["by_query"], key=lambda x: int(x)):
                 q = run["by_query"][qid]
+                src = metrics.get(int(qid)) or metrics.get(str(qid), {})
+                source_avg = src.get("source_avg_latency", "")
+                source_max = src.get("source_max_latency", "")
+                comp = ratio_text(q.get("avg_ms"), ms_from_source(source_avg))
                 lines.append(
                     f"| {qid} | {q['workers']} | {q['ops']} | {q['ok']} | {q['errors']} | "
-                    f"{q['avg_ms']} | {q['p95_ms']} | {q['max_ms']} | {q['avg_rows']} |"
+                    f"{source_avg} | {source_max} | {q['avg_ms']} | {comp} | "
+                    f"{q['p95_ms']} | {q['max_ms']} | {q['avg_rows']} |"
                 )
             lines.append("")
     lines += ["", "## Per-Query Details", ""]
