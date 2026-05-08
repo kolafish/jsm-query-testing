@@ -1,5 +1,5 @@
 {
-  "run_time": "2026-05-08T14:37:12.191771+00:00",
+  "run_time": "2026-05-08T15:14:27.334Z",
   "database": "jsm_assets4",
   "source_report": "/Users/jin/Downloads/full_report_for_pingcap.md",
   "sample_limit": 10,
@@ -14,6 +14,26 @@
       "source_avg_rows": "0",
       "source_avg_cop_tasks": "1",
       "digest": "`0be5ee110d02ddd38a3f3ef749c30a2fe529f2a7c1afcc441637297238fdabe0`"
+    },
+    "2": {
+      "tables": "obj_relationship_new",
+      "indexes_used": "obj_relationship_new:ix_obj_rel_object_id_without_partition",
+      "exec_count": "6,010",
+      "source_avg_latency": "320.8ms",
+      "source_max_latency": "14332.3ms",
+      "source_avg_rows": "234",
+      "source_avg_cop_tasks": "33",
+      "digest": "`5458cc92e3a6099543ef353b8efcd5cc406ceaa9352a2f98944d2712bb913f69`"
+    },
+    "3": {
+      "tables": "obj_type,cdm_type_obj_type,icon,obj_schema,cdm_type_obj_schema,obj_schema_property,obj_schema_owner",
+      "indexes_used": "obj_type:PRIMARY",
+      "exec_count": "48,787",
+      "source_avg_latency": "36.3ms",
+      "source_max_latency": "8652.6ms",
+      "source_avg_rows": "1",
+      "source_avg_cop_tasks": "6",
+      "digest": "`779292fed4ece2f4bf5a791dc5711f729163e7f9811fead38443d2fe5a57a915`"
     },
     "4": {
       "tables": "obj_new",
@@ -35,66 +55,6 @@
       "source_avg_cop_tasks": "1821",
       "digest": "`12cd1340a582755a0154160861d2d1bbd6c9503117ae42a3ab81dbf8cfdf2306`"
     },
-    "10": {
-      "tables": "obj_new",
-      "indexes_used": "obj_new:ix_obj_label_objtypeid_new",
-      "exec_count": "4",
-      "source_avg_latency": "41204.1ms",
-      "source_max_latency": "51112.0ms",
-      "source_avg_rows": "136",
-      "source_avg_cop_tasks": "4324",
-      "digest": "`d2d19dc81356ae14771a9c4078a9e0eb537f90ed5a4038e6bfe05af1f2704e8f`"
-    },
-    "17": {
-      "tables": "obj_new",
-      "indexes_used": "obj_new:ix_obj_label_objtypeid_new",
-      "exec_count": "3",
-      "source_avg_latency": "29564.9ms",
-      "source_max_latency": "37139.7ms",
-      "source_avg_rows": "0",
-      "source_avg_cop_tasks": "2578",
-      "digest": "`5dbce1791d490432524cf2c7e482d5c61e3fdfca96d3fb2973f8e49dbdcba5b9`"
-    },
-    "2": {
-      "tables": "obj_relationship_new",
-      "indexes_used": "obj_relationship_new:ix_obj_rel_object_id_without_partition",
-      "exec_count": "6,010",
-      "source_avg_latency": "320.8ms",
-      "source_max_latency": "14332.3ms",
-      "source_avg_rows": "234",
-      "source_avg_cop_tasks": "33",
-      "digest": "`5458cc92e3a6099543ef353b8efcd5cc406ceaa9352a2f98944d2712bb913f69`"
-    },
-    "9": {
-      "tables": "obj_relationship_new",
-      "indexes_used": "obj_relationship_new:ix_obj_rel_object_id_without_partition",
-      "exec_count": "5,959",
-      "source_avg_latency": "28.1ms",
-      "source_max_latency": "10778.1ms",
-      "source_avg_rows": "8",
-      "source_avg_cop_tasks": "6",
-      "digest": "`e925f942104eb6ab61a2af94469c3970a7814f6ed9446bf52f0a481e87495092`"
-    },
-    "3": {
-      "tables": "obj_type,cdm_type_obj_type,icon,obj_schema,cdm_type_obj_schema,obj_schema_property,obj_schema_owner",
-      "indexes_used": "obj_type:PRIMARY",
-      "exec_count": "48,787",
-      "source_avg_latency": "36.3ms",
-      "source_max_latency": "8652.6ms",
-      "source_avg_rows": "1",
-      "source_avg_cop_tasks": "6",
-      "digest": "`779292fed4ece2f4bf5a791dc5711f729163e7f9811fead38443d2fe5a57a915`"
-    },
-    "8": {
-      "tables": "obj_new",
-      "indexes_used": "obj_new:idx_fts_text_value_22",
-      "exec_count": "13",
-      "source_avg_latency": "16983.6ms",
-      "source_max_latency": "32291.9ms",
-      "source_avg_rows": "6",
-      "source_avg_cop_tasks": "127",
-      "digest": "`45a8dc3a1ec1682475cb179a47f186c42a1b5d5c1604b0c8aa0f51790504d5f5`"
-    },
     "6": {
       "tables": "obj_new",
       "indexes_used": "obj_new:primary_without_partition",
@@ -114,6 +74,36 @@
       "source_avg_rows": "35",
       "source_avg_cop_tasks": "2",
       "digest": "`668e859a1d48b364db3b61aecb12aaea2a7c47abc457ed29d76672101079f842`"
+    },
+    "8": {
+      "tables": "obj_new",
+      "indexes_used": "obj_new:idx_fts_text_value_22",
+      "exec_count": "13",
+      "source_avg_latency": "16983.6ms",
+      "source_max_latency": "32291.9ms",
+      "source_avg_rows": "6",
+      "source_avg_cop_tasks": "127",
+      "digest": "`45a8dc3a1ec1682475cb179a47f186c42a1b5d5c1604b0c8aa0f51790504d5f5`"
+    },
+    "9": {
+      "tables": "obj_relationship_new",
+      "indexes_used": "obj_relationship_new:ix_obj_rel_object_id_without_partition",
+      "exec_count": "5,959",
+      "source_avg_latency": "28.1ms",
+      "source_max_latency": "10778.1ms",
+      "source_avg_rows": "8",
+      "source_avg_cop_tasks": "6",
+      "digest": "`e925f942104eb6ab61a2af94469c3970a7814f6ed9446bf52f0a481e87495092`"
+    },
+    "10": {
+      "tables": "obj_new",
+      "indexes_used": "obj_new:ix_obj_label_objtypeid_new",
+      "exec_count": "4",
+      "source_avg_latency": "41204.1ms",
+      "source_max_latency": "51112.0ms",
+      "source_avg_rows": "136",
+      "source_avg_cop_tasks": "4324",
+      "digest": "`d2d19dc81356ae14771a9c4078a9e0eb537f90ed5a4038e6bfe05af1f2704e8f`"
     },
     "11": {
       "tables": "obj_new",
@@ -174,6 +164,16 @@
       "source_avg_rows": "500",
       "source_avg_cop_tasks": "1738",
       "digest": "`f8233e327500a09679cdab272a2f27054f207ba8daad793b9a0c06582d955621`"
+    },
+    "17": {
+      "tables": "obj_new",
+      "indexes_used": "obj_new:ix_obj_label_objtypeid_new",
+      "exec_count": "3",
+      "source_avg_latency": "29564.9ms",
+      "source_max_latency": "37139.7ms",
+      "source_avg_rows": "0",
+      "source_avg_cop_tasks": "2578",
+      "digest": "`5dbce1791d490432524cf2c7e482d5c61e3fdfca96d3fb2973f8e49dbdcba5b9`"
     },
     "18": {
       "tables": "obj_type",
@@ -292,7 +292,7 @@
           "sql": "SELECT obj_relationship.workspace_id, obj_relationship.partition_id, obj_relationship.id, obj_relationship.object_id, obj_relationship.referenced_object_id, obj_relationship.object_type_attribute_id, obj_relationship.object_type_id, obj_relationship.referenced_object_type_id FROM obj_relationship_new obj_relationship WHERE obj_relationship.object_id IN (0x9f4bea519f7545cbae5bcd1c04c8ef0f, 0x9c349813e5644d2da6d0295f36150d46, 0x2c1b25c5223d4581a709bec11032535a, 0x8d3fa0d434064475bee58a2e7dfe5ee4, 0x0a253ec8bd394c5cbf435302a1580072, 0xd537fbdf73b8416cafda6c71ab49213f, 0x1d771524393846aa8dfa07fbb75ed4af, 0x21f32bbb7613422bb2818d6ecb20a855, 0x1f6139328a244da989650fed5fb464ab, 0x13b79a52d2f34ae2a8dbbab09d446e82, 0xa3a06c9c9ee24136aeef6cca386eb63f, 0x5a10008d838d483ab5953152ef8a125c, 0xe46f465606a1420e904e5da28076340c, 0xd649c69c8cf94708851bb291c4331b11, 0x9df5fa2a06364182a5881abf34d61778, 0x17a00aac0ed349c88c9bf12132b8efb6, 0x0a213f2838f84b45bd578ea99799663f, 0x56bf89ed45904be793c3ef493681fc2b, 0x7c70ea63898645daba4ca30cbe266e51, 0x6378046ab18a430184b732bf889bc56e, 0xc56f394674004d9689475ce9e306fbe3, 0xd447bedb01ed4c8dbb9f9710be3b4a53, 0x0e04a42b038448bb9a4a61490a79903a, 0x6390f68c90324e6b97ff7b9e9370cf85, 0xfacdcb6f5c2b4fe1bb3373d78fd22f55)",
           "status": "ok",
           "rows": 600,
-          "latency_ms": 51.0,
+          "latency_ms": 51,
           "error": null
         },
         {
@@ -337,7 +337,7 @@
           "sql": "SELECT obj_relationship.workspace_id, obj_relationship.partition_id, obj_relationship.id, obj_relationship.object_id, obj_relationship.referenced_object_id, obj_relationship.object_type_attribute_id, obj_relationship.object_type_id, obj_relationship.referenced_object_type_id FROM obj_relationship_new obj_relationship WHERE obj_relationship.object_id IN (0x2a46d739e7134c3d92b283f135590ce4, 0x383bae64c5b9437d998496fc56b8e5c8, 0x833c81ea77204770bfe1762901e1ad24, 0xc16a2fb7dc674e91810fce72ea66bf8b, 0x375f19a4cd7d42e19e740d801e4519af, 0xdda25ef3937b4812af8d93a48c416f19, 0x728d9440d7af4dbaa0f05aac407f9a55, 0xd5568353ec974cc1bd7065f25f9e2146, 0x9a9f4350e88348c09e8541385e2d97d4, 0x9b4ca6886ccc4abe894621254f28b78d, 0xd46a95e35f0e4a10be8b7f3e591441c0, 0x7e3dac668d6e4217a7fc44601963f4de, 0xe10f49fc56ef422fbac43f50d330dc2b, 0x0c8bf32f448b4d499471bb1f86f48dd6, 0x143dd7a09d8d446ebae384d44b6d9f97, 0xa6fdecb3444a4220b30266d68f94e6ba, 0x2c97b9daec9246659a669c2d9f299ceb, 0xa4e3f747cfb24bf39c97b37c9e01632d, 0xc527472831744a10b06e6b57810e083a, 0x18989c517dca49ff8032012ba573eb5f, 0xd2dd69f616a44936ae70ab436ae07ea9, 0x457db933d261405d93be9ddd4ca4e5ca, 0xe3ea6706da154d7baf64ab984cadc8ba, 0x17222905e5c247a09dfc277432f42f43, 0x1cfec92b4c25418498dfcd074727ea82)",
           "status": "ok",
           "rows": 600,
-          "latency_ms": 102.0,
+          "latency_ms": 102,
           "error": null
         },
         {
@@ -374,7 +374,7 @@
         "errors": 0,
         "avg_ms": 103.3,
         "p50_ms": 80.6,
-        "min_ms": 51.0,
+        "min_ms": 51,
         "max_ms": 203.8,
         "avg_rows": 600
       }
@@ -441,7 +441,7 @@
           "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='134fa09e-62e8-4b23-be76-d1b2d01845cc' AND (o.obj_type_id IN (0xc30b5368dba04929bc3ddff93d45b5c2, 0x0a79f4d515274f18b770be668a5fb0ad, 0xd05f44807ba44f6997649ee42ce5f6ef, 0x33516f753dd943d6b121a8bf408c69be, 0x05f273ff222145a49742dd58bb38be3e) AND ((o.numeric_value_5 IS NOT NULL AND o.obj_type_id = 0xc30b5368dba04929bc3ddff93d45b5c2) OR (o.numeric_value_5 IS NOT NULL AND o.obj_type_id = 0x0a79f4d515274f18b770be668a5fb0ad) OR (o.numeric_value_5 IS NOT NULL AND o.obj_type_id = 0xd05f44807ba44f6997649ee42ce5f6ef) OR (o.numeric_value_5 IS NOT NULL AND o.obj_type_id = 0x33516f753dd943d6b121a8bf408c69be) OR (o.numeric_value_5 IS NOT NULL AND o.obj_type_id = 0x05f273ff222145a49742dd58bb38be3e))) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
-          "latency_ms": 11157.0,
+          "latency_ms": 11157,
           "error": null
         },
         {
@@ -477,7 +477,7 @@
           "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707) AND ((o.numeric_value_5 IS NOT NULL AND o.obj_type_id = 0x7d9ffc8b03a94ef69bbfb2e5f939ba14) OR (o.numeric_value_5 IS NOT NULL AND o.obj_type_id = 0x266009e95e414bafab14eef7ffe5f2e0) OR (o.numeric_value_5 IS NOT NULL AND o.obj_type_id = 0xfa8499385ed14c6089b9adb37223c21c) OR (o.numeric_value_5 IS NOT NULL AND o.obj_type_id = 0xdc814b704b9e458d94fe350ddfc49d98) OR (o.numeric_value_5 IS NOT NULL AND o.obj_type_id = 0x77744fc5c48e44e8a7f11213703b7707))) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
-          "latency_ms": 49.0,
+          "latency_ms": 49,
           "error": null
         },
         {
@@ -538,7 +538,7 @@
           "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='134fa09e-62e8-4b23-be76-d1b2d01845cc' AND (o.obj_type_id IN (0x33516f753dd943d6b121a8bf408c69be, 0xd05f44807ba44f6997649ee42ce5f6ef, 0x0a79f4d515274f18b770be668a5fb0ad, 0x05f273ff222145a49742dd58bb38be3e, 0xc30b5368dba04929bc3ddff93d45b5c2) AND (((JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"114023ee-4b90-43ea-8e30-2eb628f4ca5f\"', JSON_ARRAY('jira-group11'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"43e53aee-5066-4925-9cb3-80f2fb64b9da\"', JSON_ARRAY('61b1ba5e2278e7006b942f83'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"43e53aee-5066-4925-9cb3-80f2fb64b9da\"', JSON_ARRAY('61b191a56d002b006b4d444c'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"114023ee-4b90-43ea-8e30-2eb628f4ca5f\"', JSON_ARRAY('jira-group4')))) AND o.obj_type_id=0x33516f753dd943d6b121a8bf408c69be) OR ((JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"ab07b8ce-2e8c-421e-b178-69e76cb31808\"', JSON_ARRAY('61b1bc02ef18ca0071f4ec12'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"b9059390-133d-412a-a356-97a3e3fbc06c\"', JSON_ARRAY('jira-group19'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"ab07b8ce-2e8c-421e-b178-69e76cb31808\"', JSON_ARRAY('61b1b99b3618cd006f5b1b8b'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"ab07b8ce-2e8c-421e-b178-69e76cb31808\"', JSON_ARRAY('61b1b914ef18ca0071f4c664')))) AND o.obj_type_id=0xd05f44807ba44f6997649ee42ce5f6ef) OR ((JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"e3dde5ba-2d2e-46fe-9f9d-1fcee4e9a437\"', JSON_ARRAY('61b1c2b7b43d5b006ad76902'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"6f4dd958-d05e-4a67-9226-3cec8a00f670\"', JSON_ARRAY('jira-group8'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"e3dde5ba-2d2e-46fe-9f9d-1fcee4e9a437\"', JSON_ARRAY('61b1c572c510bc006b6785fa'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"e3dde5ba-2d2e-46fe-9f9d-1fcee4e9a437\"', JSON_ARRAY('61b1928febce470067edf720')))) AND o.obj_type_id=0x0a79f4d515274f18b770be668a5fb0ad) OR ((JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"adaac18e-cd3f-4fb6-8125-0ae7a7a2397b\"', JSON_ARRAY('61b1c53eebce470067f04a7c'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"adaac18e-cd3f-4fb6-8125-0ae7a7a2397b\"', JSON_ARRAY('61b190e7b43d5b006ad52310'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"adaac18e-cd3f-4fb6-8125-0ae7a7a2397b\"', JSON_ARRAY('61b1916dfe9f3000681bba0d'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"adaac18e-cd3f-4fb6-8125-0ae7a7a2397b\"', JSON_ARRAY('61b1c88ff241500072843899')))) AND o.obj_type_id=0x05f273ff222145a49742dd58bb38be3e) OR ((JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"2e1541f7-7371-465b-8716-e50d73bcd3ab\"', JSON_ARRAY('61b19187744c4d00698782b1'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"d1b88ffc-81f5-4c12-a149-fcad3817aeb5\"', JSON_ARRAY('jira-group18'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"d1b88ffc-81f5-4c12-a149-fcad3817aeb5\"', JSON_ARRAY('jira-group11'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"2e1541f7-7371-465b-8716-e50d73bcd3ab\"', JSON_ARRAY('61b1c857977c5b00728bb1e6')))) AND o.obj_type_id=0xc30b5368dba04929bc3ddff93d45b5c2))) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
-          "latency_ms": 165.0,
+          "latency_ms": 165,
           "error": null
         },
         {
@@ -825,17 +825,17 @@
       "samples": [
         {
           "sample": "s1",
-          "params": "workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_type=ad3f4fea-db96-456d-a7bf-fc4cd63f05f4, text_value_22=\u2063Analysed\u2063",
-          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='8a6526e6-cd57-4216-bac6-358a6177d221' AND (o.obj_type_id IN (0xad3f4feadb96456da7bffc4cd63f05f4, 0x81790b7da4ec44de85e1c94e50c497a7, 0x1d9d47a406e14befa85e456dcec5b67b, 0x1bfa019ca2164e97b43331fe25d01325, 0x29ba27b2e1174ca3a0541b8e84c15d4e) AND (o.obj_type_id = 0xad3f4feadb96456da7bffc4cd63f05f4) AND (o.text_value_23 = 'Amana' AND MATCH(o.text_value_22) AGAINST ('\"\u2063Analysed\u2063\"' IN BOOLEAN MODE) AND o.text_value_22 LIKE '%\u2063Analysed\u2063%' AND o.text_value_22 != '' AND o.text_value_9 = 'Fagor' AND (o.numeric_value_3 = 20.000000000000000000000000000000 OR o.numeric_value_1 = 938.000000000000000000000000000000))) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
+          "params": "workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_type=ad3f4fea-db96-456d-a7bf-fc4cd63f05f4, text_value_22=⁣Analysed⁣",
+          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='8a6526e6-cd57-4216-bac6-358a6177d221' AND (o.obj_type_id IN (0xad3f4feadb96456da7bffc4cd63f05f4, 0x81790b7da4ec44de85e1c94e50c497a7, 0x1d9d47a406e14befa85e456dcec5b67b, 0x1bfa019ca2164e97b43331fe25d01325, 0x29ba27b2e1174ca3a0541b8e84c15d4e) AND (o.obj_type_id = 0xad3f4feadb96456da7bffc4cd63f05f4) AND (o.text_value_23 = 'Amana' AND MATCH(o.text_value_22) AGAINST ('\"⁣Analysed⁣\"' IN BOOLEAN MODE) AND o.text_value_22 LIKE '%⁣Analysed⁣%' AND o.text_value_22 != '' AND o.text_value_9 = 'Fagor' AND (o.numeric_value_3 = 20.000000000000000000000000000000 OR o.numeric_value_1 = 938.000000000000000000000000000000))) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 4,
-          "latency_ms": 42368.0,
+          "latency_ms": 42368,
           "error": null
         },
         {
           "sample": "s2",
-          "params": "workspace=9963b35f-9397-48ec-9403-adab57aef265, obj_type=c803e991-dc8d-4c96-a818-0a05c3a7ee7b, text_value_22=\u2063Operational\u2063",
-          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='9963b35f-9397-48ec-9403-adab57aef265' AND (o.obj_type_id IN (0xf1e422765cd348969fee51389a43a639, 0x79d1215ce2a04ecaa29b257eec19bb8d, 0xc803e991dc8d4c96a8180a05c3a7ee7b, 0xcaa0b57b5bca42d780f67b3831e81978, 0xe9b4640efde64a4baba2d402fb8d3f93) AND (o.obj_type_id = 0xc803e991dc8d4c96a8180a05c3a7ee7b) AND (o.text_value_23 = '\udbff\udfff' AND MATCH(o.text_value_22) AGAINST ('\"\u2063Operational\u2063\"' IN BOOLEAN MODE) AND o.text_value_22 LIKE '%\u2063Operational\u2063%' AND o.text_value_22 != '' AND o.text_value_9 = 'KitchenAid' AND (o.numeric_value_3 = 12.000000000000000000000000000000 OR o.numeric_value_1 = 307.000000000000000000000000000000))) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
+          "params": "workspace=9963b35f-9397-48ec-9403-adab57aef265, obj_type=c803e991-dc8d-4c96-a818-0a05c3a7ee7b, text_value_22=⁣Operational⁣",
+          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='9963b35f-9397-48ec-9403-adab57aef265' AND (o.obj_type_id IN (0xf1e422765cd348969fee51389a43a639, 0x79d1215ce2a04ecaa29b257eec19bb8d, 0xc803e991dc8d4c96a8180a05c3a7ee7b, 0xcaa0b57b5bca42d780f67b3831e81978, 0xe9b4640efde64a4baba2d402fb8d3f93) AND (o.obj_type_id = 0xc803e991dc8d4c96a8180a05c3a7ee7b) AND (o.text_value_23 = '􏿿' AND MATCH(o.text_value_22) AGAINST ('\"⁣Operational⁣\"' IN BOOLEAN MODE) AND o.text_value_22 LIKE '%⁣Operational⁣%' AND o.text_value_22 != '' AND o.text_value_9 = 'KitchenAid' AND (o.numeric_value_3 = 12.000000000000000000000000000000 OR o.numeric_value_1 = 307.000000000000000000000000000000))) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 37,
           "latency_ms": 39990.9,
@@ -843,8 +843,8 @@
         },
         {
           "sample": "s3",
-          "params": "workspace=3b4c201d-8244-416e-925d-f9608e001a2b, obj_type=451aed8b-a883-4ee3-8d40-5f6881afa983, text_value_22=\u2063Retired\u2063",
-          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='3b4c201d-8244-416e-925d-f9608e001a2b' AND (o.obj_type_id IN (0x6098d21a52cf48b3b073e9e390bc0c5b, 0x397053bd325843b2be6d405789b8e3dc, 0x427ac8ba5626416899e60708472a9a7b, 0x84c285d578f24fbfafc03aa25bc139ac, 0x451aed8ba8834ee38d405f6881afa983) AND (o.obj_type_id = 0x451aed8ba8834ee38d405f6881afa983) AND (o.text_value_23 = 'Electrolux' AND MATCH(o.text_value_22) AGAINST ('\"\u2063Retired\u2063\"' IN BOOLEAN MODE) AND o.text_value_22 LIKE '%\u2063Retired\u2063%' AND o.text_value_22 != '' AND o.text_value_9 = '\udbff\udfff' AND (o.numeric_value_3 = 45.000000000000000000000000000000 OR o.numeric_value_1 = 643.000000000000000000000000000000))) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
+          "params": "workspace=3b4c201d-8244-416e-925d-f9608e001a2b, obj_type=451aed8b-a883-4ee3-8d40-5f6881afa983, text_value_22=⁣Retired⁣",
+          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='3b4c201d-8244-416e-925d-f9608e001a2b' AND (o.obj_type_id IN (0x6098d21a52cf48b3b073e9e390bc0c5b, 0x397053bd325843b2be6d405789b8e3dc, 0x427ac8ba5626416899e60708472a9a7b, 0x84c285d578f24fbfafc03aa25bc139ac, 0x451aed8ba8834ee38d405f6881afa983) AND (o.obj_type_id = 0x451aed8ba8834ee38d405f6881afa983) AND (o.text_value_23 = 'Electrolux' AND MATCH(o.text_value_22) AGAINST ('\"⁣Retired⁣\"' IN BOOLEAN MODE) AND o.text_value_22 LIKE '%⁣Retired⁣%' AND o.text_value_22 != '' AND o.text_value_9 = '􏿿' AND (o.numeric_value_3 = 45.000000000000000000000000000000 OR o.numeric_value_1 = 643.000000000000000000000000000000))) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 19,
           "latency_ms": 26999.8,
@@ -852,8 +852,8 @@
         },
         {
           "sample": "s4",
-          "params": "workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, obj_type=eefa73e0-11da-4486-8024-fddfc52baef8, text_value_22=\u2063Defined\u2063",
-          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='cafd5188-8a63-44e7-b4a9-e885c9664b9c' AND (o.obj_type_id IN (0xca0a6a3f120d4e81a73a35dc434b9590, 0x89a756f602014cdabec2e6496b1d0018, 0xeefa73e011da44868024fddfc52baef8, 0xcd53ba50fac84ae287fd01dfee6d7a25, 0x8ae2f34e8ec14171a8f43e264d19fa83) AND (o.obj_type_id = 0xeefa73e011da44868024fddfc52baef8) AND (o.text_value_23 = '\udbff\udfff' AND MATCH(o.text_value_22) AGAINST ('\"\u2063Defined\u2063\"' IN BOOLEAN MODE) AND o.text_value_22 LIKE '%\u2063Defined\u2063%' AND o.text_value_22 != '' AND o.text_value_9 = '\udbff\udfff' AND (o.numeric_value_3 = 9.000000000000000000000000000000 OR o.numeric_value_1 = 0E-30))) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
+          "params": "workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, obj_type=eefa73e0-11da-4486-8024-fddfc52baef8, text_value_22=⁣Defined⁣",
+          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='cafd5188-8a63-44e7-b4a9-e885c9664b9c' AND (o.obj_type_id IN (0xca0a6a3f120d4e81a73a35dc434b9590, 0x89a756f602014cdabec2e6496b1d0018, 0xeefa73e011da44868024fddfc52baef8, 0xcd53ba50fac84ae287fd01dfee6d7a25, 0x8ae2f34e8ec14171a8f43e264d19fa83) AND (o.obj_type_id = 0xeefa73e011da44868024fddfc52baef8) AND (o.text_value_23 = '􏿿' AND MATCH(o.text_value_22) AGAINST ('\"⁣Defined⁣\"' IN BOOLEAN MODE) AND o.text_value_22 LIKE '%⁣Defined⁣%' AND o.text_value_22 != '' AND o.text_value_9 = '􏿿' AND (o.numeric_value_3 = 9.000000000000000000000000000000 OR o.numeric_value_1 = 0E-30))) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 25577.8,
@@ -861,17 +861,17 @@
         },
         {
           "sample": "s5",
-          "params": "workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=c30b5368-dba0-4929-bc3d-dff93d45b5c2, text_value_22=\u2063Retired\u2063",
-          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='134fa09e-62e8-4b23-be76-d1b2d01845cc' AND (o.obj_type_id IN (0xd05f44807ba44f6997649ee42ce5f6ef, 0x05f273ff222145a49742dd58bb38be3e, 0xc30b5368dba04929bc3ddff93d45b5c2, 0x0a79f4d515274f18b770be668a5fb0ad, 0x33516f753dd943d6b121a8bf408c69be) AND (o.obj_type_id = 0xc30b5368dba04929bc3ddff93d45b5c2) AND (o.text_value_23 = '\udbff\udfff' AND MATCH(o.text_value_22) AGAINST ('\"\u2063Retired\u2063\"' IN BOOLEAN MODE) AND o.text_value_22 LIKE '%\u2063Retired\u2063%' AND o.text_value_22 != '' AND o.text_value_9 = 'Sharp' AND (o.numeric_value_3 = 40.000000000000000000000000000000 OR o.numeric_value_1 = 68.000000000000000000000000000000))) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
+          "params": "workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=c30b5368-dba0-4929-bc3d-dff93d45b5c2, text_value_22=⁣Retired⁣",
+          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='134fa09e-62e8-4b23-be76-d1b2d01845cc' AND (o.obj_type_id IN (0xd05f44807ba44f6997649ee42ce5f6ef, 0x05f273ff222145a49742dd58bb38be3e, 0xc30b5368dba04929bc3ddff93d45b5c2, 0x0a79f4d515274f18b770be668a5fb0ad, 0x33516f753dd943d6b121a8bf408c69be) AND (o.obj_type_id = 0xc30b5368dba04929bc3ddff93d45b5c2) AND (o.text_value_23 = '􏿿' AND MATCH(o.text_value_22) AGAINST ('\"⁣Retired⁣\"' IN BOOLEAN MODE) AND o.text_value_22 LIKE '%⁣Retired⁣%' AND o.text_value_22 != '' AND o.text_value_9 = 'Sharp' AND (o.numeric_value_3 = 40.000000000000000000000000000000 OR o.numeric_value_1 = 68.000000000000000000000000000000))) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 13,
-          "latency_ms": 8028.0,
+          "latency_ms": 8028,
           "error": null
         },
         {
           "sample": "s6",
-          "params": "workspace=183afe88-bcf4-48a6-a9ef-65420b7b819c, obj_type=09ae6b6f-4a9d-4021-8377-e14a3e0ccdd1, text_value_22=\u2063Defined\u2063",
-          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='183afe88-bcf4-48a6-a9ef-65420b7b819c' AND (o.obj_type_id IN (0xbe1cdce6236a472e97e23d955d5b853f, 0x90f90af700c74fde8c7964873f49c3af, 0xe4fa095634454bbcbd91dff2d3eee2af, 0x09ae6b6f4a9d40218377e14a3e0ccdd1, 0xeff9228fd04b4f0f881229f29500c8f5) AND (o.obj_type_id = 0x09ae6b6f4a9d40218377e14a3e0ccdd1) AND (o.text_value_23 = 'KitchenAid' AND MATCH(o.text_value_22) AGAINST ('\"\u2063Defined\u2063\"' IN BOOLEAN MODE) AND o.text_value_22 LIKE '%\u2063Defined\u2063%' AND o.text_value_22 != '' AND o.text_value_9 = 'Samsung' AND (o.numeric_value_3 = 41.000000000000000000000000000000 OR o.numeric_value_1 = 696.000000000000000000000000000000))) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
+          "params": "workspace=183afe88-bcf4-48a6-a9ef-65420b7b819c, obj_type=09ae6b6f-4a9d-4021-8377-e14a3e0ccdd1, text_value_22=⁣Defined⁣",
+          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='183afe88-bcf4-48a6-a9ef-65420b7b819c' AND (o.obj_type_id IN (0xbe1cdce6236a472e97e23d955d5b853f, 0x90f90af700c74fde8c7964873f49c3af, 0xe4fa095634454bbcbd91dff2d3eee2af, 0x09ae6b6f4a9d40218377e14a3e0ccdd1, 0xeff9228fd04b4f0f881229f29500c8f5) AND (o.obj_type_id = 0x09ae6b6f4a9d40218377e14a3e0ccdd1) AND (o.text_value_23 = 'KitchenAid' AND MATCH(o.text_value_22) AGAINST ('\"⁣Defined⁣\"' IN BOOLEAN MODE) AND o.text_value_22 LIKE '%⁣Defined⁣%' AND o.text_value_22 != '' AND o.text_value_9 = 'Samsung' AND (o.numeric_value_3 = 41.000000000000000000000000000000 OR o.numeric_value_1 = 696.000000000000000000000000000000))) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1,
           "latency_ms": 8581.7,
@@ -879,8 +879,8 @@
         },
         {
           "sample": "s7",
-          "params": "workspace=23f639f1-fae8-48b0-8518-da3b7c80be57, obj_type=a8439325-6f3b-4715-bdcb-9c132779da43, text_value_22=\u2063Retired\u2063",
-          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='23f639f1-fae8-48b0-8518-da3b7c80be57' AND (o.obj_type_id IN (0x768ae07d4a53469fab5f88094eb73381, 0xa84393256f3b4715bdcb9c132779da43, 0xdba12748de424ec5a5f100357e1f33de, 0xaa0e1ddc2a784d21a1b0328b0980b917, 0xddebccff288541e29d63dc595d7a5f6d) AND (o.obj_type_id = 0xa84393256f3b4715bdcb9c132779da43) AND (o.text_value_23 = 'Whirlpool' AND MATCH(o.text_value_22) AGAINST ('\"\u2063Retired\u2063\"' IN BOOLEAN MODE) AND o.text_value_22 LIKE '%\u2063Retired\u2063%' AND o.text_value_22 != '' AND o.text_value_9 = 'KitchenAid' AND (o.numeric_value_3 = 6.000000000000000000000000000000 OR o.numeric_value_1 = 141.000000000000000000000000000000))) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
+          "params": "workspace=23f639f1-fae8-48b0-8518-da3b7c80be57, obj_type=a8439325-6f3b-4715-bdcb-9c132779da43, text_value_22=⁣Retired⁣",
+          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='23f639f1-fae8-48b0-8518-da3b7c80be57' AND (o.obj_type_id IN (0x768ae07d4a53469fab5f88094eb73381, 0xa84393256f3b4715bdcb9c132779da43, 0xdba12748de424ec5a5f100357e1f33de, 0xaa0e1ddc2a784d21a1b0328b0980b917, 0xddebccff288541e29d63dc595d7a5f6d) AND (o.obj_type_id = 0xa84393256f3b4715bdcb9c132779da43) AND (o.text_value_23 = 'Whirlpool' AND MATCH(o.text_value_22) AGAINST ('\"⁣Retired⁣\"' IN BOOLEAN MODE) AND o.text_value_22 LIKE '%⁣Retired⁣%' AND o.text_value_22 != '' AND o.text_value_9 = 'KitchenAid' AND (o.numeric_value_3 = 6.000000000000000000000000000000 OR o.numeric_value_1 = 141.000000000000000000000000000000))) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 2,
           "latency_ms": 4490.7,
@@ -888,8 +888,8 @@
         },
         {
           "sample": "s8",
-          "params": "workspace=718915aa-f8e9-4bbc-b1dc-ba720f1296e2, obj_type=440eb858-a088-46c0-bb9a-0f1ca94eae58, text_value_22=\u2063Approved\u2063",
-          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='718915aa-f8e9-4bbc-b1dc-ba720f1296e2' AND (o.obj_type_id IN (0xe7afe364c8d5413eb80ceb69477bba57, 0x2fbcbf352e6f47368e0fd506c4470805, 0x440eb858a08846c0bb9a0f1ca94eae58, 0x28bb55ff511b4479ab669f0707da95c1, 0xfba9571458214ad1af46d4699ceb4ec7) AND (o.obj_type_id = 0x440eb858a08846c0bb9a0f1ca94eae58) AND (o.text_value_23 = '\udbff\udfff' AND MATCH(o.text_value_22) AGAINST ('\"\u2063Approved\u2063\"' IN BOOLEAN MODE) AND o.text_value_22 LIKE '%\u2063Approved\u2063%' AND o.text_value_22 != '' AND o.text_value_9 = 'Franke' AND (o.numeric_value_3 = 3.000000000000000000000000000000 OR o.numeric_value_1 = 888.000000000000000000000000000000))) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
+          "params": "workspace=718915aa-f8e9-4bbc-b1dc-ba720f1296e2, obj_type=440eb858-a088-46c0-bb9a-0f1ca94eae58, text_value_22=⁣Approved⁣",
+          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='718915aa-f8e9-4bbc-b1dc-ba720f1296e2' AND (o.obj_type_id IN (0xe7afe364c8d5413eb80ceb69477bba57, 0x2fbcbf352e6f47368e0fd506c4470805, 0x440eb858a08846c0bb9a0f1ca94eae58, 0x28bb55ff511b4479ab669f0707da95c1, 0xfba9571458214ad1af46d4699ceb4ec7) AND (o.obj_type_id = 0x440eb858a08846c0bb9a0f1ca94eae58) AND (o.text_value_23 = '􏿿' AND MATCH(o.text_value_22) AGAINST ('\"⁣Approved⁣\"' IN BOOLEAN MODE) AND o.text_value_22 LIKE '%⁣Approved⁣%' AND o.text_value_22 != '' AND o.text_value_9 = 'Franke' AND (o.numeric_value_3 = 3.000000000000000000000000000000 OR o.numeric_value_1 = 888.000000000000000000000000000000))) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 5,
           "latency_ms": 4165.5,
@@ -897,8 +897,8 @@
         },
         {
           "sample": "s9",
-          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_22=\u2063Defined\u2063",
-          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id IN (0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c) AND (o.obj_type_id = 0xdc814b704b9e458d94fe350ddfc49d98) AND (o.text_value_23 = '\udbff\udfff' AND MATCH(o.text_value_22) AGAINST ('\"\u2063Defined\u2063\"' IN BOOLEAN MODE) AND o.text_value_22 LIKE '%\u2063Defined\u2063%' AND o.text_value_22 != '' AND o.text_value_9 = 'Samsung' AND (o.numeric_value_3 = 28.000000000000000000000000000000 OR o.numeric_value_1 = 217.000000000000000000000000000000))) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_22=⁣Defined⁣",
+          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id IN (0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c) AND (o.obj_type_id = 0xdc814b704b9e458d94fe350ddfc49d98) AND (o.text_value_23 = '􏿿' AND MATCH(o.text_value_22) AGAINST ('\"⁣Defined⁣\"' IN BOOLEAN MODE) AND o.text_value_22 LIKE '%⁣Defined⁣%' AND o.text_value_22 != '' AND o.text_value_9 = 'Samsung' AND (o.numeric_value_3 = 28.000000000000000000000000000000 OR o.numeric_value_1 = 217.000000000000000000000000000000))) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 4,
           "latency_ms": 639.1,
@@ -906,8 +906,8 @@
         },
         {
           "sample": "s10",
-          "params": "workspace=82e47cda-f6dc-4999-b9fa-dc813435ec51, obj_type=fd57a932-342b-43ee-b20c-0ea71d89c5b3, text_value_22=\u2063Defined\u2063",
-          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='82e47cda-f6dc-4999-b9fa-dc813435ec51' AND (o.obj_type_id IN (0x338c801a4d03484fa4b36eb1b1e1d481, 0xfa6b9dcfff79406b9e57d2907e7ab8f6, 0xfd57a932342b43eeb20c0ea71d89c5b3, 0x3fb90e7eadd44003b4cc47d4b439a0c6, 0xcce0656a3fe04fefb77f61d31396fbfa) AND (o.obj_type_id = 0xfd57a932342b43eeb20c0ea71d89c5b3) AND (o.text_value_23 = 'Blue Star' AND MATCH(o.text_value_22) AGAINST ('\"\u2063Defined\u2063\"' IN BOOLEAN MODE) AND o.text_value_22 LIKE '%\u2063Defined\u2063%' AND o.text_value_22 != '' AND o.text_value_9 = 'KitchenAid' AND (o.numeric_value_3 = 40.000000000000000000000000000000 OR o.numeric_value_1 = 612.000000000000000000000000000000))) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
+          "params": "workspace=82e47cda-f6dc-4999-b9fa-dc813435ec51, obj_type=fd57a932-342b-43ee-b20c-0ea71d89c5b3, text_value_22=⁣Defined⁣",
+          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='82e47cda-f6dc-4999-b9fa-dc813435ec51' AND (o.obj_type_id IN (0x338c801a4d03484fa4b36eb1b1e1d481, 0xfa6b9dcfff79406b9e57d2907e7ab8f6, 0xfd57a932342b43eeb20c0ea71d89c5b3, 0x3fb90e7eadd44003b4cc47d4b439a0c6, 0xcce0656a3fe04fefb77f61d31396fbfa) AND (o.obj_type_id = 0xfd57a932342b43eeb20c0ea71d89c5b3) AND (o.text_value_23 = 'Blue Star' AND MATCH(o.text_value_22) AGAINST ('\"⁣Defined⁣\"' IN BOOLEAN MODE) AND o.text_value_22 LIKE '%⁣Defined⁣%' AND o.text_value_22 != '' AND o.text_value_9 = 'KitchenAid' AND (o.numeric_value_3 = 40.000000000000000000000000000000 OR o.numeric_value_1 = 612.000000000000000000000000000000))) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1,
           "latency_ms": 588.3,
@@ -918,10 +918,10 @@
         "runs": 10,
         "ok": 10,
         "errors": 0,
-        "avg_ms": 16143.0,
+        "avg_ms": 16143,
         "p50_ms": 8304.9,
         "min_ms": 588.3,
-        "max_ms": 42368.0,
+        "max_ms": 42368,
         "avg_rows": 108.6
       }
     },
@@ -1095,7 +1095,7 @@
           "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='134fa09e-62e8-4b23-be76-d1b2d01845cc' AND (o.obj_type_id=0x0a79f4d515274f18b770be668a5fb0ad AND (JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"e3dde5ba-2d2e-46fe-9f9d-1fcee4e9a437\"', JSON_ARRAY('61b1c2b7b43d5b006ad76902'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"6f4dd958-d05e-4a67-9226-3cec8a00f670\"', JSON_ARRAY('jira-group8'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"e3dde5ba-2d2e-46fe-9f9d-1fcee4e9a437\"', JSON_ARRAY('61b1c572c510bc006b6785fa'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"e3dde5ba-2d2e-46fe-9f9d-1fcee4e9a437\"', JSON_ARRAY('61b1928febce470067edf720')))) AND o.obj_type_id=0x0a79f4d515274f18b770be668a5fb0ad) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
-          "latency_ms": 590.0,
+          "latency_ms": 590,
           "error": null
         },
         {
@@ -1104,7 +1104,7 @@
           "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='134fa09e-62e8-4b23-be76-d1b2d01845cc' AND (o.obj_type_id=0x33516f753dd943d6b121a8bf408c69be AND (JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"114023ee-4b90-43ea-8e30-2eb628f4ca5f\"', JSON_ARRAY('jira-group11'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"43e53aee-5066-4925-9cb3-80f2fb64b9da\"', JSON_ARRAY('61b1ba5e2278e7006b942f83'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"43e53aee-5066-4925-9cb3-80f2fb64b9da\"', JSON_ARRAY('61b191a56d002b006b4d444c'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"114023ee-4b90-43ea-8e30-2eb628f4ca5f\"', JSON_ARRAY('jira-group4')))) AND o.obj_type_id=0x33516f753dd943d6b121a8bf408c69be) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
-          "latency_ms": 580.0,
+          "latency_ms": 580,
           "error": null
         },
         {
@@ -1183,7 +1183,7 @@
           "sql": "SELECT obj.* FROM obj_new obj WHERE obj.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND obj.sequential_id = 5",
           "status": "ok",
           "rows": 1,
-          "latency_ms": 12.0,
+          "latency_ms": 12,
           "error": null
         },
         {
@@ -1201,7 +1201,7 @@
           "sql": "SELECT obj.* FROM obj_new obj WHERE obj.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND obj.sequential_id = 7",
           "status": "ok",
           "rows": 1,
-          "latency_ms": 11.0,
+          "latency_ms": 11,
           "error": null
         },
         {
@@ -1371,8 +1371,8 @@
       "samples": [
         {
           "sample": "s1",
-          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=\udbff\udfff",
-          "sql": "SELECT o.sequential_id, o.text_value_8 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_amana__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_8='\udbff\udfff' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.text_value_8 ASC LIMIT 1000 OFFSET 0",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=􏿿",
+          "sql": "SELECT o.sequential_id, o.text_value_8 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_amana__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_8='􏿿' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.text_value_8 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 94.7,
@@ -1381,16 +1381,16 @@
         {
           "sample": "s2",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=LG",
-          "sql": "SELECT o.sequential_id, o.text_value_8 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_electrolux__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_8='LG' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.text_value_8 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.sequential_id, o.text_value_8 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_electrolux__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_8='LG' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.text_value_8 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
-          "latency_ms": 89.0,
+          "latency_ms": 89,
           "error": null
         },
         {
           "sample": "s3",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, text_value_8=KitchenAid",
-          "sql": "SELECT o.sequential_id, o.text_value_8 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707 AND ((NOT o.text_value_7_lower = '__not_\udbff\udfff__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707)  AND (o.text_value_8='KitchenAid' AND o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707)) ORDER BY o.text_value_8 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.sequential_id, o.text_value_8 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707 AND ((NOT o.text_value_7_lower = '__not_􏿿__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707)  AND (o.text_value_8='KitchenAid' AND o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707)) ORDER BY o.text_value_8 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 148.7,
@@ -1399,7 +1399,7 @@
         {
           "sample": "s4",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=7d9ffc8b-03a9-4ef6-9bbf-b2e5f939ba14, text_value_8=Siemens",
-          "sql": "SELECT o.sequential_id, o.text_value_8 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x7d9ffc8b03a94ef69bbfb2e5f939ba14 AND ((NOT o.text_value_7_lower = '__not_kitchenaid__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x7d9ffc8b03a94ef69bbfb2e5f939ba14)  AND (o.text_value_8='Siemens' AND o.obj_type_id=0x7d9ffc8b03a94ef69bbfb2e5f939ba14)) ORDER BY o.text_value_8 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.sequential_id, o.text_value_8 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x7d9ffc8b03a94ef69bbfb2e5f939ba14 AND ((NOT o.text_value_7_lower = '__not_kitchenaid__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x7d9ffc8b03a94ef69bbfb2e5f939ba14)  AND (o.text_value_8='Siemens' AND o.obj_type_id=0x7d9ffc8b03a94ef69bbfb2e5f939ba14)) ORDER BY o.text_value_8 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 136.1,
@@ -1408,16 +1408,16 @@
         {
           "sample": "s5",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=Fagor",
-          "sql": "SELECT o.sequential_id, o.text_value_8 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_bosch__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_8='Fagor' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.text_value_8 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.sequential_id, o.text_value_8 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_bosch__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_8='Fagor' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.text_value_8 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
-          "latency_ms": 85.0,
+          "latency_ms": 85,
           "error": null
         },
         {
           "sample": "s6",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Samsung",
-          "sql": "SELECT o.sequential_id, o.text_value_8 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_lg__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_8='Samsung' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.text_value_8 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.sequential_id, o.text_value_8 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_lg__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_8='Samsung' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.text_value_8 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 84.2,
@@ -1426,7 +1426,7 @@
         {
           "sample": "s7",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Franke",
-          "sql": "SELECT o.sequential_id, o.text_value_8 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_admiral__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_8='Franke' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.text_value_8 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.sequential_id, o.text_value_8 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_admiral__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_8='Franke' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.text_value_8 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 80.2,
@@ -1434,8 +1434,8 @@
         },
         {
           "sample": "s8",
-          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_8=\udbff\udfff",
-          "sql": "SELECT o.sequential_id, o.text_value_8 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xfa8499385ed14c6089b9adb37223c21c AND ((NOT o.text_value_7_lower = '__not_\udbff\udfff__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xfa8499385ed14c6089b9adb37223c21c)  AND (o.text_value_8='\udbff\udfff' AND o.obj_type_id=0xfa8499385ed14c6089b9adb37223c21c)) ORDER BY o.text_value_8 ASC LIMIT 1000 OFFSET 0",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_8=􏿿",
+          "sql": "SELECT o.sequential_id, o.text_value_8 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xfa8499385ed14c6089b9adb37223c21c AND ((NOT o.text_value_7_lower = '__not_􏿿__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xfa8499385ed14c6089b9adb37223c21c)  AND (o.text_value_8='􏿿' AND o.obj_type_id=0xfa8499385ed14c6089b9adb37223c21c)) ORDER BY o.text_value_8 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 85.7,
@@ -1444,7 +1444,7 @@
         {
           "sample": "s9",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Samsung",
-          "sql": "SELECT o.sequential_id, o.text_value_8 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_amana__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_8='Samsung' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.text_value_8 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.sequential_id, o.text_value_8 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_amana__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_8='Samsung' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.text_value_8 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 16.9,
@@ -1453,7 +1453,7 @@
         {
           "sample": "s10",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Siemens",
-          "sql": "SELECT o.sequential_id, o.text_value_8 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_sharp__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_8='Siemens' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.text_value_8 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.sequential_id, o.text_value_8 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_sharp__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_8='Siemens' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.text_value_8 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 79.9,
@@ -1464,7 +1464,7 @@
         "runs": 10,
         "ok": 10,
         "errors": 0,
-        "avg_ms": 90.0,
+        "avg_ms": 90,
         "p50_ms": 85.3,
         "min_ms": 16.9,
         "max_ms": 148.7,
@@ -1477,8 +1477,8 @@
       "samples": [
         {
           "sample": "s1",
-          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=\udbff\udfff",
-          "sql": "SELECT o.sequential_id, o.text_value_1 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_amana__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_8='\udbff\udfff' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=􏿿",
+          "sql": "SELECT o.sequential_id, o.text_value_1 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_amana__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_8='􏿿' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 93.3,
@@ -1487,7 +1487,7 @@
         {
           "sample": "s2",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=LG",
-          "sql": "SELECT o.sequential_id, o.text_value_1 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_electrolux__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_8='LG' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.sequential_id, o.text_value_1 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_electrolux__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_8='LG' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 76.7,
@@ -1496,7 +1496,7 @@
         {
           "sample": "s3",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, text_value_8=KitchenAid",
-          "sql": "SELECT o.sequential_id, o.text_value_1 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707 AND ((NOT o.text_value_7_lower = '__not_\udbff\udfff__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707)  AND (o.text_value_8='KitchenAid' AND o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.sequential_id, o.text_value_1 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707 AND ((NOT o.text_value_7_lower = '__not_􏿿__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707)  AND (o.text_value_8='KitchenAid' AND o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 89.9,
@@ -1505,7 +1505,7 @@
         {
           "sample": "s4",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=7d9ffc8b-03a9-4ef6-9bbf-b2e5f939ba14, text_value_8=Siemens",
-          "sql": "SELECT o.sequential_id, o.text_value_1 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x7d9ffc8b03a94ef69bbfb2e5f939ba14 AND ((NOT o.text_value_7_lower = '__not_kitchenaid__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x7d9ffc8b03a94ef69bbfb2e5f939ba14)  AND (o.text_value_8='Siemens' AND o.obj_type_id=0x7d9ffc8b03a94ef69bbfb2e5f939ba14)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.sequential_id, o.text_value_1 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x7d9ffc8b03a94ef69bbfb2e5f939ba14 AND ((NOT o.text_value_7_lower = '__not_kitchenaid__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x7d9ffc8b03a94ef69bbfb2e5f939ba14)  AND (o.text_value_8='Siemens' AND o.obj_type_id=0x7d9ffc8b03a94ef69bbfb2e5f939ba14)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 86.7,
@@ -1514,7 +1514,7 @@
         {
           "sample": "s5",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=Fagor",
-          "sql": "SELECT o.sequential_id, o.text_value_1 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_bosch__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_8='Fagor' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.sequential_id, o.text_value_1 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_bosch__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_8='Fagor' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 78.5,
@@ -1523,7 +1523,7 @@
         {
           "sample": "s6",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Samsung",
-          "sql": "SELECT o.sequential_id, o.text_value_1 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_lg__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_8='Samsung' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.sequential_id, o.text_value_1 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_lg__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_8='Samsung' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 85.4,
@@ -1532,7 +1532,7 @@
         {
           "sample": "s7",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Franke",
-          "sql": "SELECT o.sequential_id, o.text_value_1 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_admiral__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_8='Franke' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.sequential_id, o.text_value_1 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_admiral__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_8='Franke' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 77.4,
@@ -1540,8 +1540,8 @@
         },
         {
           "sample": "s8",
-          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_8=\udbff\udfff",
-          "sql": "SELECT o.sequential_id, o.text_value_1 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xfa8499385ed14c6089b9adb37223c21c AND ((NOT o.text_value_7_lower = '__not_\udbff\udfff__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xfa8499385ed14c6089b9adb37223c21c)  AND (o.text_value_8='\udbff\udfff' AND o.obj_type_id=0xfa8499385ed14c6089b9adb37223c21c)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_8=􏿿",
+          "sql": "SELECT o.sequential_id, o.text_value_1 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xfa8499385ed14c6089b9adb37223c21c AND ((NOT o.text_value_7_lower = '__not_􏿿__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xfa8499385ed14c6089b9adb37223c21c)  AND (o.text_value_8='􏿿' AND o.obj_type_id=0xfa8499385ed14c6089b9adb37223c21c)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 87.7,
@@ -1550,7 +1550,7 @@
         {
           "sample": "s9",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Samsung",
-          "sql": "SELECT o.sequential_id, o.text_value_1 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_amana__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_8='Samsung' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.sequential_id, o.text_value_1 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_amana__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_8='Samsung' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 16.9,
@@ -1559,7 +1559,7 @@
         {
           "sample": "s10",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Siemens",
-          "sql": "SELECT o.sequential_id, o.text_value_1 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_sharp__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_8='Siemens' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.sequential_id, o.text_value_1 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_sharp__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_8='Siemens' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 84.5,
@@ -1571,7 +1571,7 @@
         "ok": 10,
         "errors": 0,
         "avg_ms": 77.7,
-        "p50_ms": 85.0,
+        "p50_ms": 85,
         "min_ms": 16.9,
         "max_ms": 93.3,
         "avg_rows": 1000
@@ -1584,7 +1584,7 @@
         {
           "sample": "s1",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_16=Whirlpool",
-          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_amana__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_16='Whirlpool' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_amana__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_16='Whirlpool' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 829.1,
@@ -1592,8 +1592,8 @@
         },
         {
           "sample": "s2",
-          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_16=\udbff\udfff",
-          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_electrolux__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_16='\udbff\udfff' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_16=􏿿",
+          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_electrolux__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_16='􏿿' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 913.7,
@@ -1602,7 +1602,7 @@
         {
           "sample": "s3",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, text_value_16=Whirlpool",
-          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707 AND ((NOT o.text_value_7_lower = '__not_\udbff\udfff__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707)  AND (o.text_value_16='Whirlpool' AND o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707 AND ((NOT o.text_value_7_lower = '__not_􏿿__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707)  AND (o.text_value_16='Whirlpool' AND o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 828.8,
@@ -1611,7 +1611,7 @@
         {
           "sample": "s4",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=7d9ffc8b-03a9-4ef6-9bbf-b2e5f939ba14, text_value_16=Admiral",
-          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x7d9ffc8b03a94ef69bbfb2e5f939ba14 AND ((NOT o.text_value_7_lower = '__not_kitchenaid__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x7d9ffc8b03a94ef69bbfb2e5f939ba14)  AND (o.text_value_16='Admiral' AND o.obj_type_id=0x7d9ffc8b03a94ef69bbfb2e5f939ba14)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x7d9ffc8b03a94ef69bbfb2e5f939ba14 AND ((NOT o.text_value_7_lower = '__not_kitchenaid__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x7d9ffc8b03a94ef69bbfb2e5f939ba14)  AND (o.text_value_16='Admiral' AND o.obj_type_id=0x7d9ffc8b03a94ef69bbfb2e5f939ba14)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 815.7,
@@ -1619,8 +1619,8 @@
         },
         {
           "sample": "s5",
-          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_16=\udbff\udfff",
-          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_bosch__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_16='\udbff\udfff' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_16=􏿿",
+          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_bosch__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_16='􏿿' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 823.5,
@@ -1629,7 +1629,7 @@
         {
           "sample": "s6",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_16=Whirlpool",
-          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_lg__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_16='Whirlpool' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_lg__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_16='Whirlpool' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 805.3,
@@ -1638,16 +1638,16 @@
         {
           "sample": "s7",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_16=LG",
-          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_admiral__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_16='LG' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_admiral__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_16='LG' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
-          "latency_ms": 818.0,
+          "latency_ms": 818,
           "error": null
         },
         {
           "sample": "s8",
-          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_16=\udbff\udfff",
-          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xfa8499385ed14c6089b9adb37223c21c AND ((NOT o.text_value_7_lower = '__not_\udbff\udfff__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xfa8499385ed14c6089b9adb37223c21c)  AND (o.text_value_16='\udbff\udfff' AND o.obj_type_id=0xfa8499385ed14c6089b9adb37223c21c)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_16=􏿿",
+          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xfa8499385ed14c6089b9adb37223c21c AND ((NOT o.text_value_7_lower = '__not_􏿿__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xfa8499385ed14c6089b9adb37223c21c)  AND (o.text_value_16='􏿿' AND o.obj_type_id=0xfa8499385ed14c6089b9adb37223c21c)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 893.9,
@@ -1656,7 +1656,7 @@
         {
           "sample": "s9",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_16=Franke",
-          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_amana__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_16='Franke' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_amana__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_16='Franke' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 813.8,
@@ -1664,8 +1664,8 @@
         },
         {
           "sample": "s10",
-          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_16=\udbff\udfff",
-          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_sharp__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_16='\udbff\udfff' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_16=􏿿",
+          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_sharp__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_16='􏿿' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 889.3,
@@ -1729,7 +1729,7 @@
           "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xfa8499385ed14c6089b9adb37223c21c AND (JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"c4c5d894-d622-453a-bb6b-d2040fe9cd5a\"', JSON_ARRAY('61b19212c15977006a48aca8'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"c5955f51-9283-4a8e-8495-66ddf3cf750d\"', JSON_ARRAY('jira-group9'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"c4c5d894-d622-453a-bb6b-d2040fe9cd5a\"', JSON_ARRAY('61b1b9b9d2e64c0071dae2e9'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"c5955f51-9283-4a8e-8495-66ddf3cf750d\"', JSON_ARRAY('jira-group17'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"c5955f51-9283-4a8e-8495-66ddf3cf750d\"', JSON_ARRAY('jira-group6'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"c5955f51-9283-4a8e-8495-66ddf3cf750d\"', JSON_ARRAY('jira-group3'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"c4c5d894-d622-453a-bb6b-d2040fe9cd5a\"', JSON_ARRAY('61b19494ebce470067ee0baf'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"c5955f51-9283-4a8e-8495-66ddf3cf750d\"', JSON_ARRAY('jira-group14')))) AND o.obj_type_id=0xfa8499385ed14c6089b9adb37223c21c) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
-          "latency_ms": 90.0,
+          "latency_ms": 90,
           "error": null
         },
         {
@@ -1747,7 +1747,7 @@
           "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='134fa09e-62e8-4b23-be76-d1b2d01845cc' AND (o.obj_type_id=0x0a79f4d515274f18b770be668a5fb0ad AND (JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"e3dde5ba-2d2e-46fe-9f9d-1fcee4e9a437\"', JSON_ARRAY('61b1c2b7b43d5b006ad76902'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"6f4dd958-d05e-4a67-9226-3cec8a00f670\"', JSON_ARRAY('jira-group8'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"e3dde5ba-2d2e-46fe-9f9d-1fcee4e9a437\"', JSON_ARRAY('61b1c572c510bc006b6785fa'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"e3dde5ba-2d2e-46fe-9f9d-1fcee4e9a437\"', JSON_ARRAY('61b1928febce470067edf720'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"e3dde5ba-2d2e-46fe-9f9d-1fcee4e9a437\"', JSON_ARRAY('61b1c2816d002b006b4f809b'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"e3dde5ba-2d2e-46fe-9f9d-1fcee4e9a437\"', JSON_ARRAY('61b1c38f744c4d006989ce29'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"6f4dd958-d05e-4a67-9226-3cec8a00f670\"', JSON_ARRAY('jira-group11'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"6f4dd958-d05e-4a67-9226-3cec8a00f670\"', JSON_ARRAY('jira-group2')))) AND o.obj_type_id=0x0a79f4d515274f18b770be668a5fb0ad) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
-          "latency_ms": 111.0,
+          "latency_ms": 111,
           "error": null
         },
         {
@@ -1817,7 +1817,7 @@
           "sql": "SELECT ote1_0.* FROM obj_type ote1_0 WHERE ote1_0.workspace_id='3b4c201d-8244-416e-925d-f9608e001a2b' AND ote1_0.is_deleted = 0 AND ote1_0.id IN (0x397053bd325843b2be6d405789b8e3dc, 0x427ac8ba5626416899e60708472a9a7b, 0x451aed8ba8834ee38d405f6881afa983, 0x6098d21a52cf48b3b073e9e390bc0c5b, 0x84c285d578f24fbfafc03aa25bc139ac)",
           "status": "ok",
           "rows": 5,
-          "latency_ms": 2.0,
+          "latency_ms": 2,
           "error": null
         },
         {
@@ -1871,7 +1871,7 @@
           "sql": "SELECT ote1_0.* FROM obj_type ote1_0 WHERE ote1_0.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND ote1_0.is_deleted = 0 AND ote1_0.id IN (0x266009e95e414bafab14eef7ffe5f2e0, 0x77744fc5c48e44e8a7f11213703b7707, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0xfa8499385ed14c6089b9adb37223c21c)",
           "status": "ok",
           "rows": 5,
-          "latency_ms": 2.0,
+          "latency_ms": 2,
           "error": null
         },
         {
@@ -1902,7 +1902,7 @@
         {
           "sample": "s1",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_16=Whirlpool",
-          "sql": "SELECT o.sequential_id, o.numeric_value_4 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_amana__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_16='Whirlpool' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.sequential_id, o.numeric_value_4 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_amana__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_16='Whirlpool' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 85.1,
@@ -1910,8 +1910,8 @@
         },
         {
           "sample": "s2",
-          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_16=\udbff\udfff",
-          "sql": "SELECT o.sequential_id, o.numeric_value_4 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_electrolux__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_16='\udbff\udfff' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_16=􏿿",
+          "sql": "SELECT o.sequential_id, o.numeric_value_4 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_electrolux__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_16='􏿿' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 96.2,
@@ -1920,7 +1920,7 @@
         {
           "sample": "s3",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, text_value_16=Whirlpool",
-          "sql": "SELECT o.sequential_id, o.numeric_value_4 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707 AND ((NOT o.text_value_7_lower = '__not_\udbff\udfff__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707)  AND (o.text_value_16='Whirlpool' AND o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.sequential_id, o.numeric_value_4 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707 AND ((NOT o.text_value_7_lower = '__not_􏿿__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707)  AND (o.text_value_16='Whirlpool' AND o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 92.1,
@@ -1929,7 +1929,7 @@
         {
           "sample": "s4",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=7d9ffc8b-03a9-4ef6-9bbf-b2e5f939ba14, text_value_16=Admiral",
-          "sql": "SELECT o.sequential_id, o.numeric_value_4 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x7d9ffc8b03a94ef69bbfb2e5f939ba14 AND ((NOT o.text_value_7_lower = '__not_kitchenaid__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x7d9ffc8b03a94ef69bbfb2e5f939ba14)  AND (o.text_value_16='Admiral' AND o.obj_type_id=0x7d9ffc8b03a94ef69bbfb2e5f939ba14)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.sequential_id, o.numeric_value_4 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x7d9ffc8b03a94ef69bbfb2e5f939ba14 AND ((NOT o.text_value_7_lower = '__not_kitchenaid__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x7d9ffc8b03a94ef69bbfb2e5f939ba14)  AND (o.text_value_16='Admiral' AND o.obj_type_id=0x7d9ffc8b03a94ef69bbfb2e5f939ba14)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 87.4,
@@ -1937,17 +1937,17 @@
         },
         {
           "sample": "s5",
-          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_16=\udbff\udfff",
-          "sql": "SELECT o.sequential_id, o.numeric_value_4 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_bosch__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_16='\udbff\udfff' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_16=􏿿",
+          "sql": "SELECT o.sequential_id, o.numeric_value_4 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_bosch__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_16='􏿿' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
-          "latency_ms": 77.0,
+          "latency_ms": 77,
           "error": null
         },
         {
           "sample": "s6",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_16=Whirlpool",
-          "sql": "SELECT o.sequential_id, o.numeric_value_4 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_lg__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_16='Whirlpool' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.sequential_id, o.numeric_value_4 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_lg__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_16='Whirlpool' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 78.3,
@@ -1956,7 +1956,7 @@
         {
           "sample": "s7",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_16=LG",
-          "sql": "SELECT o.sequential_id, o.numeric_value_4 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_admiral__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_16='LG' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.sequential_id, o.numeric_value_4 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_admiral__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_16='LG' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 83.3,
@@ -1964,8 +1964,8 @@
         },
         {
           "sample": "s8",
-          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_16=\udbff\udfff",
-          "sql": "SELECT o.sequential_id, o.numeric_value_4 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xfa8499385ed14c6089b9adb37223c21c AND ((NOT o.text_value_7_lower = '__not_\udbff\udfff__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xfa8499385ed14c6089b9adb37223c21c)  AND (o.text_value_16='\udbff\udfff' AND o.obj_type_id=0xfa8499385ed14c6089b9adb37223c21c)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_16=􏿿",
+          "sql": "SELECT o.sequential_id, o.numeric_value_4 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xfa8499385ed14c6089b9adb37223c21c AND ((NOT o.text_value_7_lower = '__not_􏿿__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xfa8499385ed14c6089b9adb37223c21c)  AND (o.text_value_16='􏿿' AND o.obj_type_id=0xfa8499385ed14c6089b9adb37223c21c)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 88.5,
@@ -1974,7 +1974,7 @@
         {
           "sample": "s9",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_16=Franke",
-          "sql": "SELECT o.sequential_id, o.numeric_value_4 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_amana__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_16='Franke' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.sequential_id, o.numeric_value_4 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_amana__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_16='Franke' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 88.5,
@@ -1982,8 +1982,8 @@
         },
         {
           "sample": "s10",
-          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_16=\udbff\udfff",
-          "sql": "SELECT o.sequential_id, o.numeric_value_4 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_sharp__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_16='\udbff\udfff' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_16=􏿿",
+          "sql": "SELECT o.sequential_id, o.numeric_value_4 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_sharp__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_16='􏿿' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 90.6,
@@ -1995,8 +1995,8 @@
         "ok": 10,
         "errors": 0,
         "avg_ms": 86.7,
-        "p50_ms": 88.0,
-        "min_ms": 77.0,
+        "p50_ms": 88,
+        "min_ms": 77,
         "max_ms": 96.2,
         "avg_rows": 1000
       }
@@ -2113,8 +2113,8 @@
       "samples": [
         {
           "sample": "s1",
-          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=Bosch, sub_text_value_8=\udbff\udfff",
-          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id IN (0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707) AND (o.text_value_24='Bosch' AND o.obj_type_id IN (0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707)) AND EXISTS (SELECT 1 FROM obj_relationship_new subr INNER JOIN obj_new subo1 ON subr.object_id=subo1.id AND subo1.obj_type_id IN (0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707) WHERE o.id=subr.referenced_object_id AND subo1.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND subo1.text_value_8='\udbff\udfff')) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=Bosch, sub_text_value_8=􏿿",
+          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id IN (0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707) AND (o.text_value_24='Bosch' AND o.obj_type_id IN (0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707)) AND EXISTS (SELECT 1 FROM obj_relationship_new subr INNER JOIN obj_new subo1 ON subr.object_id=subo1.id AND subo1.obj_type_id IN (0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707) WHERE o.id=subr.referenced_object_id AND subo1.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND subo1.text_value_8='􏿿')) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 13389.4,
@@ -2122,17 +2122,17 @@
         },
         {
           "sample": "s2",
-          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=Bosch, sub_text_value_8=\udbff\udfff",
-          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707) AND (o.text_value_24='Bosch' AND o.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707)) AND EXISTS (SELECT 1 FROM obj_relationship_new subr INNER JOIN obj_new subo1 ON subr.object_id=subo1.id AND subo1.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707) WHERE o.id=subr.referenced_object_id AND subo1.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND subo1.text_value_8='\udbff\udfff')) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=Bosch, sub_text_value_8=􏿿",
+          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707) AND (o.text_value_24='Bosch' AND o.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707)) AND EXISTS (SELECT 1 FROM obj_relationship_new subr INNER JOIN obj_new subo1 ON subr.object_id=subo1.id AND subo1.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707) WHERE o.id=subr.referenced_object_id AND subo1.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND subo1.text_value_8='􏿿')) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
-          "latency_ms": 245.0,
+          "latency_ms": 245,
           "error": null
         },
         {
           "sample": "s3",
-          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=KitchenAid, sub_text_value_8=\udbff\udfff",
-          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707) AND (o.text_value_24='KitchenAid' AND o.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707)) AND EXISTS (SELECT 1 FROM obj_relationship_new subr INNER JOIN obj_new subo1 ON subr.object_id=subo1.id AND subo1.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707) WHERE o.id=subr.referenced_object_id AND subo1.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND subo1.text_value_8='\udbff\udfff')) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=KitchenAid, sub_text_value_8=􏿿",
+          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707) AND (o.text_value_24='KitchenAid' AND o.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707)) AND EXISTS (SELECT 1 FROM obj_relationship_new subr INNER JOIN obj_new subo1 ON subr.object_id=subo1.id AND subo1.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707) WHERE o.id=subr.referenced_object_id AND subo1.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND subo1.text_value_8='􏿿')) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 249.1,
@@ -2140,8 +2140,8 @@
         },
         {
           "sample": "s4",
-          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=\udbff\udfff, sub_text_value_8=\udbff\udfff",
-          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c) AND (o.text_value_24='\udbff\udfff' AND o.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c)) AND EXISTS (SELECT 1 FROM obj_relationship_new subr INNER JOIN obj_new subo1 ON subr.object_id=subo1.id AND subo1.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c) WHERE o.id=subr.referenced_object_id AND subo1.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND subo1.text_value_8='\udbff\udfff')) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=􏿿, sub_text_value_8=􏿿",
+          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c) AND (o.text_value_24='􏿿' AND o.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c)) AND EXISTS (SELECT 1 FROM obj_relationship_new subr INNER JOIN obj_new subo1 ON subr.object_id=subo1.id AND subo1.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c) WHERE o.id=subr.referenced_object_id AND subo1.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND subo1.text_value_8='􏿿')) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 246.2,
@@ -2149,8 +2149,8 @@
         },
         {
           "sample": "s5",
-          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=\udbff\udfff, sub_text_value_8=\udbff\udfff",
-          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c) AND (o.text_value_24='\udbff\udfff' AND o.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c)) AND EXISTS (SELECT 1 FROM obj_relationship_new subr INNER JOIN obj_new subo1 ON subr.object_id=subo1.id AND subo1.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c) WHERE o.id=subr.referenced_object_id AND subo1.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND subo1.text_value_8='\udbff\udfff')) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=􏿿, sub_text_value_8=􏿿",
+          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c) AND (o.text_value_24='􏿿' AND o.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c)) AND EXISTS (SELECT 1 FROM obj_relationship_new subr INNER JOIN obj_new subo1 ON subr.object_id=subo1.id AND subo1.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c) WHERE o.id=subr.referenced_object_id AND subo1.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND subo1.text_value_8='􏿿')) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 251.6,
@@ -2158,8 +2158,8 @@
         },
         {
           "sample": "s6",
-          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=\udbff\udfff, sub_text_value_8=\udbff\udfff",
-          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id IN (0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c) AND (o.text_value_24='\udbff\udfff' AND o.obj_type_id IN (0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c)) AND EXISTS (SELECT 1 FROM obj_relationship_new subr INNER JOIN obj_new subo1 ON subr.object_id=subo1.id AND subo1.obj_type_id IN (0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c) WHERE o.id=subr.referenced_object_id AND subo1.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND subo1.text_value_8='\udbff\udfff')) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=􏿿, sub_text_value_8=􏿿",
+          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id IN (0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c) AND (o.text_value_24='􏿿' AND o.obj_type_id IN (0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c)) AND EXISTS (SELECT 1 FROM obj_relationship_new subr INNER JOIN obj_new subo1 ON subr.object_id=subo1.id AND subo1.obj_type_id IN (0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c) WHERE o.id=subr.referenced_object_id AND subo1.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND subo1.text_value_8='􏿿')) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 233.9,
@@ -2167,8 +2167,8 @@
         },
         {
           "sample": "s7",
-          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=Franke, sub_text_value_8=\udbff\udfff",
-          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id IN (0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707) AND (o.text_value_24='Franke' AND o.obj_type_id IN (0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707)) AND EXISTS (SELECT 1 FROM obj_relationship_new subr INNER JOIN obj_new subo1 ON subr.object_id=subo1.id AND subo1.obj_type_id IN (0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707) WHERE o.id=subr.referenced_object_id AND subo1.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND subo1.text_value_8='\udbff\udfff')) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=Franke, sub_text_value_8=􏿿",
+          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id IN (0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707) AND (o.text_value_24='Franke' AND o.obj_type_id IN (0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707)) AND EXISTS (SELECT 1 FROM obj_relationship_new subr INNER JOIN obj_new subo1 ON subr.object_id=subo1.id AND subo1.obj_type_id IN (0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707) WHERE o.id=subr.referenced_object_id AND subo1.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND subo1.text_value_8='􏿿')) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 234.2,
@@ -2176,8 +2176,8 @@
         },
         {
           "sample": "s8",
-          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=Electrolux, sub_text_value_8=\udbff\udfff",
-          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707) AND (o.text_value_24='Electrolux' AND o.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707)) AND EXISTS (SELECT 1 FROM obj_relationship_new subr INNER JOIN obj_new subo1 ON subr.object_id=subo1.id AND subo1.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707) WHERE o.id=subr.referenced_object_id AND subo1.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND subo1.text_value_8='\udbff\udfff')) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=Electrolux, sub_text_value_8=􏿿",
+          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707) AND (o.text_value_24='Electrolux' AND o.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707)) AND EXISTS (SELECT 1 FROM obj_relationship_new subr INNER JOIN obj_new subo1 ON subr.object_id=subo1.id AND subo1.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707) WHERE o.id=subr.referenced_object_id AND subo1.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND subo1.text_value_8='􏿿')) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 232.6,
@@ -2185,8 +2185,8 @@
         },
         {
           "sample": "s9",
-          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=\udbff\udfff, sub_text_value_8=\udbff\udfff",
-          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c) AND (o.text_value_24='\udbff\udfff' AND o.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c)) AND EXISTS (SELECT 1 FROM obj_relationship_new subr INNER JOIN obj_new subo1 ON subr.object_id=subo1.id AND subo1.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c) WHERE o.id=subr.referenced_object_id AND subo1.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND subo1.text_value_8='\udbff\udfff')) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=􏿿, sub_text_value_8=􏿿",
+          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c) AND (o.text_value_24='􏿿' AND o.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c)) AND EXISTS (SELECT 1 FROM obj_relationship_new subr INNER JOIN obj_new subo1 ON subr.object_id=subo1.id AND subo1.obj_type_id IN (0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c) WHERE o.id=subr.referenced_object_id AND subo1.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND subo1.text_value_8='􏿿')) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 224.1,
@@ -2194,8 +2194,8 @@
         },
         {
           "sample": "s10",
-          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=IKEA, sub_text_value_8=\udbff\udfff",
-          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id IN (0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14) AND (o.text_value_24='IKEA' AND o.obj_type_id IN (0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14)) AND EXISTS (SELECT 1 FROM obj_relationship_new subr INNER JOIN obj_new subo1 ON subr.object_id=subo1.id AND subo1.obj_type_id IN (0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14) WHERE o.id=subr.referenced_object_id AND subo1.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND subo1.text_value_8='\udbff\udfff')) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=IKEA, sub_text_value_8=􏿿",
+          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id IN (0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14) AND (o.text_value_24='IKEA' AND o.obj_type_id IN (0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14)) AND EXISTS (SELECT 1 FROM obj_relationship_new subr INNER JOIN obj_new subo1 ON subr.object_id=subo1.id AND subo1.obj_type_id IN (0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14) WHERE o.id=subr.referenced_object_id AND subo1.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND subo1.text_value_8='􏿿')) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 254.4,
@@ -2206,7 +2206,7 @@
         "runs": 10,
         "ok": 10,
         "errors": 0,
-        "avg_ms": 1556.0,
+        "avg_ms": 1556,
         "p50_ms": 245.6,
         "min_ms": 224.1,
         "max_ms": 13389.4,
@@ -2524,7 +2524,7 @@
         "runs": 10,
         "ok": 10,
         "errors": 0,
-        "avg_ms": 1765.0,
+        "avg_ms": 1765,
         "p50_ms": 1183.8,
         "min_ms": 1148.9,
         "max_ms": 7046.3,
@@ -2537,8 +2537,8 @@
       "samples": [
         {
           "sample": "s1",
-          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=\udbff\udfff",
-          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_amana__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_8='\udbff\udfff' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=􏿿",
+          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_amana__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_8='􏿿' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 863.5,
@@ -2547,7 +2547,7 @@
         {
           "sample": "s2",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=LG",
-          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_electrolux__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_8='LG' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_electrolux__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_8='LG' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 817.4,
@@ -2556,7 +2556,7 @@
         {
           "sample": "s3",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, text_value_8=KitchenAid",
-          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707 AND ((NOT o.text_value_7_lower = '__not_\udbff\udfff__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707)  AND (o.text_value_8='KitchenAid' AND o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707 AND ((NOT o.text_value_7_lower = '__not_􏿿__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707)  AND (o.text_value_8='KitchenAid' AND o.obj_type_id=0x77744fc5c48e44e8a7f11213703b7707)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 795.1,
@@ -2565,7 +2565,7 @@
         {
           "sample": "s4",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=7d9ffc8b-03a9-4ef6-9bbf-b2e5f939ba14, text_value_8=Siemens",
-          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x7d9ffc8b03a94ef69bbfb2e5f939ba14 AND ((NOT o.text_value_7_lower = '__not_kitchenaid__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x7d9ffc8b03a94ef69bbfb2e5f939ba14)  AND (o.text_value_8='Siemens' AND o.obj_type_id=0x7d9ffc8b03a94ef69bbfb2e5f939ba14)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x7d9ffc8b03a94ef69bbfb2e5f939ba14 AND ((NOT o.text_value_7_lower = '__not_kitchenaid__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x7d9ffc8b03a94ef69bbfb2e5f939ba14)  AND (o.text_value_8='Siemens' AND o.obj_type_id=0x7d9ffc8b03a94ef69bbfb2e5f939ba14)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 813.6,
@@ -2574,7 +2574,7 @@
         {
           "sample": "s5",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=Fagor",
-          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_bosch__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_8='Fagor' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_bosch__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_8='Fagor' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 833.2,
@@ -2583,7 +2583,7 @@
         {
           "sample": "s6",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Samsung",
-          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_lg__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_8='Samsung' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_lg__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_8='Samsung' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 803.7,
@@ -2592,7 +2592,7 @@
         {
           "sample": "s7",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Franke",
-          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_admiral__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_8='Franke' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_admiral__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_8='Franke' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 805.5,
@@ -2600,8 +2600,8 @@
         },
         {
           "sample": "s8",
-          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_8=\udbff\udfff",
-          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xfa8499385ed14c6089b9adb37223c21c AND ((NOT o.text_value_7_lower = '__not_\udbff\udfff__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xfa8499385ed14c6089b9adb37223c21c)  AND (o.text_value_8='\udbff\udfff' AND o.obj_type_id=0xfa8499385ed14c6089b9adb37223c21c)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_8=􏿿",
+          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xfa8499385ed14c6089b9adb37223c21c AND ((NOT o.text_value_7_lower = '__not_􏿿__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xfa8499385ed14c6089b9adb37223c21c)  AND (o.text_value_8='􏿿' AND o.obj_type_id=0xfa8499385ed14c6089b9adb37223c21c)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 898.7,
@@ -2610,7 +2610,7 @@
         {
           "sample": "s9",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Samsung",
-          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_amana__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_8='Samsung' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_amana__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_8='Samsung' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 340.5,
@@ -2619,7 +2619,7 @@
         {
           "sample": "s10",
           "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Siemens",
-          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_sharp__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_8='Siemens' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
+          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98 AND ((NOT o.text_value_7_lower = '__not_sharp__' OR LOWER(o.text_value_7) = '􏿿') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)  AND (o.text_value_8='Siemens' AND o.obj_type_id=0xdc814b704b9e458d94fe350ddfc49d98)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
           "status": "ok",
           "rows": 1000,
           "latency_ms": 834.3,
@@ -2642,10 +2642,10 @@
     {
       "concurrency": 66,
       "duration_s": 600,
-      "start_time": "2026-05-08T09:27:24.920898+00:00",
-      "end_time": "2026-05-08T09:37:27.651864+00:00",
-      "start_epoch": 1778232444.920959,
-      "end_epoch": 1778233047.651863,
+      "start_time": "2026-05-08T14:59:27.975863+00:00",
+      "end_time": "2026-05-08T15:09:30.730154+00:00",
+      "start_epoch": 1778252367.975872,
+      "end_epoch": 1778252970.7301505,
       "worker_assignment": {
         "2": 3,
         "4": 3,
@@ -2671,259 +2671,259 @@
         "25": 3
       },
       "summary": {
-        "avg_ms": 1579.1,
-        "p50_ms": 1289.7,
-        "p95_ms": 4233.6,
-        "max_ms": 12112.0,
-        "avg_rows": 345.7,
+        "avg_ms": 216.4,
+        "p50_ms": 51.4,
+        "p95_ms": 755.1,
+        "max_ms": 11053.5,
+        "avg_rows": 69.9,
         "concurrency": 66,
         "query_classes": 22,
-        "ops": 25061,
-        "ok": 25061,
+        "ops": 183209,
+        "ok": 183209,
         "errors": 0,
-        "elapsed_s": 602.7,
-        "qps": 41.58
+        "elapsed_s": 602.8,
+        "qps": 303.95
       },
       "by_query": {
         "2": {
-          "avg_ms": 1042.0,
-          "p50_ms": 1016.5,
-          "p95_ms": 1802.2,
-          "max_ms": 5323.1,
+          "avg_ms": 734.4,
+          "p50_ms": 722.2,
+          "p95_ms": 1041.5,
+          "max_ms": 2412.6,
           "avg_rows": 600,
-          "ops": 1726,
-          "ok": 1726,
+          "ops": 2452,
+          "ok": 2452,
           "errors": 0,
           "workers": 3
         },
         "4": {
-          "avg_ms": 2757.1,
-          "p50_ms": 2693.2,
-          "p95_ms": 4605.0,
-          "max_ms": 7439.7,
+          "avg_ms": 3064.8,
+          "p50_ms": 2980.3,
+          "p95_ms": 4750.9,
+          "max_ms": 6736,
           "avg_rows": 1000,
-          "ops": 654,
-          "ok": 654,
+          "ops": 589,
+          "ok": 589,
           "errors": 0,
           "workers": 3
         },
         "5": {
-          "avg_ms": 3066.1,
-          "p50_ms": 2871.3,
-          "p95_ms": 5057.3,
-          "max_ms": 8565.0,
+          "avg_ms": 3270.1,
+          "p50_ms": 3113.6,
+          "p95_ms": 4983.1,
+          "max_ms": 7066.4,
           "avg_rows": 1000,
+          "ops": 551,
+          "ok": 551,
+          "errors": 0,
+          "workers": 3
+        },
+        "6": {
+          "avg_ms": 651.2,
+          "p50_ms": 645.9,
+          "p95_ms": 939,
+          "max_ms": 1465.4,
+          "avg_rows": 50,
+          "ops": 2765,
+          "ok": 2765,
+          "errors": 0,
+          "workers": 3
+        },
+        "7": {
+          "avg_ms": 63.9,
+          "p50_ms": 60.2,
+          "p95_ms": 111.9,
+          "max_ms": 1417.6,
+          "avg_rows": 35,
+          "ops": 28159,
+          "ok": 28159,
+          "errors": 0,
+          "workers": 3
+        },
+        "8": {
+          "avg_ms": 4474.8,
+          "p50_ms": 3508.3,
+          "p95_ms": 9318.2,
+          "max_ms": 11053.5,
+          "avg_rows": 113,
+          "ops": 403,
+          "ok": 403,
+          "errors": 0,
+          "workers": 3
+        },
+        "9": {
+          "avg_ms": 53.1,
+          "p50_ms": 49.5,
+          "p95_ms": 94.9,
+          "max_ms": 1896.6,
+          "avg_rows": 24,
+          "ops": 33903,
+          "ok": 33903,
+          "errors": 0,
+          "workers": 3
+        },
+        "10": {
+          "avg_ms": 3879.8,
+          "p50_ms": 3630.1,
+          "p95_ms": 6035.2,
+          "max_ms": 8513.4,
+          "avg_rows": 956.3,
+          "ops": 465,
+          "ok": 465,
+          "errors": 0,
+          "workers": 3
+        },
+        "11": {
+          "avg_ms": 583,
+          "p50_ms": 580.3,
+          "p95_ms": 840.1,
+          "max_ms": 1078.6,
+          "avg_rows": 1,
+          "ops": 3088,
+          "ok": 3088,
+          "errors": 0,
+          "workers": 3
+        },
+        "13": {
+          "avg_ms": 105.4,
+          "p50_ms": 100.4,
+          "p95_ms": 174.7,
+          "max_ms": 2119.8,
+          "avg_rows": 175,
+          "ops": 17078,
+          "ok": 17078,
+          "errors": 0,
+          "workers": 3
+        },
+        "14": {
+          "avg_ms": 3139.8,
+          "p50_ms": 2907.7,
+          "p95_ms": 5435.1,
+          "max_ms": 7618.7,
+          "avg_rows": 1000,
+          "ops": 575,
+          "ok": 575,
+          "errors": 0,
+          "workers": 3
+        },
+        "15": {
+          "avg_ms": 3151.6,
+          "p50_ms": 2905.9,
+          "p95_ms": 5441.4,
+          "max_ms": 7696.5,
+          "avg_rows": 1000,
+          "ops": 572,
+          "ok": 572,
+          "errors": 0,
+          "workers": 3
+        },
+        "16": {
+          "avg_ms": 4786,
+          "p50_ms": 4723.2,
+          "p95_ms": 6531.3,
+          "max_ms": 8350.5,
+          "avg_rows": 1000,
+          "ops": 377,
+          "ok": 377,
+          "errors": 0,
+          "workers": 3
+        },
+        "17": {
+          "avg_ms": 2996.4,
+          "p50_ms": 2680.5,
+          "p95_ms": 5589.6,
+          "max_ms": 8438.8,
+          "avg_rows": 1000,
+          "ops": 601,
+          "ok": 601,
+          "errors": 0,
+          "workers": 3
+        },
+        "18": {
+          "avg_ms": 35,
+          "p50_ms": 31.6,
+          "p95_ms": 69.9,
+          "max_ms": 639.6,
+          "avg_rows": 5,
+          "ops": 51419,
+          "ok": 51419,
+          "errors": 0,
+          "workers": 3
+        },
+        "19": {
+          "avg_ms": 3145.2,
+          "p50_ms": 2904.4,
+          "p95_ms": 5452.5,
+          "max_ms": 7651.8,
+          "avg_rows": 1000,
+          "ops": 573,
+          "ok": 573,
+          "errors": 0,
+          "workers": 3
+        },
+        "20": {
+          "avg_ms": 51.5,
+          "p50_ms": 47.7,
+          "p95_ms": 95.3,
+          "max_ms": 1884.8,
+          "avg_rows": 1,
+          "ops": 34942,
+          "ok": 34942,
+          "errors": 0,
+          "workers": 3
+        },
+        "21": {
+          "avg_ms": 5265.9,
+          "p50_ms": 5223.2,
+          "p95_ms": 7800.8,
+          "max_ms": 9528.4,
+          "avg_rows": 1000,
+          "ops": 343,
+          "ok": 343,
+          "errors": 0,
+          "workers": 3
+        },
+        "22": {
+          "avg_ms": 611.5,
+          "p50_ms": 609,
+          "p95_ms": 874.9,
+          "max_ms": 1251.1,
+          "avg_rows": 20,
+          "ops": 2944,
+          "ok": 2944,
+          "errors": 0,
+          "workers": 3
+        },
+        "23": {
+          "avg_ms": 3069.9,
+          "p50_ms": 2738.1,
+          "p95_ms": 5442.9,
+          "max_ms": 7986.5,
+          "avg_rows": 956.7,
           "ops": 588,
           "ok": 588,
           "errors": 0,
           "workers": 3
         },
-        "6": {
-          "avg_ms": 1017.9,
-          "p50_ms": 984.2,
-          "p95_ms": 1802.2,
-          "max_ms": 5672.3,
-          "avg_rows": 50,
-          "ops": 1765,
-          "ok": 1765,
-          "errors": 0,
-          "workers": 3
-        },
-        "7": {
-          "avg_ms": 857.0,
-          "p50_ms": 765.8,
-          "p95_ms": 1561.8,
-          "max_ms": 5669.5,
-          "avg_rows": 35,
-          "ops": 2098,
-          "ok": 2098,
-          "errors": 0,
-          "workers": 3
-        },
-        "8": {
-          "avg_ms": 5140.4,
-          "p50_ms": 4478.4,
-          "p95_ms": 9737.8,
-          "max_ms": 12112.0,
-          "avg_rows": 111.3,
-          "ops": 351,
-          "ok": 351,
-          "errors": 0,
-          "workers": 3
-        },
-        "9": {
-          "avg_ms": 854.3,
-          "p50_ms": 764.1,
-          "p95_ms": 1557.0,
-          "max_ms": 5674.0,
-          "avg_rows": 24,
-          "ops": 2103,
-          "ok": 2103,
-          "errors": 0,
-          "workers": 3
-        },
-        "10": {
-          "avg_ms": 2958.2,
-          "p50_ms": 2732.3,
-          "p95_ms": 5073.0,
-          "max_ms": 8229.5,
-          "avg_rows": 957.4,
-          "ops": 608,
-          "ok": 608,
-          "errors": 0,
-          "workers": 3
-        },
-        "11": {
-          "avg_ms": 966.6,
-          "p50_ms": 906.9,
-          "p95_ms": 1702.8,
-          "max_ms": 5630.7,
-          "avg_rows": 1,
-          "ops": 1858,
-          "ok": 1858,
-          "errors": 0,
-          "workers": 3
-        },
-        "13": {
-          "avg_ms": 881.0,
-          "p50_ms": 773.0,
-          "p95_ms": 1647.4,
-          "max_ms": 5701.7,
-          "avg_rows": 175,
-          "ops": 2038,
-          "ok": 2038,
-          "errors": 0,
-          "workers": 3
-        },
-        "14": {
-          "avg_ms": 2540.9,
-          "p50_ms": 2337.8,
-          "p95_ms": 4244.9,
-          "max_ms": 6919.8,
-          "avg_rows": 1000,
-          "ops": 708,
-          "ok": 708,
-          "errors": 0,
-          "workers": 3
-        },
-        "15": {
-          "avg_ms": 2543.0,
-          "p50_ms": 2353.0,
-          "p95_ms": 4114.5,
-          "max_ms": 7088.3,
-          "avg_rows": 1000,
-          "ops": 708,
-          "ok": 708,
-          "errors": 0,
-          "workers": 3
-        },
-        "16": {
-          "avg_ms": 3469.3,
-          "p50_ms": 3371.3,
-          "p95_ms": 4661.2,
-          "max_ms": 8217.1,
-          "avg_rows": 1000,
-          "ops": 519,
-          "ok": 519,
-          "errors": 0,
-          "workers": 3
-        },
-        "17": {
-          "avg_ms": 2905.7,
-          "p50_ms": 2594.0,
-          "p95_ms": 5124.1,
-          "max_ms": 7227.7,
-          "avg_rows": 1000,
-          "ops": 618,
-          "ok": 618,
-          "errors": 0,
-          "workers": 3
-        },
-        "18": {
-          "avg_ms": 829.7,
-          "p50_ms": 756.9,
-          "p95_ms": 1541.9,
-          "max_ms": 5692.9,
-          "avg_rows": 5,
-          "ops": 2164,
-          "ok": 2164,
-          "errors": 0,
-          "workers": 3
-        },
-        "19": {
-          "avg_ms": 2720.8,
-          "p50_ms": 2552.4,
-          "p95_ms": 4388.8,
-          "max_ms": 6849.2,
-          "avg_rows": 1000,
-          "ops": 662,
-          "ok": 662,
-          "errors": 0,
-          "workers": 3
-        },
-        "20": {
-          "avg_ms": 844.5,
-          "p50_ms": 761.0,
-          "p95_ms": 1554.8,
-          "max_ms": 5663.3,
-          "avg_rows": 1,
-          "ops": 2126,
-          "ok": 2126,
-          "errors": 0,
-          "workers": 3
-        },
-        "21": {
-          "avg_ms": 4430.4,
-          "p50_ms": 4160.2,
-          "p95_ms": 7125.6,
-          "max_ms": 11135.8,
-          "avg_rows": 1000,
-          "ops": 407,
-          "ok": 407,
-          "errors": 0,
-          "workers": 3
-        },
-        "22": {
-          "avg_ms": 992.4,
-          "p50_ms": 957.6,
-          "p95_ms": 1741.4,
-          "max_ms": 5307.0,
-          "avg_rows": 20,
-          "ops": 1809,
-          "ok": 1809,
-          "errors": 0,
-          "workers": 3
-        },
-        "23": {
-          "avg_ms": 2910.3,
-          "p50_ms": 2570.9,
-          "p95_ms": 5189.5,
-          "max_ms": 7218.5,
-          "avg_rows": 956.0,
-          "ops": 618,
-          "ok": 618,
-          "errors": 0,
-          "workers": 3
-        },
         "24": {
-          "avg_ms": 4313.4,
-          "p50_ms": 4376.5,
-          "p95_ms": 5148.4,
-          "max_ms": 9951.9,
+          "avg_ms": 4131.6,
+          "p50_ms": 4201.6,
+          "p95_ms": 5131.8,
+          "max_ms": 6462.6,
           "avg_rows": 1000,
-          "ops": 417,
-          "ok": 417,
+          "ops": 436,
+          "ok": 436,
           "errors": 0,
           "workers": 3
         },
         "25": {
-          "avg_ms": 3488.2,
-          "p50_ms": 3413.9,
-          "p95_ms": 4704.1,
-          "max_ms": 8207.4,
+          "avg_ms": 4669.4,
+          "p50_ms": 4491.3,
+          "p95_ms": 6308.9,
+          "max_ms": 7790.3,
           "avg_rows": 1000,
-          "ops": 516,
-          "ok": 516,
+          "ops": 386,
+          "ok": 386,
           "errors": 0,
           "workers": 3
         }
@@ -2931,29 +2931,29 @@
       "metrics": {
         "tidb": {
           "replicas": 3,
-          "cpu_avg_cores": 6.18,
-          "cpu_max_cores": 7.11,
-          "cpu_max_pct": 14.8,
-          "mem_avg_gib": 12.49,
-          "mem_max_gib": 16.31,
+          "cpu_avg_cores": 4.86,
+          "cpu_max_cores": 5.58,
+          "cpu_max_pct": 11.6,
+          "mem_avg_gib": 20.78,
+          "mem_max_gib": 23.48,
           "note": ""
         },
         "tikv": {
-          "replicas": 4,
-          "cpu_avg_cores": 30.14,
-          "cpu_max_cores": 34.29,
-          "cpu_max_pct": 53.6,
-          "mem_avg_gib": 73.72,
-          "mem_max_gib": 74.61,
+          "replicas": 3,
+          "cpu_avg_cores": 27.84,
+          "cpu_max_cores": 32.04,
+          "cpu_max_pct": 66.8,
+          "mem_avg_gib": 57.71,
+          "mem_max_gib": 58.38,
           "note": ""
         },
         "tiflash": {
           "replicas": 6,
-          "cpu_avg_cores": 64.51,
-          "cpu_max_cores": 82.04,
-          "cpu_max_pct": 85.5,
-          "mem_avg_gib": 52.75,
-          "mem_max_gib": 58.44,
+          "cpu_avg_cores": 66.1,
+          "cpu_max_cores": 73.73,
+          "cpu_max_pct": 76.8,
+          "mem_avg_gib": 48.86,
+          "mem_max_gib": 54.8,
           "note": "TiFlash proxy process CPU metric"
         }
       }
@@ -3006,7 +3006,7 @@
       "by_query": {
         "2": {
           "avg_ms": 1562.2,
-          "p50_ms": 1527.0,
+          "p50_ms": 1527,
           "p95_ms": 2194.5,
           "max_ms": 4558.9,
           "avg_rows": 600,
@@ -3105,7 +3105,7 @@
         },
         "13": {
           "avg_ms": 217.9,
-          "p50_ms": 207.0,
+          "p50_ms": 207,
           "p95_ms": 355.7,
           "max_ms": 2605.4,
           "avg_rows": 175,
@@ -3162,7 +3162,7 @@
           "avg_ms": 72.7,
           "p50_ms": 66.5,
           "p95_ms": 142.9,
-          "max_ms": 388.0,
+          "max_ms": 388,
           "avg_rows": 5,
           "ops": 49479,
           "ok": 49479,
@@ -3193,7 +3193,7 @@
         },
         "21": {
           "avg_ms": 10776.4,
-          "p50_ms": 10842.0,
+          "p50_ms": 10842,
           "p95_ms": 15745.4,
           "max_ms": 18339.6,
           "avg_rows": 1000,
@@ -3203,8 +3203,8 @@
           "workers": 6
         },
         "22": {
-          "avg_ms": 1272.0,
-          "p50_ms": 1260.0,
+          "avg_ms": 1272,
+          "p50_ms": 1260,
           "p95_ms": 1761.5,
           "max_ms": 2428.9,
           "avg_rows": 20,
@@ -3238,7 +3238,7 @@
         "25": {
           "avg_ms": 8782.7,
           "p50_ms": 8737.7,
-          "p95_ms": 11429.0,
+          "p95_ms": 11429,
           "max_ms": 13220.6,
           "avg_rows": 1000,
           "ops": 412,
