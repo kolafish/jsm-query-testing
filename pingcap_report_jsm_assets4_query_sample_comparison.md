@@ -1,6 +1,6 @@
 # jsm_assets4 Query Sample Run vs PingCAP Report
 
-Run time: 2026-05-08T13:46:14.906893+00:00
+Run time: 2026-05-08T14:37:12.191771+00:00
 
 Source report: `/Users/jin/Downloads/full_report_for_pingcap.md`.
 
@@ -16,30 +16,30 @@ Notes:
 | Query | Source avg | Source max | Source rows avg | Samples | Run rows avg | jsm_assets4 avg | jsm_assets4 p50 | jsm_assets4 max | Comparison | Status |
 |---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|
 | 1 | 2.7ms | 518.3ms | 0 | 0 | None | None | None | None | n/a | skipped |
-| 2 | 320.8ms | 14332.3ms | 234 | 10 | 600 | 333.2 | 319.6 | 407.9 | 1.04x source | ok |
+| 2 | 320.8ms | 14332.3ms | 234 | 10 | 600 | 103.3 | 80.6 | 203.8 | 3.11x faster | ok |
 | 3 | 36.3ms | 8652.6ms | 1 | 0 | None | None | None | None | n/a | skipped |
-| 4 | 11882.9ms | 34102.7ms | 1000 | 10 | 1000 | 593.4 | 551.5 | 993.8 | 20.03x faster | ok |
-| 5 | 29101.7ms | 60034.6ms | 65 | 10 | 1000 | 604.3 | 554.2 | 769.9 | 48.16x faster | ok |
-| 6 | 44.8ms | 927.9ms | 168 | 10 | 50 | 317.9 | 264.6 | 758.6 | 7.10x source | ok |
-| 7 | 8.7ms | 487.0ms | 35 | 10 | 35 | 254.3 | 247.3 | 289.0 | 29.23x source | ok |
-| 8 | 16983.6ms | 32291.9ms | 6 | 10 | 108.6 | 1611.5 | 1324.0 | 3311.0 | 10.54x faster | ok |
-| 9 | 28.1ms | 10778.1ms | 8 | 10 | 24 | 276.3 | 273.1 | 308.3 | 9.83x source | ok |
-| 10 | 41204.1ms | 51112.0ms | 136 | 10 | 956.8 | 1072.9 | 898.1 | 2533.1 | 38.40x faster | ok |
-| 11 | 17.0ms | 228.7ms | 1 | 10 | 1 | 271.2 | 252.9 | 334.4 | 15.95x source | ok |
+| 4 | 11882.9ms | 34102.7ms | 1000 | 10 | 1000 | 8618.1 | 10658.4 | 11471.1 | 1.38x faster | ok |
+| 5 | 29101.7ms | 60034.6ms | 65 | 10 | 1000 | 1497.3 | 219.9 | 8309.5 | 19.44x faster | ok |
+| 6 | 44.8ms | 927.9ms | 168 | 10 | 50 | 50.1 | 38.7 | 140.8 | 1.12x source | ok |
+| 7 | 8.7ms | 487.0ms | 35 | 10 | 35 | 9.1 | 6.5 | 31.3 | 1.05x source | ok |
+| 8 | 16983.6ms | 32291.9ms | 6 | 10 | 108.6 | 16143.0 | 8304.9 | 42368.0 | 1.05x faster | ok |
+| 9 | 28.1ms | 10778.1ms | 8 | 10 | 24 | 16.4 | 16.2 | 27.5 | 1.71x faster | ok |
+| 10 | 41204.1ms | 51112.0ms | 136 | 10 | 956.8 | 606.1 | 556.2 | 1474.4 | 67.98x faster | ok |
+| 11 | 17.0ms | 228.7ms | 1 | 10 | 1 | 13.2 | 11.2 | 31.6 | 1.29x faster | ok |
 | 12 | 10.2ms | 473.9ms | 1 | 0 | None | None | None | None | n/a | skipped |
-| 13 | 29.8ms | 6157.8ms | 175 | 10 | 175 | 276.2 | 259.2 | 318.9 | 9.27x source | ok |
-| 14 | 28809.4ms | 45421.2ms | 1000 | 10 | 1000 | 325.9 | 325.6 | 385.1 | 88.40x faster | ok |
-| 15 | 24650.8ms | 42060.9ms | 1000 | 10 | 1000 | 331.2 | 329.4 | 365.6 | 74.43x faster | ok |
-| 16 | 47800.9ms | 60019.8ms | 500 | 10 | 1000 | 1479.8 | 1519.0 | 1775.8 | 32.30x faster | ok |
-| 17 | 29564.9ms | 37139.7ms | 0 | 10 | 1000 | 426.0 | 423.9 | 587.2 | 69.40x faster | ok |
-| 18 | 3.7ms | 325.7ms | 4 | 10 | 5 | 276.3 | 268.5 | 335.9 | 74.68x source | ok |
-| 19 | 39798.6ms | 60018.5ms | 500 | 10 | 1000 | 328.8 | 327.6 | 347.6 | 121.04x faster | ok |
-| 20 | 17.8ms | 5900.3ms | 1 | 10 | 1 | 259.5 | 244.9 | 331.2 | 14.58x source | ok |
-| 21 | 23577.6ms | 30859.8ms | 1000 | 10 | 1000 | 497.5 | 480.4 | 639.7 | 47.39x faster | ok |
-| 22 | 25.9ms | 233.2ms | 20 | 10 | 20 | 285.8 | 261.6 | 506.6 | 11.03x source | ok |
-| 23 | 33550.1ms | 35378.6ms | 0 | 10 | 956.8 | 385.4 | 363.2 | 559.4 | 87.05x faster | ok |
-| 24 | 60085.2ms | 60085.2ms | 0 | 10 | 1000 | 1742.4 | 1748.8 | 1832.8 | 34.48x faster | ok |
-| 25 | 59691.1ms | 59691.1ms | 1000 | 10 | 1000 | 1463.8 | 1257.0 | 3279.8 | 40.78x faster | ok |
+| 13 | 29.8ms | 6157.8ms | 175 | 10 | 175 | 9.7 | 9.4 | 12.1 | 3.07x faster | ok |
+| 14 | 28809.4ms | 45421.2ms | 1000 | 10 | 1000 | 90.0 | 85.3 | 148.7 | 320.10x faster | ok |
+| 15 | 24650.8ms | 42060.9ms | 1000 | 10 | 1000 | 77.7 | 85.0 | 93.3 | 317.26x faster | ok |
+| 16 | 47800.9ms | 60019.8ms | 500 | 10 | 1000 | 843.1 | 826.1 | 913.7 | 56.70x faster | ok |
+| 17 | 29564.9ms | 37139.7ms | 0 | 10 | 1000 | 159.3 | 135.6 | 311.1 | 185.59x faster | ok |
+| 18 | 3.7ms | 325.7ms | 4 | 10 | 5 | 2.4 | 2.5 | 3.1 | 1.54x faster | ok |
+| 19 | 39798.6ms | 60018.5ms | 500 | 10 | 1000 | 86.7 | 88.0 | 96.2 | 459.04x faster | ok |
+| 20 | 17.8ms | 5900.3ms | 1 | 10 | 1 | 4.4 | 3.5 | 12.9 | 4.05x faster | ok |
+| 21 | 23577.6ms | 30859.8ms | 1000 | 10 | 1000 | 1556.0 | 245.6 | 13389.4 | 15.15x faster | ok |
+| 22 | 25.9ms | 233.2ms | 20 | 10 | 20 | 28.3 | 30.4 | 50.7 | 1.09x source | ok |
+| 23 | 33550.1ms | 35378.6ms | 0 | 10 | 956.8 | 113.7 | 89.6 | 235.2 | 295.08x faster | ok |
+| 24 | 60085.2ms | 60085.2ms | 0 | 10 | 1000 | 1765.0 | 1183.8 | 7046.3 | 34.04x faster | ok |
+| 25 | 59691.1ms | 59691.1ms | 1000 | 10 | 1000 | 780.5 | 815.5 | 898.7 | 76.48x faster | ok |
 
 ## Skipped Queries
 
@@ -54,7 +54,7 @@ Worker assignment is per query class. When concurrency equals the runnable query
 | Concurrency | Query classes | Duration s | Successful ops | QPS | Avg ms | P95 ms | Max ms |
 |---:|---:|---:|---:|---:|---:|---:|---:|
 | 66 | 22 | 600 | 25061 | 41.58 | 1579.1 | 4233.6 | 12112.0 |
-| 132 | 22 | 600 | 166810 | 276.4 | 453.8 | 1746.3 | 20434.0 |
+| 132 | 22 | 600 | 179223 | 296.85 | 442.8 | 1547.7 | 21732.4 |
 
 ### Grafana / Prometheus Resource Metrics
 
@@ -115,15 +115,14 @@ Grafana panel screenshots:
 
 #### Concurrency 132
 
-- Window: `2026-05-08T13:36:10.497953+00:00` to `2026-05-08T13:46:14.001566+00:00`
-- Grafana time range: [http://a2e41aa49d08647d1b55ecd7b146bbf6-38f9eda417a300aa.elb.us-east-2.amazonaws.com:3000?from=1778247370497&to=1778247974001](http://a2e41aa49d08647d1b55ecd7b146bbf6-38f9eda417a300aa.elb.us-east-2.amazonaws.com:3000?from=1778247370497&to=1778247974001)
-- Failed ops: `135326`. Affected query classes: Query 8: 135326. Failed ops are excluded from QPS and latency statistics.
+- Window: `2026-05-08T14:27:07.866017+00:00` to `2026-05-08T14:37:11.607752+00:00`
+- Grafana time range: [http://a2e41aa49d08647d1b55ecd7b146bbf6-38f9eda417a300aa.elb.us-east-2.amazonaws.com:3000?from=1778250427866&to=1778251031607](http://a2e41aa49d08647d1b55ecd7b146bbf6-38f9eda417a300aa.elb.us-east-2.amazonaws.com:3000?from=1778250427866&to=1778251031607)
 
 | Component | Replicas | CPU avg cores | CPU max cores | CPU max % capacity | Mem avg GiB | Mem max GiB | Note |
 |---|---:|---:|---:|---:|---:|---:|---|
-| tidb | 3 | 6.08 | 7.89 | 16.4% | 22.71 | 26.37 |  |
-| tikv | 4 | 24.53 | 30.31 | 47.4% | 74.08 | 75.02 |  |
-| tiflash | 6 | 70.11 | 84.53 | 88.1% | 71.56 | 81.75 | TiFlash proxy process CPU metric |
+| tidb | 3 | 5.31 | 6.90 | 14.4% | 22.15 | 25.97 |  |
+| tikv | 4 | 28.96 | 33.96 | 53.1% | 58.04 | 59.21 |  |
+| tiflash | 6 | 72.81 | 85.89 | 89.5% | 56.81 | 67.19 | TiFlash proxy process CPU metric |
 
 Grafana panel screenshots:
 
@@ -144,28 +143,28 @@ Grafana panel screenshots:
 
 | Query | Successful ops | Source avg | Source max | Source rows avg | Run avg ms | vs source avg | P95 ms | Max ms | Run rows avg |
 |---:|---:|---:|---:|---:|---:|---|---:|---:|---:|
-| 2 | 2144 | 320.8ms | 14332.3ms | 234 | 1678.6 | 5.23x source | 2323.3 | 5956.4 | 600 |
-| 4 | 628 | 11882.9ms | 34102.7ms | 1000 | 5750.3 | 2.07x faster | 9591.2 | 16539.6 | 1000 |
-| 5 | 576 | 29101.7ms | 60034.6ms | 65 | 6272.8 | 4.64x faster | 9892.7 | 12811.1 | 1000 |
-| 6 | 2412 | 44.8ms | 927.9ms | 168 | 1492.2 | 33.31x source | 2079.4 | 2931.1 | 50 |
-| 7 | 26291 | 8.7ms | 487.0ms | 35 | 136.7 | 15.71x source | 245.2 | 479.5 | 35 |
-| 8 | 0 | 16983.6ms | 32291.9ms | 6 | None | n/a | None | None | None |
-| 9 | 31211 | 28.1ms | 10778.1ms | 8 | 115.2 | 4.10x source | 210.2 | 487.7 | 24 |
-| 10 | 443 | 41204.1ms | 51112.0ms | 136 | 8147.8 | 5.06x faster | 13039.5 | 17820.6 | 956.1 |
-| 11 | 2673 | 17.0ms | 228.7ms | 1 | 1346.8 | 79.22x source | 1896.7 | 2563.5 | 1 |
-| 13 | 17037 | 29.8ms | 6157.8ms | 175 | 211.1 | 7.08x source | 355.5 | 920.2 | 175 |
-| 14 | 535 | 28809.4ms | 45421.2ms | 1000 | 6744.1 | 4.27x faster | 11002.9 | 13632.0 | 1000 |
-| 15 | 549 | 24650.8ms | 42060.9ms | 1000 | 6577.8 | 3.75x faster | 10904.3 | 14762.4 | 1000 |
-| 16 | 414 | 47800.9ms | 60019.8ms | 500 | 8712.2 | 5.49x faster | 12015.7 | 14779.5 | 1000 |
-| 17 | 567 | 29564.9ms | 37139.7ms | 0 | 6359.1 | 4.65x faster | 10255.6 | 15402.2 | 1000 |
-| 18 | 45231 | 3.7ms | 325.7ms | 4 | 79.5 | 21.49x source | 159.0 | 385.3 | 5 |
-| 19 | 547 | 39798.6ms | 60018.5ms | 500 | 6595.3 | 6.03x faster | 11335.0 | 16214.5 | 1000 |
-| 20 | 31169 | 17.8ms | 5900.3ms | 1 | 115.4 | 6.48x source | 213.7 | 455.6 | 1 |
-| 21 | 368 | 23577.6ms | 30859.8ms | 1000 | 9815.5 | 2.40x faster | 15908.0 | 20434.0 | 1000 |
-| 22 | 2575 | 25.9ms | 233.2ms | 20 | 1397.8 | 53.97x source | 1950.2 | 2564.0 | 20 |
-| 23 | 564 | 33550.1ms | 35378.6ms | 0 | 6399.0 | 5.24x faster | 10415.3 | 13899.8 | 957.9 |
-| 24 | 456 | 60085.2ms | 60085.2ms | 0 | 7923.3 | 7.58x faster | 10363.3 | 11341.4 | 1000 |
-| 25 | 420 | 59691.1ms | 59691.1ms | 1000 | 8592.3 | 6.95x faster | 11490.5 | 13949.4 | 1000 |
+| 2 | 2306 | 320.8ms | 14332.3ms | 234 | 1562.2 | 4.87x source | 2194.5 | 4558.9 | 600 |
+| 4 | 565 | 11882.9ms | 34102.7ms | 1000 | 6384.7 | 1.86x faster | 10664.6 | 13565.4 | 1000 |
+| 5 | 497 | 29101.7ms | 60034.6ms | 65 | 7279.4 | 4.00x faster | 11625.7 | 13629.2 | 1000 |
+| 6 | 2603 | 44.8ms | 927.9ms | 168 | 1384.6 | 30.91x source | 1905.3 | 2415.9 | 50 |
+| 7 | 28089 | 8.7ms | 487.0ms | 35 | 128.1 | 14.72x source | 224.5 | 472.7 | 35 |
+| 8 | 541 | 16983.6ms | 32291.9ms | 6 | 6673.5 | 2.54x faster | 14794.1 | 18967.4 | 108.4 |
+| 9 | 34113 | 28.1ms | 10778.1ms | 8 | 105.5 | 3.75x source | 188.8 | 1159.6 | 24 |
+| 10 | 444 | 41204.1ms | 51112.0ms | 136 | 8152.7 | 5.05x faster | 11805.6 | 21732.4 | 957.2 |
+| 11 | 2953 | 17.0ms | 228.7ms | 1 | 1220.1 | 71.77x source | 1692.8 | 2297.3 | 1 |
+| 13 | 16523 | 29.8ms | 6157.8ms | 175 | 217.9 | 7.31x source | 355.7 | 2605.4 | 175 |
+| 14 | 528 | 28809.4ms | 45421.2ms | 1000 | 6838.6 | 4.21x faster | 11159.3 | 17053.9 | 1000 |
+| 15 | 526 | 24650.8ms | 42060.9ms | 1000 | 6864.5 | 3.59x faster | 11966.8 | 15021.1 | 1000 |
+| 16 | 406 | 47800.9ms | 60019.8ms | 500 | 8889.8 | 5.38x faster | 11651.2 | 15855.4 | 1000 |
+| 17 | 530 | 29564.9ms | 37139.7ms | 0 | 6801.1 | 4.35x faster | 11493.2 | 15806.6 | 1000 |
+| 18 | 49479 | 3.7ms | 325.7ms | 4 | 72.7 | 19.65x source | 142.9 | 388.0 | 5 |
+| 19 | 510 | 39798.6ms | 60018.5ms | 500 | 7080.3 | 5.62x faster | 11981.1 | 17543.9 | 1000 |
+| 20 | 34029 | 17.8ms | 5900.3ms | 1 | 105.8 | 5.94x source | 191.6 | 407.7 | 1 |
+| 21 | 335 | 23577.6ms | 30859.8ms | 1000 | 10776.4 | 2.19x faster | 15745.4 | 18339.6 | 1000 |
+| 22 | 2832 | 25.9ms | 233.2ms | 20 | 1272.0 | 49.11x source | 1761.5 | 2428.9 | 20 |
+| 23 | 539 | 33550.1ms | 35378.6ms | 0 | 6697.4 | 5.01x faster | 11222.3 | 15223.6 | 956.7 |
+| 24 | 463 | 60085.2ms | 60085.2ms | 0 | 7805.9 | 7.70x faster | 10128.3 | 12156.8 | 1000 |
+| 25 | 412 | 59691.1ms | 59691.1ms | 1000 | 8782.7 | 6.80x faster | 11429.0 | 13220.6 | 1000 |
 
 
 ## Per-Query Details
@@ -187,16 +186,16 @@ Grafana panel screenshots:
 
 | Sample | Params | Rows | Latency ms |
 |---|---|---:|---:|
-| s1 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, object_ids=25 | 600 | 325.2 |
-| s2 | workspace=9963b35f-9397-48ec-9403-adab57aef265, object_ids=25 | 600 | 284.7 |
-| s3 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, object_ids=25 | 600 | 314.1 |
-| s4 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, object_ids=25 | 600 | 307.3 |
-| s5 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, object_ids=25 | 600 | 313.0 |
-| s6 | workspace=183afe88-bcf4-48a6-a9ef-65420b7b819c, object_ids=25 | 600 | 301.9 |
-| s7 | workspace=23f639f1-fae8-48b0-8518-da3b7c80be57, object_ids=25 | 600 | 335.5 |
-| s8 | workspace=718915aa-f8e9-4bbc-b1dc-ba720f1296e2, object_ids=25 | 600 | 338.0 |
-| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, object_ids=25 | 600 | 407.9 |
-| s10 | workspace=82e47cda-f6dc-4999-b9fa-dc813435ec51, object_ids=25 | 600 | 404.5 |
+| s1 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, object_ids=25 | 600 | 81.9 |
+| s2 | workspace=9963b35f-9397-48ec-9403-adab57aef265, object_ids=25 | 600 | 51.0 |
+| s3 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, object_ids=25 | 600 | 73.7 |
+| s4 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, object_ids=25 | 600 | 57.4 |
+| s5 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, object_ids=25 | 600 | 79.3 |
+| s6 | workspace=183afe88-bcf4-48a6-a9ef-65420b7b819c, object_ids=25 | 600 | 75.1 |
+| s7 | workspace=23f639f1-fae8-48b0-8518-da3b7c80be57, object_ids=25 | 600 | 102.0 |
+| s8 | workspace=718915aa-f8e9-4bbc-b1dc-ba720f1296e2, object_ids=25 | 600 | 109.3 |
+| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, object_ids=25 | 600 | 203.8 |
+| s10 | workspace=82e47cda-f6dc-4999-b9fa-dc813435ec51, object_ids=25 | 600 | 199.2 |
 
 <details>
 <summary>Representative SQL</summary>
@@ -224,16 +223,16 @@ SELECT obj_relationship.workspace_id, obj_relationship.partition_id, obj_relatio
 
 | Sample | Params | Rows | Latency ms |
 |---|---|---:|---:|
-| s1 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_types=5 | 1000 | 993.8 |
-| s2 | workspace=9963b35f-9397-48ec-9403-adab57aef265, obj_types=5 | 1000 | 797.0 |
-| s3 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, obj_types=5 | 1000 | 728.5 |
-| s4 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, obj_types=5 | 1000 | 734.9 |
-| s5 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_types=5 | 1000 | 484.1 |
-| s6 | workspace=183afe88-bcf4-48a6-a9ef-65420b7b819c, obj_types=5 | 1000 | 619.0 |
-| s7 | workspace=23f639f1-fae8-48b0-8518-da3b7c80be57, obj_types=5 | 1000 | 475.0 |
-| s8 | workspace=718915aa-f8e9-4bbc-b1dc-ba720f1296e2, obj_types=5 | 1000 | 466.7 |
-| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_types=5 | 1000 | 316.4 |
-| s10 | workspace=82e47cda-f6dc-4999-b9fa-dc813435ec51, obj_types=5 | 1000 | 318.2 |
+| s1 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_types=5 | 1000 | 9048.8 |
+| s2 | workspace=9963b35f-9397-48ec-9403-adab57aef265, obj_types=5 | 1000 | 10422.6 |
+| s3 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, obj_types=5 | 1000 | 10746.6 |
+| s4 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, obj_types=5 | 1000 | 11471.1 |
+| s5 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_types=5 | 1000 | 11157.0 |
+| s6 | workspace=183afe88-bcf4-48a6-a9ef-65420b7b819c, obj_types=5 | 1000 | 10570.1 |
+| s7 | workspace=23f639f1-fae8-48b0-8518-da3b7c80be57, obj_types=5 | 1000 | 11244.9 |
+| s8 | workspace=718915aa-f8e9-4bbc-b1dc-ba720f1296e2, obj_types=5 | 1000 | 11424.6 |
+| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_types=5 | 1000 | 49.0 |
+| s10 | workspace=82e47cda-f6dc-4999-b9fa-dc813435ec51, obj_types=5 | 1000 | 46.4 |
 
 <details>
 <summary>Representative SQL</summary>
@@ -253,16 +252,16 @@ SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='8a6526e6-cd
 
 | Sample | Params | Rows | Latency ms |
 |---|---|---:|---:|
-| s1 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_type_branches=5 | 1000 | 571.2 |
-| s2 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, obj_type_branches=5 | 1000 | 521.4 |
-| s3 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, obj_type_branches=5 | 1000 | 540.6 |
-| s4 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type_branches=5 | 1000 | 558.0 |
-| s5 | workspace=183afe88-bcf4-48a6-a9ef-65420b7b819c, obj_type_branches=5 | 1000 | 767.0 |
-| s6 | workspace=23f639f1-fae8-48b0-8518-da3b7c80be57, obj_type_branches=5 | 1000 | 769.9 |
-| s7 | workspace=718915aa-f8e9-4bbc-b1dc-ba720f1296e2, obj_type_branches=5 | 1000 | 481.6 |
-| s8 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type_branches=5 | 1000 | 543.5 |
-| s9 | workspace=82e47cda-f6dc-4999-b9fa-dc813435ec51, obj_type_branches=5 | 1000 | 550.5 |
-| s10 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_type_branches=5 | 1000 | 739.7 |
+| s1 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_type_branches=5 | 1000 | 275.6 |
+| s2 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, obj_type_branches=5 | 1000 | 221.4 |
+| s3 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, obj_type_branches=5 | 1000 | 218.3 |
+| s4 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type_branches=5 | 1000 | 165.0 |
+| s5 | workspace=183afe88-bcf4-48a6-a9ef-65420b7b819c, obj_type_branches=5 | 1000 | 140.4 |
+| s6 | workspace=23f639f1-fae8-48b0-8518-da3b7c80be57, obj_type_branches=5 | 1000 | 165.4 |
+| s7 | workspace=718915aa-f8e9-4bbc-b1dc-ba720f1296e2, obj_type_branches=5 | 1000 | 183.6 |
+| s8 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type_branches=5 | 1000 | 3899.1 |
+| s9 | workspace=82e47cda-f6dc-4999-b9fa-dc813435ec51, obj_type_branches=5 | 1000 | 8309.5 |
+| s10 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_type_branches=5 | 1000 | 1394.6 |
 
 <details>
 <summary>Representative SQL</summary>
@@ -282,16 +281,16 @@ SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='8a6526e6-cd
 
 | Sample | Params | Rows | Latency ms |
 |---|---|---:|---:|
-| s1 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, ids=50 | 50 | 758.6 |
-| s2 | workspace=9963b35f-9397-48ec-9403-adab57aef265, ids=50 | 50 | 263.1 |
-| s3 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, ids=50 | 50 | 266.0 |
-| s4 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, ids=50 | 50 | 265.0 |
-| s5 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, ids=50 | 50 | 262.2 |
-| s6 | workspace=183afe88-bcf4-48a6-a9ef-65420b7b819c, ids=50 | 50 | 292.3 |
-| s7 | workspace=23f639f1-fae8-48b0-8518-da3b7c80be57, ids=50 | 50 | 261.6 |
-| s8 | workspace=718915aa-f8e9-4bbc-b1dc-ba720f1296e2, ids=50 | 50 | 263.0 |
-| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, ids=50 | 50 | 282.8 |
-| s10 | workspace=82e47cda-f6dc-4999-b9fa-dc813435ec51, ids=50 | 50 | 264.2 |
+| s1 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, ids=50 | 50 | 140.8 |
+| s2 | workspace=9963b35f-9397-48ec-9403-adab57aef265, ids=50 | 50 | 68.5 |
+| s3 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, ids=50 | 50 | 55.3 |
+| s4 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, ids=50 | 50 | 31.2 |
+| s5 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, ids=50 | 50 | 44.4 |
+| s6 | workspace=183afe88-bcf4-48a6-a9ef-65420b7b819c, ids=50 | 50 | 38.8 |
+| s7 | workspace=23f639f1-fae8-48b0-8518-da3b7c80be57, ids=50 | 50 | 38.6 |
+| s8 | workspace=718915aa-f8e9-4bbc-b1dc-ba720f1296e2, ids=50 | 50 | 27.7 |
+| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, ids=50 | 50 | 27.8 |
+| s10 | workspace=82e47cda-f6dc-4999-b9fa-dc813435ec51, ids=50 | 50 | 27.6 |
 
 <details>
 <summary>Representative SQL</summary>
@@ -311,16 +310,16 @@ SELECT obj.* FROM obj_new obj WHERE obj.id IN (0xbf9242d795564affacb528e70164d52
 
 | Sample | Params | Rows | Latency ms |
 |---|---|---:|---:|
-| s1 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, obj_type=ca0a6a3f-120d-4e81-a73a-35dc434b9590 | 35 | 253.8 |
-| s2 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, obj_type=89a756f6-0201-4cda-bec2-e6496b1d0018 | 35 | 247.5 |
-| s3 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_type=29ba27b2-e117-4ca3-a054-1b8e84c15d4e | 35 | 256.0 |
-| s4 | workspace=718915aa-f8e9-4bbc-b1dc-ba720f1296e2, obj_type=e7afe364-c8d5-413e-b80c-eb69477bba57 | 35 | 247.2 |
-| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c | 35 | 245.1 |
-| s6 | workspace=9963b35f-9397-48ec-9403-adab57aef265, obj_type=e9b4640e-fde6-4a4b-aba2-d402fb8d3f93 | 35 | 246.9 |
-| s7 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, obj_type=451aed8b-a883-4ee3-8d40-5f6881afa983 | 35 | 289.0 |
-| s8 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_type=1bfa019c-a216-4e97-b433-31fe25d01325 | 35 | 244.8 |
-| s9 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=0a79f4d5-1527-4f18-b770-be668a5fb0ad | 35 | 266.7 |
-| s10 | workspace=9963b35f-9397-48ec-9403-adab57aef265, obj_type=caa0b57b-5bca-42d7-80f6-7b3831e81978 | 35 | 245.9 |
+| s1 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, obj_type=ca0a6a3f-120d-4e81-a73a-35dc434b9590 | 35 | 31.3 |
+| s2 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, obj_type=89a756f6-0201-4cda-bec2-e6496b1d0018 | 35 | 6.9 |
+| s3 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_type=29ba27b2-e117-4ca3-a054-1b8e84c15d4e | 35 | 8.3 |
+| s4 | workspace=718915aa-f8e9-4bbc-b1dc-ba720f1296e2, obj_type=e7afe364-c8d5-413e-b80c-eb69477bba57 | 35 | 6.7 |
+| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c | 35 | 6.6 |
+| s6 | workspace=9963b35f-9397-48ec-9403-adab57aef265, obj_type=e9b4640e-fde6-4a4b-aba2-d402fb8d3f93 | 35 | 6.4 |
+| s7 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, obj_type=451aed8b-a883-4ee3-8d40-5f6881afa983 | 35 | 5.9 |
+| s8 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_type=1bfa019c-a216-4e97-b433-31fe25d01325 | 35 | 6.3 |
+| s9 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=0a79f4d5-1527-4f18-b770-be668a5fb0ad | 35 | 6.5 |
+| s10 | workspace=9963b35f-9397-48ec-9403-adab57aef265, obj_type=caa0b57b-5bca-42d7-80f6-7b3831e81978 | 35 | 6.2 |
 
 <details>
 <summary>Representative SQL</summary>
@@ -340,16 +339,16 @@ SELECT otae1_0.id, otae1_0.additional_value, otae1_0.aql, otae1_0.created, otae1
 
 | Sample | Params | Rows | Latency ms |
 |---|---|---:|---:|
-| s1 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_type=ad3f4fea-db96-456d-a7bf-fc4cd63f05f4, text_value_22=⁣Analysed⁣ | 4 | 3311.0 |
-| s2 | workspace=9963b35f-9397-48ec-9403-adab57aef265, obj_type=c803e991-dc8d-4c96-a818-0a05c3a7ee7b, text_value_22=⁣Operational⁣ | 37 | 2477.2 |
-| s3 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, obj_type=451aed8b-a883-4ee3-8d40-5f6881afa983, text_value_22=⁣Retired⁣ | 19 | 1756.0 |
-| s4 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, obj_type=eefa73e0-11da-4486-8024-fddfc52baef8, text_value_22=⁣Defined⁣ | 1000 | 2356.0 |
-| s5 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=c30b5368-dba0-4929-bc3d-dff93d45b5c2, text_value_22=⁣Retired⁣ | 13 | 1354.6 |
-| s6 | workspace=183afe88-bcf4-48a6-a9ef-65420b7b819c, obj_type=09ae6b6f-4a9d-4021-8377-e14a3e0ccdd1, text_value_22=⁣Defined⁣ | 1 | 1293.5 |
-| s7 | workspace=23f639f1-fae8-48b0-8518-da3b7c80be57, obj_type=a8439325-6f3b-4715-bdcb-9c132779da43, text_value_22=⁣Retired⁣ | 2 | 1014.7 |
-| s8 | workspace=718915aa-f8e9-4bbc-b1dc-ba720f1296e2, obj_type=440eb858-a088-46c0-bb9a-0f1ca94eae58, text_value_22=⁣Approved⁣ | 5 | 1195.0 |
-| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_22=⁣Defined⁣ | 4 | 650.1 |
-| s10 | workspace=82e47cda-f6dc-4999-b9fa-dc813435ec51, obj_type=fd57a932-342b-43ee-b20c-0ea71d89c5b3, text_value_22=⁣Defined⁣ | 1 | 707.2 |
+| s1 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_type=ad3f4fea-db96-456d-a7bf-fc4cd63f05f4, text_value_22=⁣Analysed⁣ | 4 | 42368.0 |
+| s2 | workspace=9963b35f-9397-48ec-9403-adab57aef265, obj_type=c803e991-dc8d-4c96-a818-0a05c3a7ee7b, text_value_22=⁣Operational⁣ | 37 | 39990.9 |
+| s3 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, obj_type=451aed8b-a883-4ee3-8d40-5f6881afa983, text_value_22=⁣Retired⁣ | 19 | 26999.8 |
+| s4 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, obj_type=eefa73e0-11da-4486-8024-fddfc52baef8, text_value_22=⁣Defined⁣ | 1000 | 25577.8 |
+| s5 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=c30b5368-dba0-4929-bc3d-dff93d45b5c2, text_value_22=⁣Retired⁣ | 13 | 8028.0 |
+| s6 | workspace=183afe88-bcf4-48a6-a9ef-65420b7b819c, obj_type=09ae6b6f-4a9d-4021-8377-e14a3e0ccdd1, text_value_22=⁣Defined⁣ | 1 | 8581.7 |
+| s7 | workspace=23f639f1-fae8-48b0-8518-da3b7c80be57, obj_type=a8439325-6f3b-4715-bdcb-9c132779da43, text_value_22=⁣Retired⁣ | 2 | 4490.7 |
+| s8 | workspace=718915aa-f8e9-4bbc-b1dc-ba720f1296e2, obj_type=440eb858-a088-46c0-bb9a-0f1ca94eae58, text_value_22=⁣Approved⁣ | 5 | 4165.5 |
+| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_22=⁣Defined⁣ | 4 | 639.1 |
+| s10 | workspace=82e47cda-f6dc-4999-b9fa-dc813435ec51, obj_type=fd57a932-342b-43ee-b20c-0ea71d89c5b3, text_value_22=⁣Defined⁣ | 1 | 588.3 |
 
 <details>
 <summary>Representative SQL</summary>
@@ -369,16 +368,16 @@ SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='8a6526e6-cd
 
 | Sample | Params | Rows | Latency ms |
 |---|---|---:|---:|
-| s1 | workspace=9963b35f-9397-48ec-9403-adab57aef265, object_id=d8312458-5347-4044-93fb-a6699a237a0d | 24 | 271.3 |
-| s2 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, object_id=1aad6e65-5158-4aa6-acbf-07086511d34f | 24 | 266.2 |
-| s3 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, object_id=d1b33aad-b216-46e7-ba41-8fd241b78193 | 24 | 261.5 |
-| s4 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, object_id=f3764ae7-41b2-4061-a67c-b2646a491e03 | 24 | 277.5 |
-| s5 | workspace=183afe88-bcf4-48a6-a9ef-65420b7b819c, object_id=344e6047-1681-47d9-a916-a1b56678ee12 | 24 | 279.5 |
-| s6 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, object_id=2084b310-7756-47ab-95a9-5d2b14e951b3 | 24 | 303.2 |
-| s7 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, object_id=a2407626-7bb1-478c-a8e4-9867c7a7d8f7 | 24 | 308.3 |
-| s8 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, object_id=03b64a23-9dd4-4767-b2ae-458587776144 | 24 | 256.9 |
-| s9 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, object_id=de9533f2-5132-49c8-97ea-a53248460d94 | 24 | 274.8 |
-| s10 | workspace=183afe88-bcf4-48a6-a9ef-65420b7b819c, object_id=7ad29c7b-e5a1-4cdd-b99e-c4559739494f | 24 | 263.5 |
+| s1 | workspace=9963b35f-9397-48ec-9403-adab57aef265, object_id=d8312458-5347-4044-93fb-a6699a237a0d | 24 | 15.1 |
+| s2 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, object_id=1aad6e65-5158-4aa6-acbf-07086511d34f | 24 | 18.5 |
+| s3 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, object_id=d1b33aad-b216-46e7-ba41-8fd241b78193 | 24 | 12.8 |
+| s4 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, object_id=f3764ae7-41b2-4061-a67c-b2646a491e03 | 24 | 27.5 |
+| s5 | workspace=183afe88-bcf4-48a6-a9ef-65420b7b819c, object_id=344e6047-1681-47d9-a916-a1b56678ee12 | 24 | 19.2 |
+| s6 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, object_id=2084b310-7756-47ab-95a9-5d2b14e951b3 | 24 | 10.8 |
+| s7 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, object_id=a2407626-7bb1-478c-a8e4-9867c7a7d8f7 | 24 | 17.3 |
+| s8 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, object_id=03b64a23-9dd4-4767-b2ae-458587776144 | 24 | 10.2 |
+| s9 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, object_id=de9533f2-5132-49c8-97ea-a53248460d94 | 24 | 12.7 |
+| s10 | workspace=183afe88-bcf4-48a6-a9ef-65420b7b819c, object_id=7ad29c7b-e5a1-4cdd-b99e-c4559739494f | 24 | 19.7 |
 
 <details>
 <summary>Representative SQL</summary>
@@ -398,16 +397,16 @@ SELECT obj_relationship.workspace_id, obj_relationship.partition_id, obj_relatio
 
 | Sample | Params | Rows | Latency ms |
 |---|---|---:|---:|
-| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, json_terms=4 | 1000 | 2533.1 |
-| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, json_terms=4 | 1000 | 993.5 |
-| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=7d9ffc8b-03a9-4ef6-9bbf-b2e5f939ba14, json_terms=4 | 1000 | 938.4 |
-| s4 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, json_terms=4 | 1000 | 819.5 |
-| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, json_terms=4 | 1000 | 803.6 |
-| s6 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=05f273ff-2221-45a4-9742-dd58bb38be3e, json_terms=4 | 568 | 1243.7 |
-| s7 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=0a79f4d5-1527-4f18-b770-be668a5fb0ad, json_terms=4 | 1000 | 973.9 |
-| s8 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=33516f75-3dd9-43d6-b121-a8bf408c69be, json_terms=4 | 1000 | 857.9 |
-| s9 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=c30b5368-dba0-4929-bc3d-dff93d45b5c2, json_terms=4 | 1000 | 827.9 |
-| s10 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=d05f4480-7ba4-4f69-9764-9ee42ce5f6ef, json_terms=4 | 1000 | 737.8 |
+| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, json_terms=4 | 1000 | 401.5 |
+| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, json_terms=4 | 1000 | 525.2 |
+| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=7d9ffc8b-03a9-4ef6-9bbf-b2e5f939ba14, json_terms=4 | 1000 | 553.4 |
+| s4 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, json_terms=4 | 1000 | 398.8 |
+| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, json_terms=4 | 1000 | 396.2 |
+| s6 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=05f273ff-2221-45a4-9742-dd58bb38be3e, json_terms=4 | 568 | 1474.4 |
+| s7 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=0a79f4d5-1527-4f18-b770-be668a5fb0ad, json_terms=4 | 1000 | 590.0 |
+| s8 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=33516f75-3dd9-43d6-b121-a8bf408c69be, json_terms=4 | 1000 | 580.0 |
+| s9 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=c30b5368-dba0-4929-bc3d-dff93d45b5c2, json_terms=4 | 1000 | 559.1 |
+| s10 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=d05f4480-7ba4-4f69-9764-9ee42ce5f6ef, json_terms=4 | 1000 | 582.1 |
 
 <details>
 <summary>Representative SQL</summary>
@@ -427,16 +426,16 @@ SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b
 
 | Sample | Params | Rows | Latency ms |
 |---|---|---:|---:|
-| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=1 | 1 | 286.6 |
-| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=2 | 1 | 253.8 |
-| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=3 | 1 | 251.7 |
-| s4 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=4 | 1 | 251.5 |
-| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=5 | 1 | 252.0 |
-| s6 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=6 | 1 | 251.3 |
-| s7 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=7 | 1 | 325.0 |
-| s8 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=8 | 1 | 253.8 |
-| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=9 | 1 | 252.0 |
-| s10 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=10 | 1 | 334.4 |
+| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=1 | 1 | 31.6 |
+| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=2 | 1 | 11.4 |
+| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=3 | 1 | 11.2 |
+| s4 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=4 | 1 | 10.8 |
+| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=5 | 1 | 12.0 |
+| s6 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=6 | 1 | 11.6 |
+| s7 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=7 | 1 | 11.0 |
+| s8 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=8 | 1 | 11.3 |
+| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=9 | 1 | 10.8 |
+| s10 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=10 | 1 | 10.8 |
 
 <details>
 <summary>Representative SQL</summary>
@@ -464,16 +463,16 @@ SELECT obj.* FROM obj_new obj WHERE obj.workspace_id='00eaf117-fdd6-4176-9926-45
 
 | Sample | Params | Rows | Latency ms |
 |---|---|---:|---:|
-| s1 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_types=5 | 175 | 303.7 |
-| s2 | workspace=9963b35f-9397-48ec-9403-adab57aef265, obj_types=5 | 175 | 254.6 |
-| s3 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, obj_types=5 | 175 | 255.9 |
-| s4 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, obj_types=5 | 175 | 250.4 |
-| s5 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_types=5 | 175 | 262.6 |
-| s6 | workspace=183afe88-bcf4-48a6-a9ef-65420b7b819c, obj_types=5 | 175 | 250.6 |
-| s7 | workspace=23f639f1-fae8-48b0-8518-da3b7c80be57, obj_types=5 | 175 | 250.7 |
-| s8 | workspace=718915aa-f8e9-4bbc-b1dc-ba720f1296e2, obj_types=5 | 175 | 318.9 |
-| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_types=5 | 175 | 308.6 |
-| s10 | workspace=82e47cda-f6dc-4999-b9fa-dc813435ec51, obj_types=5 | 175 | 305.7 |
+| s1 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_types=5 | 175 | 12.1 |
+| s2 | workspace=9963b35f-9397-48ec-9403-adab57aef265, obj_types=5 | 175 | 9.4 |
+| s3 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, obj_types=5 | 175 | 10.8 |
+| s4 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, obj_types=5 | 175 | 10.1 |
+| s5 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_types=5 | 175 | 9.5 |
+| s6 | workspace=183afe88-bcf4-48a6-a9ef-65420b7b819c, obj_types=5 | 175 | 8.7 |
+| s7 | workspace=23f639f1-fae8-48b0-8518-da3b7c80be57, obj_types=5 | 175 | 9.1 |
+| s8 | workspace=718915aa-f8e9-4bbc-b1dc-ba720f1296e2, obj_types=5 | 175 | 8.9 |
+| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_types=5 | 175 | 9.5 |
+| s10 | workspace=82e47cda-f6dc-4999-b9fa-dc813435ec51, obj_types=5 | 175 | 9.1 |
 
 <details>
 <summary>Representative SQL</summary>
@@ -493,16 +492,16 @@ SELECT otae1_0.id, otae1_0.additional_value, otae1_0.aql, otae1_0.created, otae1
 
 | Sample | Params | Rows | Latency ms |
 |---|---|---:|---:|
-| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=􏿿 | 1000 | 321.0 |
-| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=LG | 1000 | 325.5 |
-| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, text_value_8=KitchenAid | 1000 | 385.1 |
-| s4 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=7d9ffc8b-03a9-4ef6-9bbf-b2e5f939ba14, text_value_8=Siemens | 1000 | 339.5 |
-| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=Fagor | 1000 | 331.7 |
-| s6 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Samsung | 1000 | 328.2 |
-| s7 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Franke | 1000 | 325.6 |
-| s8 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_8=􏿿 | 1000 | 320.2 |
-| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Samsung | 1000 | 259.1 |
-| s10 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Siemens | 1000 | 322.8 |
+| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=􏿿 | 1000 | 94.7 |
+| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=LG | 1000 | 89.0 |
+| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, text_value_8=KitchenAid | 1000 | 148.7 |
+| s4 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=7d9ffc8b-03a9-4ef6-9bbf-b2e5f939ba14, text_value_8=Siemens | 1000 | 136.1 |
+| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=Fagor | 1000 | 85.0 |
+| s6 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Samsung | 1000 | 84.2 |
+| s7 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Franke | 1000 | 80.2 |
+| s8 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_8=􏿿 | 1000 | 85.7 |
+| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Samsung | 1000 | 16.9 |
+| s10 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Siemens | 1000 | 79.9 |
 
 <details>
 <summary>Representative SQL</summary>
@@ -522,16 +521,16 @@ SELECT o.sequential_id, o.text_value_8 FROM obj_new o WHERE o.workspace_id='00ea
 
 | Sample | Params | Rows | Latency ms |
 |---|---|---:|---:|
-| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=􏿿 | 1000 | 304.4 |
-| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=LG | 1000 | 328.0 |
-| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, text_value_8=KitchenAid | 1000 | 365.6 |
-| s4 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=7d9ffc8b-03a9-4ef6-9bbf-b2e5f939ba14, text_value_8=Siemens | 1000 | 338.7 |
-| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=Fagor | 1000 | 332.1 |
-| s6 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Samsung | 1000 | 330.8 |
-| s7 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Franke | 1000 | 323.0 |
-| s8 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_8=􏿿 | 1000 | 326.7 |
-| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Samsung | 1000 | 338.7 |
-| s10 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Siemens | 1000 | 324.1 |
+| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=􏿿 | 1000 | 93.3 |
+| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=LG | 1000 | 76.7 |
+| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, text_value_8=KitchenAid | 1000 | 89.9 |
+| s4 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=7d9ffc8b-03a9-4ef6-9bbf-b2e5f939ba14, text_value_8=Siemens | 1000 | 86.7 |
+| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=Fagor | 1000 | 78.5 |
+| s6 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Samsung | 1000 | 85.4 |
+| s7 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Franke | 1000 | 77.4 |
+| s8 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_8=􏿿 | 1000 | 87.7 |
+| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Samsung | 1000 | 16.9 |
+| s10 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Siemens | 1000 | 84.5 |
 
 <details>
 <summary>Representative SQL</summary>
@@ -551,16 +550,16 @@ SELECT o.sequential_id, o.text_value_1 FROM obj_new o WHERE o.workspace_id='00ea
 
 | Sample | Params | Rows | Latency ms |
 |---|---|---:|---:|
-| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_16=Whirlpool | 1000 | 1300.2 |
-| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_16=􏿿 | 1000 | 1646.1 |
-| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, text_value_16=Whirlpool | 1000 | 1222.0 |
-| s4 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=7d9ffc8b-03a9-4ef6-9bbf-b2e5f939ba14, text_value_16=Admiral | 1000 | 1371.7 |
-| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_16=􏿿 | 1000 | 1681.2 |
-| s6 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_16=Whirlpool | 1000 | 1775.8 |
-| s7 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_16=LG | 1000 | 1486.6 |
-| s8 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_16=􏿿 | 1000 | 1551.5 |
-| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_16=Franke | 1000 | 1169.7 |
-| s10 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_16=􏿿 | 1000 | 1593.7 |
+| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_16=Whirlpool | 1000 | 829.1 |
+| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_16=􏿿 | 1000 | 913.7 |
+| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, text_value_16=Whirlpool | 1000 | 828.8 |
+| s4 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=7d9ffc8b-03a9-4ef6-9bbf-b2e5f939ba14, text_value_16=Admiral | 1000 | 815.7 |
+| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_16=􏿿 | 1000 | 823.5 |
+| s6 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_16=Whirlpool | 1000 | 805.3 |
+| s7 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_16=LG | 1000 | 818.0 |
+| s8 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_16=􏿿 | 1000 | 893.9 |
+| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_16=Franke | 1000 | 813.8 |
+| s10 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_16=􏿿 | 1000 | 889.3 |
 
 <details>
 <summary>Representative SQL</summary>
@@ -580,16 +579,16 @@ SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b
 
 | Sample | Params | Rows | Latency ms |
 |---|---|---:|---:|
-| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, json_terms=8 | 1000 | 344.6 |
-| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, json_terms=8 | 1000 | 439.0 |
-| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=7d9ffc8b-03a9-4ef6-9bbf-b2e5f939ba14, json_terms=8 | 1000 | 408.9 |
-| s4 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, json_terms=8 | 1000 | 328.4 |
-| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, json_terms=8 | 1000 | 354.3 |
-| s6 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=05f273ff-2221-45a4-9742-dd58bb38be3e, json_terms=8 | 1000 | 587.2 |
-| s7 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=0a79f4d5-1527-4f18-b770-be668a5fb0ad, json_terms=8 | 1000 | 464.3 |
-| s8 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=33516f75-3dd9-43d6-b121-a8bf408c69be, json_terms=8 | 1000 | 368.2 |
-| s9 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=c30b5368-dba0-4929-bc3d-dff93d45b5c2, json_terms=8 | 1000 | 490.6 |
-| s10 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=d05f4480-7ba4-4f69-9764-9ee42ce5f6ef, json_terms=8 | 1000 | 474.4 |
+| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, json_terms=8 | 1000 | 66.4 |
+| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, json_terms=8 | 1000 | 103.4 |
+| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=7d9ffc8b-03a9-4ef6-9bbf-b2e5f939ba14, json_terms=8 | 1000 | 160.1 |
+| s4 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, json_terms=8 | 1000 | 56.6 |
+| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, json_terms=8 | 1000 | 90.0 |
+| s6 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=05f273ff-2221-45a4-9742-dd58bb38be3e, json_terms=8 | 1000 | 311.1 |
+| s7 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=0a79f4d5-1527-4f18-b770-be668a5fb0ad, json_terms=8 | 1000 | 111.0 |
+| s8 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=33516f75-3dd9-43d6-b121-a8bf408c69be, json_terms=8 | 1000 | 206.2 |
+| s9 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=c30b5368-dba0-4929-bc3d-dff93d45b5c2, json_terms=8 | 1000 | 275.7 |
+| s10 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=d05f4480-7ba4-4f69-9764-9ee42ce5f6ef, json_terms=8 | 1000 | 212.1 |
 
 <details>
 <summary>Representative SQL</summary>
@@ -609,16 +608,16 @@ SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fd
 
 | Sample | Params | Rows | Latency ms |
 |---|---|---:|---:|
-| s1 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_types=5 | 5 | 272.2 |
-| s2 | workspace=9963b35f-9397-48ec-9403-adab57aef265, obj_types=5 | 5 | 308.4 |
-| s3 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, obj_types=5 | 5 | 305.9 |
-| s4 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, obj_types=5 | 5 | 240.7 |
-| s5 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_types=5 | 5 | 242.7 |
-| s6 | workspace=183afe88-bcf4-48a6-a9ef-65420b7b819c, obj_types=5 | 5 | 335.9 |
-| s7 | workspace=23f639f1-fae8-48b0-8518-da3b7c80be57, obj_types=5 | 5 | 308.3 |
-| s8 | workspace=718915aa-f8e9-4bbc-b1dc-ba720f1296e2, obj_types=5 | 5 | 264.9 |
-| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_types=5 | 5 | 241.6 |
-| s10 | workspace=82e47cda-f6dc-4999-b9fa-dc813435ec51, obj_types=5 | 5 | 242.4 |
+| s1 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_types=5 | 5 | 2.5 |
+| s2 | workspace=9963b35f-9397-48ec-9403-adab57aef265, obj_types=5 | 5 | 3.1 |
+| s3 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, obj_types=5 | 5 | 2.0 |
+| s4 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, obj_types=5 | 5 | 2.9 |
+| s5 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_types=5 | 5 | 1.9 |
+| s6 | workspace=183afe88-bcf4-48a6-a9ef-65420b7b819c, obj_types=5 | 5 | 2.8 |
+| s7 | workspace=23f639f1-fae8-48b0-8518-da3b7c80be57, obj_types=5 | 5 | 2.6 |
+| s8 | workspace=718915aa-f8e9-4bbc-b1dc-ba720f1296e2, obj_types=5 | 5 | 1.9 |
+| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_types=5 | 5 | 2.0 |
+| s10 | workspace=82e47cda-f6dc-4999-b9fa-dc813435ec51, obj_types=5 | 5 | 2.5 |
 
 <details>
 <summary>Representative SQL</summary>
@@ -638,16 +637,16 @@ SELECT ote1_0.* FROM obj_type ote1_0 WHERE ote1_0.workspace_id='8a6526e6-cd57-42
 
 | Sample | Params | Rows | Latency ms |
 |---|---|---:|---:|
-| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_16=Whirlpool | 1000 | 327.2 |
-| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_16=􏿿 | 1000 | 320.2 |
-| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, text_value_16=Whirlpool | 1000 | 347.6 |
-| s4 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=7d9ffc8b-03a9-4ef6-9bbf-b2e5f939ba14, text_value_16=Admiral | 1000 | 347.1 |
-| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_16=􏿿 | 1000 | 308.9 |
-| s6 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_16=Whirlpool | 1000 | 331.7 |
-| s7 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_16=LG | 1000 | 328.1 |
-| s8 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_16=􏿿 | 1000 | 335.6 |
-| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_16=Franke | 1000 | 315.2 |
-| s10 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_16=􏿿 | 1000 | 326.8 |
+| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_16=Whirlpool | 1000 | 85.1 |
+| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_16=􏿿 | 1000 | 96.2 |
+| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, text_value_16=Whirlpool | 1000 | 92.1 |
+| s4 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=7d9ffc8b-03a9-4ef6-9bbf-b2e5f939ba14, text_value_16=Admiral | 1000 | 87.4 |
+| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_16=􏿿 | 1000 | 77.0 |
+| s6 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_16=Whirlpool | 1000 | 78.3 |
+| s7 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_16=LG | 1000 | 83.3 |
+| s8 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_16=􏿿 | 1000 | 88.5 |
+| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_16=Franke | 1000 | 88.5 |
+| s10 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_16=􏿿 | 1000 | 90.6 |
 
 <details>
 <summary>Representative SQL</summary>
@@ -667,16 +666,16 @@ SELECT o.sequential_id, o.numeric_value_4 FROM obj_new o WHERE o.workspace_id='0
 
 | Sample | Params | Rows | Latency ms |
 |---|---|---:|---:|
-| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=1 | 1 | 245.3 |
-| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=2 | 1 | 242.6 |
-| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=3 | 1 | 243.4 |
-| s4 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=4 | 1 | 242.9 |
-| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=5 | 1 | 244.4 |
-| s6 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=6 | 1 | 249.0 |
-| s7 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=7 | 1 | 331.2 |
-| s8 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=8 | 1 | 306.7 |
-| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=9 | 1 | 245.5 |
-| s10 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=10 | 1 | 243.6 |
+| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=1 | 1 | 12.9 |
+| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=2 | 1 | 3.5 |
+| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=3 | 1 | 3.5 |
+| s4 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=4 | 1 | 3.7 |
+| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=5 | 1 | 3.5 |
+| s6 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=6 | 1 | 3.4 |
+| s7 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=7 | 1 | 3.4 |
+| s8 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=8 | 1 | 3.4 |
+| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=9 | 1 | 3.4 |
+| s10 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=10 | 1 | 3.5 |
 
 <details>
 <summary>Representative SQL</summary>
@@ -696,16 +695,16 @@ SELECT otae1_0.id, otae1_0.additional_value, otae1_0.aql, otae1_0.created, otae1
 
 | Sample | Params | Rows | Latency ms |
 |---|---|---:|---:|
-| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=Bosch, sub_text_value_8=􏿿 | 1000 | 639.7 |
-| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=Bosch, sub_text_value_8=􏿿 | 1000 | 467.3 |
-| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=KitchenAid, sub_text_value_8=􏿿 | 1000 | 487.9 |
-| s4 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=􏿿, sub_text_value_8=􏿿 | 1000 | 513.4 |
-| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=􏿿, sub_text_value_8=􏿿 | 1000 | 479.8 |
-| s6 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=􏿿, sub_text_value_8=􏿿 | 1000 | 488.2 |
-| s7 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=Franke, sub_text_value_8=􏿿 | 1000 | 478.7 |
-| s8 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=Electrolux, sub_text_value_8=􏿿 | 1000 | 468.3 |
-| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=􏿿, sub_text_value_8=􏿿 | 1000 | 480.9 |
-| s10 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=IKEA, sub_text_value_8=􏿿 | 1000 | 470.4 |
+| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=Bosch, sub_text_value_8=􏿿 | 1000 | 13389.4 |
+| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=Bosch, sub_text_value_8=􏿿 | 1000 | 245.0 |
+| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=KitchenAid, sub_text_value_8=􏿿 | 1000 | 249.1 |
+| s4 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=􏿿, sub_text_value_8=􏿿 | 1000 | 246.2 |
+| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=􏿿, sub_text_value_8=􏿿 | 1000 | 251.6 |
+| s6 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=􏿿, sub_text_value_8=􏿿 | 1000 | 233.9 |
+| s7 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=Franke, sub_text_value_8=􏿿 | 1000 | 234.2 |
+| s8 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=Electrolux, sub_text_value_8=􏿿 | 1000 | 232.6 |
+| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=􏿿, sub_text_value_8=􏿿 | 1000 | 224.1 |
+| s10 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=IKEA, sub_text_value_8=􏿿 | 1000 | 254.4 |
 
 <details>
 <summary>Representative SQL</summary>
@@ -725,16 +724,16 @@ SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fd
 
 | Sample | Params | Rows | Latency ms |
 |---|---|---:|---:|
-| s1 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, partition_id=1, sequential_ids=20 | 20 | 506.6 |
-| s2 | workspace=9963b35f-9397-48ec-9403-adab57aef265, partition_id=1, sequential_ids=20 | 20 | 264.8 |
-| s3 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, partition_id=1, sequential_ids=20 | 20 | 265.3 |
-| s4 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, partition_id=1, sequential_ids=20 | 20 | 261.6 |
-| s5 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, partition_id=1, sequential_ids=20 | 20 | 258.7 |
-| s6 | workspace=183afe88-bcf4-48a6-a9ef-65420b7b819c, partition_id=1, sequential_ids=20 | 20 | 261.6 |
-| s7 | workspace=23f639f1-fae8-48b0-8518-da3b7c80be57, partition_id=1, sequential_ids=20 | 20 | 260.4 |
-| s8 | workspace=718915aa-f8e9-4bbc-b1dc-ba720f1296e2, partition_id=1, sequential_ids=20 | 20 | 263.6 |
-| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, partition_id=1, sequential_ids=20 | 20 | 257.3 |
-| s10 | workspace=82e47cda-f6dc-4999-b9fa-dc813435ec51, partition_id=1, sequential_ids=20 | 20 | 258.2 |
+| s1 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, partition_id=1, sequential_ids=20 | 20 | 50.7 |
+| s2 | workspace=9963b35f-9397-48ec-9403-adab57aef265, partition_id=1, sequential_ids=20 | 20 | 32.3 |
+| s3 | workspace=3b4c201d-8244-416e-925d-f9608e001a2b, partition_id=1, sequential_ids=20 | 20 | 30.8 |
+| s4 | workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, partition_id=1, sequential_ids=20 | 20 | 33.9 |
+| s5 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, partition_id=1, sequential_ids=20 | 20 | 20.5 |
+| s6 | workspace=183afe88-bcf4-48a6-a9ef-65420b7b819c, partition_id=1, sequential_ids=20 | 20 | 32.2 |
+| s7 | workspace=23f639f1-fae8-48b0-8518-da3b7c80be57, partition_id=1, sequential_ids=20 | 20 | 18.8 |
+| s8 | workspace=718915aa-f8e9-4bbc-b1dc-ba720f1296e2, partition_id=1, sequential_ids=20 | 20 | 29.9 |
+| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, partition_id=1, sequential_ids=20 | 20 | 15.9 |
+| s10 | workspace=82e47cda-f6dc-4999-b9fa-dc813435ec51, partition_id=1, sequential_ids=20 | 20 | 18.2 |
 
 <details>
 <summary>Representative SQL</summary>
@@ -754,16 +753,16 @@ SELECT obj.* FROM obj_new obj WHERE obj.workspace_id='8a6526e6-cd57-4216-bac6-35
 
 | Sample | Params | Rows | Latency ms |
 |---|---|---:|---:|
-| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, json_terms=4 | 1000 | 305.4 |
-| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, json_terms=4 | 1000 | 411.6 |
-| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=7d9ffc8b-03a9-4ef6-9bbf-b2e5f939ba14, json_terms=4 | 1000 | 353.2 |
-| s4 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, json_terms=4 | 1000 | 300.6 |
-| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, json_terms=4 | 1000 | 342.2 |
-| s6 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=05f273ff-2221-45a4-9742-dd58bb38be3e, json_terms=4 | 568 | 559.4 |
-| s7 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=0a79f4d5-1527-4f18-b770-be668a5fb0ad, json_terms=4 | 1000 | 347.3 |
-| s8 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=33516f75-3dd9-43d6-b121-a8bf408c69be, json_terms=4 | 1000 | 402.1 |
-| s9 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=c30b5368-dba0-4929-bc3d-dff93d45b5c2, json_terms=4 | 1000 | 373.2 |
-| s10 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=d05f4480-7ba4-4f69-9764-9ee42ce5f6ef, json_terms=4 | 1000 | 459.0 |
+| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, json_terms=4 | 1000 | 58.4 |
+| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, json_terms=4 | 1000 | 88.1 |
+| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=7d9ffc8b-03a9-4ef6-9bbf-b2e5f939ba14, json_terms=4 | 1000 | 88.7 |
+| s4 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, json_terms=4 | 1000 | 102.4 |
+| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, json_terms=4 | 1000 | 53.1 |
+| s6 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=05f273ff-2221-45a4-9742-dd58bb38be3e, json_terms=4 | 568 | 235.2 |
+| s7 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=0a79f4d5-1527-4f18-b770-be668a5fb0ad, json_terms=4 | 1000 | 88.9 |
+| s8 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=33516f75-3dd9-43d6-b121-a8bf408c69be, json_terms=4 | 1000 | 145.7 |
+| s9 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=c30b5368-dba0-4929-bc3d-dff93d45b5c2, json_terms=4 | 1000 | 90.2 |
+| s10 | workspace=134fa09e-62e8-4b23-be76-d1b2d01845cc, obj_type=d05f4480-7ba4-4f69-9764-9ee42ce5f6ef, json_terms=4 | 1000 | 185.8 |
 
 <details>
 <summary>Representative SQL</summary>
@@ -783,16 +782,16 @@ SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fd
 
 | Sample | Params | Rows | Latency ms |
 |---|---|---:|---:|
-| s1 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, depth3_label=LG-52576 | 1000 | 1765.8 |
-| s2 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, depth3_label=Samsung-514085 | 1000 | 1761.1 |
-| s3 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, depth3_label=Admiral-16098 | 1000 | 1813.2 |
-| s4 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, depth3_label=Admiral-282336 | 1000 | 1703.5 |
-| s5 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, depth3_label=LG-360191 | 1000 | 1777.3 |
-| s6 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, depth3_label=Blue Star-562402 | 1000 | 1641.6 |
-| s7 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, depth3_label=Whirlpool-509861 | 1000 | 1690.5 |
-| s8 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, depth3_label=LG-52576 | 1000 | 1736.6 |
-| s9 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, depth3_label=Samsung-514085 | 1000 | 1832.8 |
-| s10 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, depth3_label=Admiral-16098 | 1000 | 1701.2 |
+| s1 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, depth3_label=LG-52576 | 1000 | 7046.3 |
+| s2 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, depth3_label=Samsung-514085 | 1000 | 1186.8 |
+| s3 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, depth3_label=Admiral-16098 | 1000 | 1182.7 |
+| s4 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, depth3_label=Admiral-282336 | 1000 | 1148.9 |
+| s5 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, depth3_label=LG-360191 | 1000 | 1183.8 |
+| s6 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, depth3_label=Blue Star-562402 | 1000 | 1183.7 |
+| s7 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, depth3_label=Whirlpool-509861 | 1000 | 1184.3 |
+| s8 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, depth3_label=LG-52576 | 1000 | 1171.4 |
+| s9 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, depth3_label=Samsung-514085 | 1000 | 1189.9 |
+| s10 | workspace=8a6526e6-cd57-4216-bac6-358a6177d221, depth3_label=Admiral-16098 | 1000 | 1172.2 |
 
 <details>
 <summary>Representative SQL</summary>
@@ -812,16 +811,16 @@ SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='8a6526e6-cd
 
 | Sample | Params | Rows | Latency ms |
 |---|---|---:|---:|
-| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=􏿿 | 1000 | 3279.8 |
-| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=LG | 1000 | 1253.5 |
-| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, text_value_8=KitchenAid | 1000 | 1244.8 |
-| s4 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=7d9ffc8b-03a9-4ef6-9bbf-b2e5f939ba14, text_value_8=Siemens | 1000 | 1174.8 |
-| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=Fagor | 1000 | 1184.0 |
-| s6 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Samsung | 1000 | 1260.6 |
-| s7 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Franke | 1000 | 1312.4 |
-| s8 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_8=􏿿 | 1000 | 1573.9 |
-| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Samsung | 1000 | 882.8 |
-| s10 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Siemens | 1000 | 1471.3 |
+| s1 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=􏿿 | 1000 | 863.5 |
+| s2 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=LG | 1000 | 817.4 |
+| s3 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=77744fc5-c48e-44e8-a7f1-1213703b7707, text_value_8=KitchenAid | 1000 | 795.1 |
+| s4 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=7d9ffc8b-03a9-4ef6-9bbf-b2e5f939ba14, text_value_8=Siemens | 1000 | 813.6 |
+| s5 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=Fagor | 1000 | 833.2 |
+| s6 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Samsung | 1000 | 803.7 |
+| s7 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Franke | 1000 | 805.5 |
+| s8 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=fa849938-5ed1-4c60-89b9-adb37223c21c, text_value_8=􏿿 | 1000 | 898.7 |
+| s9 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Samsung | 1000 | 340.5 |
+| s10 | workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=dc814b70-4b9e-458d-94fe-350ddfc49d98, text_value_8=Siemens | 1000 | 834.3 |
 
 <details>
 <summary>Representative SQL</summary>

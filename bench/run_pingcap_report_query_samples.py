@@ -949,6 +949,26 @@ def run_concurrency_suite(variants: dict[int, list[dict[str, Any]]], args: argpa
     return runs
 
 
+def load_variants_from_results(path: Path) -> dict[int, list[dict[str, Any]]]:
+    data = json.loads(path.read_text())
+    variants: dict[int, list[dict[str, Any]]] = {}
+    for qid_text, query in data.get("queries", {}).items():
+        samples = []
+        for sample in query.get("samples", []):
+            if not sample.get("sql"):
+                continue
+            samples.append(
+                {
+                    "sample": sample.get("sample", f"s{len(samples) + 1}"),
+                    "params": sample.get("params", ""),
+                    "sql": sample["sql"],
+                }
+            )
+        if samples:
+            variants[int(qid_text)] = samples
+    return variants
+
+
 def write_markdown(results: dict[str, Any], out: Path) -> None:
     metrics = results["source_metrics"]
     lines = [
@@ -1140,6 +1160,7 @@ def main() -> None:
     parser.add_argument("--concurrency-pause", type=int, default=30)
     parser.add_argument("--prometheus-url", default="http://127.0.0.1:19090")
     parser.add_argument("--grafana-url", default=DEFAULT_GRAFANA_URL)
+    parser.add_argument("--reuse-samples-json", type=Path, default=None)
     args = parser.parse_args()
 
     report_text = REPORT.read_text()
@@ -1148,7 +1169,10 @@ def main() -> None:
     conn = connect(args)
     cur = conn.cursor(pymysql.cursors.DictCursor)
     try:
-        variants = build_queries(cur, args.samples)
+        if args.reuse_samples_json:
+            variants = load_variants_from_results(args.reuse_samples_json)
+        else:
+            variants = build_queries(cur, args.samples)
     finally:
         cur.close()
 
