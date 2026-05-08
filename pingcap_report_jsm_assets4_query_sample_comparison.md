@@ -12,33 +12,33 @@ Notes:
 
 ## Summary
 
-| Query | Source tables | Source avg | Source max | Samples | OK | Rows avg | jsm_assets4 avg | jsm_assets4 p50 | jsm_assets4 max | Comparison | Status |
-|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---|---|
-| 1 | cdm_type_obj_type_attr | 2.7ms | 518.3ms | 0 | 0 | None | None | None | None | n/a | skipped |
-| 2 | obj_relationship_new | 320.8ms | 14332.3ms | 3 | 3 | 600 | 297.2 | 294.0 | 307.5 | 1.08x faster | ok |
-| 3 | obj_type,cdm_type_obj_type,icon,obj_schema,cdm_type_obj_schema,obj_schema_property,obj_schema_owner | 36.3ms | 8652.6ms | 0 | 0 | None | None | None | None | n/a | skipped |
-| 4 | obj_new | 11882.9ms | 34102.7ms | 3 | 3 | 1000 | 516.5 | 520.3 | 535.5 | 23.01x faster | ok |
-| 5 | obj_new | 29101.7ms | 60034.6ms | 3 | 3 | 1000 | 545.8 | 511.6 | 622.1 | 53.32x faster | ok |
-| 6 | obj_new | 44.8ms | 927.9ms | 3 | 3 | 50 | 615.2 | 586.2 | 751.3 | 13.73x source | ok |
-| 7 | obj_type_attr,obj_type | 8.7ms | 487.0ms | 3 | 3 | 35 | 256.7 | 251.5 | 267.2 | 29.51x source | ok |
-| 8 | obj_new | 16983.6ms | 32291.9ms | 3 | 3 | 85.3 | 7311.3 | 8295.4 | 10450.6 | 2.32x faster | ok |
-| 9 | obj_relationship_new | 28.1ms | 10778.1ms | 3 | 3 | 24 | 264.6 | 269.0 | 270.2 | 9.42x source | ok |
-| 10 | obj_new | 41204.1ms | 51112.0ms | 3 | 3 | 863.7 | 4044.0 | 4201.1 | 5189.5 | 10.19x faster | ok |
-| 11 | obj_new | 17.0ms | 228.7ms | 3 | 3 | 1 | 259.7 | 258.1 | 263.1 | 15.28x source | ok |
-| 12 | ref_type,cdm_type_ref_type,obj_schema,cdm_type_obj_schema,obj_schema_property,obj_schema_owner | 10.2ms | 473.9ms | 0 | 0 | None | None | None | None | n/a | skipped |
-| 13 | obj_type_attr,obj_type | 29.8ms | 6157.8ms | 3 | 3 | 175 | 272.7 | 257.1 | 304.1 | 9.15x source | ok |
-| 14 | obj_new | 28809.4ms | 45421.2ms | 3 | 3 | 1000 | 396.6 | 415.1 | 428.4 | 72.64x faster | ok |
-| 15 | obj_new | 24650.8ms | 42060.9ms | 3 | 3 | 1000 | 371.2 | 365.4 | 383.9 | 66.41x faster | ok |
-| 16 | obj_new | 47800.9ms | 60019.8ms | 3 | 3 | 1000 | 2181.1 | 2545.5 | 2584.0 | 21.92x faster | ok |
-| 17 | obj_new | 29564.9ms | 37139.7ms | 3 | 3 | 1000 | 577.0 | 467.9 | 801.9 | 51.24x faster | ok |
-| 18 | obj_type | 3.7ms | 325.7ms | 3 | 3 | 5 | 262.3 | 263.8 | 278.3 | 70.89x source | ok |
-| 19 | obj_new | 39798.6ms | 60018.5ms | 3 | 3 | 1000 | 384.7 | 386.1 | 417.7 | 103.45x faster | ok |
-| 20 | obj_type_attr | 17.8ms | 5900.3ms | 3 | 3 | 1 | 284.9 | 280.6 | 306.6 | 16.01x source | ok |
-| 21 | obj_new,obj_relationship_new | 23577.6ms | 30859.8ms | 3 | 3 | 1000 | 4802.1 | 854.3 | 13053.8 | 4.91x faster | ok |
-| 22 | obj_new | 25.9ms | 233.2ms | 3 | 3 | 20 | 352.1 | 272.2 | 512.2 | 13.59x source | ok |
-| 23 | obj_new | 33550.1ms | 35378.6ms | 3 | 3 | 863.7 | 406.0 | 359.2 | 513.2 | 82.64x faster | ok |
-| 24 | obj_new,obj_relationship_new | 60085.2ms | 60085.2ms | 3 | 3 | 1000 | 1754.4 | 1724.6 | 1906.4 | 34.25x faster | ok |
-| 25 | obj_new | 59691.1ms | 59691.1ms | 3 | 3 | 1000 | 1467.3 | 1007.5 | 2401.1 | 40.68x faster | ok |
+| Query | Source avg | Source max | Samples | OK | Rows avg | jsm_assets4 avg | jsm_assets4 p50 | jsm_assets4 max | Comparison | Status |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|
+| 1 | 2.7ms | 518.3ms | 0 | 0 | None | None | None | None | n/a | skipped |
+| 2 | 320.8ms | 14332.3ms | 3 | 3 | 600 | 297.2 | 294.0 | 307.5 | 1.08x faster | ok |
+| 3 | 36.3ms | 8652.6ms | 0 | 0 | None | None | None | None | n/a | skipped |
+| 4 | 11882.9ms | 34102.7ms | 3 | 3 | 1000 | 516.5 | 520.3 | 535.5 | 23.01x faster | ok |
+| 5 | 29101.7ms | 60034.6ms | 3 | 3 | 1000 | 545.8 | 511.6 | 622.1 | 53.32x faster | ok |
+| 6 | 44.8ms | 927.9ms | 3 | 3 | 50 | 615.2 | 586.2 | 751.3 | 13.73x source | ok |
+| 7 | 8.7ms | 487.0ms | 3 | 3 | 35 | 256.7 | 251.5 | 267.2 | 29.51x source | ok |
+| 8 | 16983.6ms | 32291.9ms | 3 | 3 | 85.3 | 7311.3 | 8295.4 | 10450.6 | 2.32x faster | ok |
+| 9 | 28.1ms | 10778.1ms | 3 | 3 | 24 | 264.6 | 269.0 | 270.2 | 9.42x source | ok |
+| 10 | 41204.1ms | 51112.0ms | 3 | 3 | 863.7 | 4044.0 | 4201.1 | 5189.5 | 10.19x faster | ok |
+| 11 | 17.0ms | 228.7ms | 3 | 3 | 1 | 259.7 | 258.1 | 263.1 | 15.28x source | ok |
+| 12 | 10.2ms | 473.9ms | 0 | 0 | None | None | None | None | n/a | skipped |
+| 13 | 29.8ms | 6157.8ms | 3 | 3 | 175 | 272.7 | 257.1 | 304.1 | 9.15x source | ok |
+| 14 | 28809.4ms | 45421.2ms | 3 | 3 | 1000 | 396.6 | 415.1 | 428.4 | 72.64x faster | ok |
+| 15 | 24650.8ms | 42060.9ms | 3 | 3 | 1000 | 371.2 | 365.4 | 383.9 | 66.41x faster | ok |
+| 16 | 47800.9ms | 60019.8ms | 3 | 3 | 1000 | 2181.1 | 2545.5 | 2584.0 | 21.92x faster | ok |
+| 17 | 29564.9ms | 37139.7ms | 3 | 3 | 1000 | 577.0 | 467.9 | 801.9 | 51.24x faster | ok |
+| 18 | 3.7ms | 325.7ms | 3 | 3 | 5 | 262.3 | 263.8 | 278.3 | 70.89x source | ok |
+| 19 | 39798.6ms | 60018.5ms | 3 | 3 | 1000 | 384.7 | 386.1 | 417.7 | 103.45x faster | ok |
+| 20 | 17.8ms | 5900.3ms | 3 | 3 | 1 | 284.9 | 280.6 | 306.6 | 16.01x source | ok |
+| 21 | 23577.6ms | 30859.8ms | 3 | 3 | 1000 | 4802.1 | 854.3 | 13053.8 | 4.91x faster | ok |
+| 22 | 25.9ms | 233.2ms | 3 | 3 | 20 | 352.1 | 272.2 | 512.2 | 13.59x source | ok |
+| 23 | 33550.1ms | 35378.6ms | 3 | 3 | 863.7 | 406.0 | 359.2 | 513.2 | 82.64x faster | ok |
+| 24 | 60085.2ms | 60085.2ms | 3 | 3 | 1000 | 1754.4 | 1724.6 | 1906.4 | 34.25x faster | ok |
+| 25 | 59691.1ms | 59691.1ms | 3 | 3 | 1000 | 1467.3 | 1007.5 | 2401.1 | 40.68x faster | ok |
 
 ## Skipped Queries
 
@@ -555,4 +555,3 @@ SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b
 ```
 
 </details>
-
