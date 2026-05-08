@@ -902,8 +902,8 @@ def collect_prometheus_metrics(url: str, start: float, end: float) -> dict[str, 
         "tikv": {
             "cpu_query": 'sum(rate(process_cpu_seconds_total{component="tikv"}[1m]))',
             "mem_query": 'sum(process_resident_memory_bytes{component="tikv"})',
-            "capacity_cores": 64,
-            "replicas": 4,
+            "capacity_cores": 48,
+            "replicas": 3,
         },
         "tiflash": {
             "cpu_query": "sum(rate(tiflash_proxy_process_cpu_seconds_total[1m]))",
@@ -1029,7 +1029,7 @@ def write_markdown(results: dict[str, Any], out: Path) -> None:
             )
         lines += ["", "### Grafana / Prometheus Resource Metrics", ""]
         lines.append(
-            "CPU and memory values below are pulled from the Grafana Prometheus datasource for each run window. CPU capacity percentage assumes the current scale: TiDB 3 x 16 cores, TiKV 4 x 16 cores, TiFlash 6 x 16 cores."
+            "CPU and memory values below are pulled from the Grafana Prometheus datasource for each run window. CPU capacity percentage uses the replica count recorded for that run."
         )
         lines.append("")
         for run in results["concurrency_runs"]:

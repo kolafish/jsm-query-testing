@@ -3258,10 +3258,10 @@
           "note": ""
         },
         "tikv": {
-          "replicas": 4,
+          "replicas": 3,
           "cpu_avg_cores": 28.96,
           "cpu_max_cores": 33.96,
-          "cpu_max_pct": 53.1,
+          "cpu_max_pct": 70.8,
           "mem_avg_gib": 58.04,
           "mem_max_gib": 59.21,
           "note": ""

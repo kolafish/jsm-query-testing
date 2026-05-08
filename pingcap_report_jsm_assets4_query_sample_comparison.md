@@ -58,7 +58,7 @@ Worker assignment is per query class. When concurrency equals the runnable query
 
 ### Grafana / Prometheus Resource Metrics
 
-CPU and memory values below are pulled from the Grafana Prometheus datasource for each run window. CPU capacity percentage assumes the current scale: TiDB 3 x 16 cores, TiKV 4 x 16 cores, TiFlash 6 x 16 cores.
+CPU and memory values below are pulled from the Grafana Prometheus datasource for each run window. CPU capacity percentage uses the replica count recorded for that run.
 
 #### Concurrency 66
 
@@ -121,7 +121,7 @@ Grafana panel screenshots:
 | Component | Replicas | CPU avg cores | CPU max cores | CPU max % capacity | Mem avg GiB | Mem max GiB | Note |
 |---|---:|---:|---:|---:|---:|---:|---|
 | tidb | 3 | 5.31 | 6.90 | 14.4% | 22.15 | 25.97 |  |
-| tikv | 4 | 28.96 | 33.96 | 53.1% | 58.04 | 59.21 |  |
+| tikv | 3 | 28.96 | 33.96 | 70.8% | 58.04 | 59.21 |  |
 | tiflash | 6 | 72.81 | 85.89 | 89.5% | 56.81 | 67.19 | TiFlash proxy process CPU metric |
 
 Grafana panel screenshots:
