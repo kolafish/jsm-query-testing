@@ -432,11 +432,11 @@ def render_query_card(query: QueryBlock) -> str:
       </details>
       <details class="block">
         <summary>Sample SQL</summary>
-        <pre class="sql">{sample_sql}</pre>
+        <pre class="sql sql-wrap">{sample_sql}</pre>
       </details>
       <details class="block">
         <summary>Raw Execution Plan</summary>
-        <pre class="raw-plan">{raw_plan}</pre>
+        <pre class="raw-plan raw-plan-wrap">{raw_plan}</pre>
       </details>
     </article>
     """
@@ -909,6 +909,11 @@ def build_html(markdown: str, source: Path) -> str:
       line-height: 1.45;
     }}
     pre.sql-wrap {{
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }}
+    pre.raw-plan-wrap {{
       white-space: pre-wrap;
       overflow-wrap: anywhere;
       word-break: break-word;
