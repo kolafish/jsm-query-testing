@@ -428,7 +428,7 @@ def render_query_card(query: QueryBlock) -> str:
       </section>
       <details class="block">
         <summary>Normalized SQL</summary>
-        <pre class="sql">{normalized_sql}</pre>
+        <pre class="sql sql-wrap">{normalized_sql}</pre>
       </details>
       <details class="block">
         <summary>Sample SQL</summary>
@@ -893,6 +893,11 @@ def build_html(markdown: str, source: Path) -> str:
       white-space: pre;
       font-size: 12px;
       line-height: 1.45;
+    }}
+    pre.sql-wrap {{
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }}
     .empty {{
       margin-top: 10px;
