@@ -967,8 +967,8 @@ def write_markdown(results: dict[str, Any], out: Path) -> None:
         "",
         "## Summary",
         "",
-        "| Query | Source avg | Source max | Source rows avg | Samples | OK | Run rows avg | jsm_assets4 avg | jsm_assets4 p50 | jsm_assets4 max | Comparison | Status |",
-        "|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|",
+        "| Query | Source avg | Source max | Source rows avg | Samples | Run rows avg | jsm_assets4 avg | jsm_assets4 p50 | jsm_assets4 max | Comparison | Status |",
+        "|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|",
     ]
     for qid in range(1, 26):
         q = results["queries"].get(str(qid), {})
@@ -980,7 +980,7 @@ def write_markdown(results: dict[str, Any], out: Path) -> None:
         lines.append(
             f"| {qid} | {src.get('source_avg_latency','')} | "
             f"{src.get('source_max_latency','')} | {src.get('source_avg_rows','')} | "
-            f"{summary.get('runs',0)} | {summary.get('ok',0)} | "
+            f"{summary.get('runs',0)} | "
             f"{summary.get('avg_rows','')} | {summary.get('avg_ms','')} | {summary.get('p50_ms','')} | "
             f"{summary.get('max_ms','')} | {comp} | {status} |"
         )
@@ -998,14 +998,14 @@ def write_markdown(results: dict[str, Any], out: Path) -> None:
             "",
             "Worker assignment is per query class. When concurrency equals the runnable query class count, each query class gets one worker. When concurrency is higher, workers are assigned round-robin across the runnable query classes.",
             "",
-            "| Concurrency | Query classes | Duration s | Ops | OK | Errors | QPS | Avg ms | P95 ms | Max ms |",
-            "|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
+            "| Concurrency | Query classes | Duration s | Successful ops | QPS | Avg ms | P95 ms | Max ms |",
+            "|---:|---:|---:|---:|---:|---:|---:|---:|",
         ]
         for run in results["concurrency_runs"]:
             s = run["summary"]
             lines.append(
-                f"| {s['concurrency']} | {s['query_classes']} | {run['duration_s']} | {s['ops']} | {s['ok']} | "
-                f"{s['errors']} | {s['qps']} | {s['avg_ms']} | {s['p95_ms']} | {s['max_ms']} |"
+                f"| {s['concurrency']} | {s['query_classes']} | {run['duration_s']} | {s['ok']} | "
+                f"{s['qps']} | {s['avg_ms']} | {s['p95_ms']} | {s['max_ms']} |"
             )
         lines += ["", "### Grafana / Prometheus Resource Metrics", ""]
         lines.append(
@@ -1022,6 +1022,16 @@ def write_markdown(results: dict[str, Any], out: Path) -> None:
                 f"- Window: `{run['start_time']}` to `{run['end_time']}`",
                 f"- Grafana time range: [{grafana_link}]({grafana_link})",
             ]
+            if run["summary"].get("errors"):
+                failed = [
+                    f"Query {qid}: {q['errors']}"
+                    for qid, q in sorted(run["by_query"].items(), key=lambda item: int(item[0]))
+                    if q.get("errors")
+                ]
+                lines.append(
+                    f"- Failed ops: `{run['summary']['errors']}`. Affected query classes: {', '.join(failed)}. "
+                    "Failed ops are excluded from QPS and latency statistics."
+                )
             if run.get("metrics_error"):
                 lines.append(f"- Metrics error: `{run['metrics_error']}`")
                 lines.append("")
@@ -1044,8 +1054,12 @@ def write_markdown(results: dict[str, Any], out: Path) -> None:
                 "",
                 "<table>",
                 "<tr>",
-                f"<td width=\"50%\"><strong>TiDB CPU/Memory</strong><br><img src=\"images/jsm_assets4_concurrency{run['concurrency']}_tidb_cpu_memory.png\" alt=\"TiDB CPU/Memory - concurrency {run['concurrency']}\" /></td>",
-                f"<td width=\"50%\"><strong>TiKV CPU/Memory</strong><br><img src=\"images/jsm_assets4_concurrency{run['concurrency']}_tikv_cpu_memory.png\" alt=\"TiKV CPU/Memory - concurrency {run['concurrency']}\" /></td>",
+                f"<td width=\"50%\"><strong>TiDB CPU</strong><br><img src=\"images/jsm_assets4_concurrency{run['concurrency']}_tidb_cpu.png\" alt=\"TiDB CPU - concurrency {run['concurrency']}\" /></td>",
+                f"<td width=\"50%\"><strong>TiDB Memory</strong><br><img src=\"images/jsm_assets4_concurrency{run['concurrency']}_tidb_memory.png\" alt=\"TiDB Memory - concurrency {run['concurrency']}\" /></td>",
+                "</tr>",
+                "<tr>",
+                f"<td width=\"50%\"><strong>TiKV CPU</strong><br><img src=\"images/jsm_assets4_concurrency{run['concurrency']}_tikv_cpu.png\" alt=\"TiKV CPU - concurrency {run['concurrency']}\" /></td>",
+                f"<td width=\"50%\"><strong>TiKV Memory</strong><br><img src=\"images/jsm_assets4_concurrency{run['concurrency']}_tikv_memory.png\" alt=\"TiKV Memory - concurrency {run['concurrency']}\" /></td>",
                 "</tr>",
                 "<tr>",
                 f"<td width=\"50%\"><strong>TiFlash CPU</strong><br><img src=\"images/jsm_assets4_concurrency{run['concurrency']}_tiflash_cpu.png\" alt=\"TiFlash CPU - concurrency {run['concurrency']}\" /></td>",
@@ -1053,8 +1067,8 @@ def write_markdown(results: dict[str, Any], out: Path) -> None:
                 "</tr>",
                 "</table>",
                 "",
-                "| Query | Ops | OK | Errors | Source avg | Source max | Source rows avg | Run avg ms | vs source avg | P95 ms | Max ms | Run rows avg |",
-                "|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|",
+                "| Query | Successful ops | Source avg | Source max | Source rows avg | Run avg ms | vs source avg | P95 ms | Max ms | Run rows avg |",
+                "|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|",
             ]
             for qid in sorted(run["by_query"], key=lambda x: int(x)):
                 q = run["by_query"][qid]
@@ -1064,7 +1078,7 @@ def write_markdown(results: dict[str, Any], out: Path) -> None:
                 source_rows = src.get("source_avg_rows", "")
                 comp = ratio_text(q.get("avg_ms"), ms_from_source(source_avg))
                 lines.append(
-                    f"| {qid} | {q['ops']} | {q['ok']} | {q['errors']} | "
+                    f"| {qid} | {q['ok']} | "
                     f"{source_avg} | {source_max} | {source_rows} | {q['avg_ms']} | {comp} | "
                     f"{q['p95_ms']} | {q['max_ms']} | {q['avg_rows']} |"
                 )
@@ -1089,13 +1103,13 @@ def write_markdown(results: dict[str, Any], out: Path) -> None:
             continue
         lines += [
             "",
-            "| Sample | Params | Rows | Latency ms | Status | Error |",
-            "|---|---|---:|---:|---|---|",
+            "| Sample | Params | Rows | Latency ms |",
+            "|---|---|---:|---:|",
         ]
         for s in q["samples"]:
             lines.append(
                 f"| {s['sample']} | {s.get('params','')} | {s.get('rows','')} | "
-                f"{s.get('latency_ms','')} | {s['status']} | {s.get('error') or ''} |"
+                f"{s.get('latency_ms','')} |"
             )
         if q["samples"]:
             lines += [
