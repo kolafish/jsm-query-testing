@@ -406,7 +406,7 @@ def render_query_card(query: QueryBlock) -> str:
         else ""
     )
     return f"""
-    <article class="query-card" id="query-{query.qid}" data-slow="{str(query.slow).lower()}" data-group="{html.escape(query.group or 'other')}" data-qid="{query.qid}">
+    <article class="query-card" id="query-{query.qid}" data-slow="{str(query.slow).lower()}" data-group="{html.escape(query.group or 'other')}" data-qid="{query.qid}" data-load="{query.load_pct:.6f}" data-avg-latency="{query.avg_latency_ms:.6f}">
       <header class="query-header">
         <div>
           <div class="eyebrow">{html.escape(group_label)}</div>
@@ -468,14 +468,17 @@ def render_group_summary(patterns: list[AntiPattern]) -> str:
 
 def render_sidebar(queries: list[QueryBlock]) -> str:
     items = []
-    for query in sorted(queries, key=lambda q: (not q.slow, -q.avg_latency_ms, q.qid)):
+    for query in sorted(queries, key=lambda q: (-q.load_pct, q.qid)):
         status = query.severity or ("SLOW" if query.slow else "OK")
-        label = f"#{query.qid} {format_duration(query.metrics.get('Avg latency', ''))}"
         items.append(
             f"""
-            <a class="nav-item" href="#query-{query.qid}" data-slow="{str(query.slow).lower()}" data-group="{html.escape(query.group or 'other')}">
-              <span>{html.escape(label)}</span>
-              <small>{html.escape(status)}</small>
+            <a class="nav-item" href="#query-{query.qid}" data-slow="{str(query.slow).lower()}" data-group="{html.escape(query.group or 'other')}" data-qid="{query.qid}" data-load="{query.load_pct:.6f}" data-avg-latency="{query.avg_latency_ms:.6f}">
+              <span>#{query.qid}</span>
+              <small class="nav-metrics">
+                <span>{html.escape(query.load or 'load n/a')}</span>
+                <span>{html.escape(format_duration(query.metrics.get('Avg latency', '')))}</span>
+                <span>{html.escape(status)}</span>
+              </small>
             </a>
             """
         )
@@ -495,7 +498,7 @@ def build_html(markdown: str, source: Path) -> str:
 
     query_cards = "\n".join(
         render_query_card(query)
-        for query in sorted(queries, key=lambda q: (not q.slow, -q.avg_latency_ms, -q.load_pct, q.qid))
+        for query in sorted(queries, key=lambda q: (-q.load_pct, q.qid))
     )
 
     meta_rows = "\n".join(
@@ -560,13 +563,13 @@ def build_html(markdown: str, source: Path) -> str:
       color: var(--muted);
       font-size: 12px;
     }}
-    .filters {{
+    .sort-control, .filters {{
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
       margin: 12px 0;
     }}
-    .filters button, .search {{
+    .sort-control button, .filters button, .search {{
       border: 1px solid var(--line-strong);
       background: #fff;
       color: var(--text);
@@ -575,7 +578,7 @@ def build_html(markdown: str, source: Path) -> str:
       padding: 7px 10px;
       font: inherit;
     }}
-    .filters button.active {{
+    .sort-control button.active, .filters button.active {{
       border-color: var(--blue);
       color: var(--blue);
       box-shadow: inset 0 0 0 1px var(--blue);
@@ -601,6 +604,17 @@ def build_html(markdown: str, source: Path) -> str:
     }}
     .nav-item:hover {{ border-color: var(--blue); background: #fff; }}
     .nav-item small {{ color: var(--muted); }}
+    .nav-metrics {{
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      white-space: nowrap;
+    }}
+    .nav-metrics span {{
+      display: inline-flex;
+      align-items: center;
+    }}
     .main {{
       padding: 28px;
       max-width: 1500px;
@@ -929,9 +943,13 @@ def build_html(markdown: str, source: Path) -> str:
     <aside class="sidebar">
       <div class="brand">
         <h1>Query Plan Viewer</h1>
-        <p>按慢查询查看指标、SQL 和结构化执行计划。</p>
+        <p>按 Load % 或 Avg latency 查看指标、SQL 和结构化执行计划。</p>
       </div>
       <input class="search" id="search" placeholder="搜索 query / table / index" />
+      <div class="sort-control" aria-label="排序方式">
+        <button class="active" data-sort="load">按 Load %</button>
+        <button data-sort="latency">按 Avg latency</button>
+      </div>
       <div class="filters">
         <button class="active" data-filter="all">全部</button>
         <button data-filter="slow">慢查询</button>
@@ -970,11 +988,29 @@ def build_html(markdown: str, source: Path) -> str:
     </main>
   </div>
   <script>
-    const buttons = Array.from(document.querySelectorAll('.filters button'));
+    const filterButtons = Array.from(document.querySelectorAll('.filters button'));
+    const sortButtons = Array.from(document.querySelectorAll('.sort-control button'));
     const search = document.getElementById('search');
     const cards = Array.from(document.querySelectorAll('.query-card'));
     const navItems = Array.from(document.querySelectorAll('.nav-item'));
+    const queryContainer = document.getElementById('queries');
+    const navList = document.getElementById('navList');
     let activeFilter = 'all';
+    let activeSort = 'load';
+
+    function sortValue(el) {{
+      return Number(activeSort === 'latency' ? el.dataset.avgLatency : el.dataset.load) || 0;
+    }}
+
+    function qid(el) {{
+      return Number(el.dataset.qid) || 0;
+    }}
+
+    function sortElements() {{
+      const byActiveSort = (a, b) => sortValue(b) - sortValue(a) || qid(a) - qid(b);
+      [...cards].sort(byActiveSort).forEach(card => queryContainer.appendChild(card));
+      [...navItems].sort(byActiveSort).forEach(item => navList.appendChild(item));
+    }}
 
     function matchesFilter(el) {{
       if (activeFilter === 'all') return true;
@@ -998,14 +1034,23 @@ def build_html(markdown: str, source: Path) -> str:
       }});
     }}
 
-    buttons.forEach(button => {{
+    filterButtons.forEach(button => {{
       button.addEventListener('click', () => {{
         activeFilter = button.dataset.filter;
-        buttons.forEach(b => b.classList.toggle('active', b === button));
+        filterButtons.forEach(b => b.classList.toggle('active', b === button));
+        applyFilters();
+      }});
+    }});
+    sortButtons.forEach(button => {{
+      button.addEventListener('click', () => {{
+        activeSort = button.dataset.sort;
+        sortButtons.forEach(b => b.classList.toggle('active', b === button));
+        sortElements();
         applyFilters();
       }});
     }});
     search.addEventListener('input', applyFilters);
+    sortElements();
 
     document.addEventListener('click', event => {{
       const toggle = event.target.closest('.row-toggle');
