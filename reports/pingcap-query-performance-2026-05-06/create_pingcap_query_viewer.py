@@ -135,6 +135,85 @@ def compact(text: str, limit: int = 240) -> str:
     return text if len(text) <= limit else text[: limit - 1].rstrip() + "..."
 
 
+def split_top_level(text: str, delimiter: str) -> list[str]:
+    parts: list[str] = []
+    start = 0
+    depth = 0
+    in_backtick = False
+    for index, char in enumerate(text):
+        if char == "`":
+            in_backtick = not in_backtick
+        elif not in_backtick:
+            if char == "(":
+                depth += 1
+            elif char == ")" and depth:
+                depth -= 1
+            elif char == delimiter and depth == 0:
+                parts.append(text[start:index].strip())
+                start = index + 1
+    tail = text[start:].strip()
+    if tail:
+        parts.append(tail)
+    return parts
+
+
+def format_sql_for_display(sql: str) -> str:
+    if not sql.strip():
+        return ""
+
+    text = re.sub(r"\s+", " ", sql.strip())
+    text = re.sub(r"(`[^`]+`)\s*\.\s*(`[^`]+`)", r"\1.\2", text)
+    text = re.sub(r"\s*,\s*", ", ", text)
+
+    lines: list[str] = []
+    match = re.match(r"(?is)^select\s+(.*?)\s+from\s+(.*)$", text)
+    if match:
+        select_items = split_top_level(match.group(1), ",")
+        lines.append("SELECT")
+        for index, item in enumerate(select_items):
+            suffix = "," if index < len(select_items) - 1 else ""
+            lines.append(f"  {item}{suffix}")
+        rest = "FROM " + match.group(2)
+    else:
+        rest = text
+
+    clause_patterns = [
+        (r"\bleft\s+join\b", "\nLEFT JOIN"),
+        (r"\bright\s+join\b", "\nRIGHT JOIN"),
+        (r"\binner\s+join\b", "\nINNER JOIN"),
+        (r"\bfull\s+join\b", "\nFULL JOIN"),
+        (r"\bcross\s+join\b", "\nCROSS JOIN"),
+        (r"\bjoin\b", "\nJOIN"),
+        (r"\bfrom\b", "\nFROM"),
+        (r"\bwhere\b", "\nWHERE\n  "),
+        (r"\border\s+by\b", "\nORDER BY"),
+        (r"\bgroup\s+by\b", "\nGROUP BY"),
+        (r"\bhaving\b", "\nHAVING\n  "),
+        (r"\blimit\b", "\nLIMIT"),
+        (r"\boffset\b", "\nOFFSET"),
+        (r"\bon\b", "\n  ON"),
+        (r"\band\b", "\n  AND"),
+        (r"\bor\b", "\n  OR"),
+        (r"\bexists\b", "EXISTS"),
+        (r"\bselect\b", "\n  SELECT"),
+    ]
+    for pattern, replacement in clause_patterns:
+        rest = re.sub(pattern, replacement, rest, flags=re.I)
+
+    indent_next = False
+    for raw_line in rest.splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        if indent_next and not line.startswith(("AND ", "OR ")):
+            line = "  " + line
+            indent_next = False
+        lines.append(line)
+        indent_next = line in {"WHERE", "HAVING"}
+
+    return "\n".join(lines)
+
+
 def read_fenced_after(section: str, marker: str) -> str:
     idx = section.find(marker)
     if idx < 0:
@@ -397,7 +476,7 @@ def render_plan_table(query: QueryBlock) -> str:
 def render_query_card(query: QueryBlock) -> str:
     severity = query.severity or ("SLOW" if query.slow else "NORMAL")
     group_label = f"Group {query.group}: {GROUP_NAMES.get(query.group, '')}" if query.group else "Other top query"
-    normalized_sql = html.escape(query.normalized_sql)
+    normalized_sql = html.escape(format_sql_for_display(query.normalized_sql))
     sample_sql = html.escape(query.sample_sql)
     raw_plan = html.escape(query.raw_plan)
     pattern = (
@@ -436,7 +515,7 @@ def render_query_card(query: QueryBlock) -> str:
       </details>
       <details class="block">
         <summary>Raw Execution Plan</summary>
-        <pre class="raw-plan raw-plan-wrap">{raw_plan}</pre>
+        <pre class="raw-plan">{raw_plan}</pre>
       </details>
     </article>
     """
@@ -909,11 +988,6 @@ def build_html(markdown: str, source: Path) -> str:
       line-height: 1.45;
     }}
     pre.sql-wrap {{
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-      word-break: break-word;
-    }}
-    pre.raw-plan-wrap {{
       white-space: pre-wrap;
       overflow-wrap: anywhere;
       word-break: break-word;
