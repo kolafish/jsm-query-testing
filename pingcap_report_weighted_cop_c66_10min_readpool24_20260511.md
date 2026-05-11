@@ -1,6 +1,6 @@
 # jsm_assets4 Query Sample Run vs PingCAP Report
 
-Run time: 2026-05-11T13:20:06.985872+00:00
+Run time: 2026-05-11T13:43:19.379373+00:00
 
 Source report: `reports/pingcap-query-performance-2026-05-06/full_report_for_pingcap.md`.
 
@@ -11,30 +11,15 @@ Notes:
 - Queries whose referenced tables are absent from `jsm_assets4` are marked skipped.
 - Grafana: [http://a2e41aa49d08647d1b55ecd7b146bbf6-2611d84fa96ba26a.elb.us-east-2.amazonaws.com:3000](http://a2e41aa49d08647d1b55ecd7b146bbf6-2611d84fa96ba26a.elb.us-east-2.amazonaws.com:3000)
 
-## Readpool 24 vs Baseline
+## Readpool 24 / 66 Workers Summary
 
-Change: `readpool.unified.max-thread-count = 24` was applied and verified on all 3 TiKV nodes through `SHOW CONFIG`.
+TiKV `readpool.unified.max-thread-count` was `24` on all 3 TiKV nodes.
 
-Both reruns used the same sampled queries, query-worker weights, and 10-minute duration per concurrency level as the baseline run.
-
-| Concurrency | TiKV readpool max threads | QPS | QPS vs baseline | Avg latency | Avg vs baseline | TiKV cop wait avg | Cop wait vs baseline | TiKV cop wait max |
+| Concurrency | Successful ops | Errors | QPS | Avg latency | P95 latency | TiKV cop wait avg | TiKV cop wait max | TiKV waiting semaphore avg/max |
 |---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| 220 | 12 baseline | 345.84 | - | 630.1 ms | - | 1,118.8 ms | - | 1,413.0 ms |
-| 220 | 24 | 318.37 | -7.9% | 686.0 ms | +8.9% | 1,573.1 ms | +40.6% | 3,044.9 ms |
-| 330 | 12 baseline | 321.70 | - | 1,013.4 ms | - | 2,021.2 ms | - | 2,998.9 ms |
-| 330 | 24 | 234.81 | -27.0% | 1,389.9 ms | +37.1% | 1,745.9 ms | -13.6% | 2,338.9 ms |
+| 66 | 163,040 | 0 | 270.92 | 243.2 ms | 748.2 ms | 231.8 ms | 359.5 ms | 621.9 / 1,185.0 |
 
-Observation: increasing TiKV unified readpool from `12` to `24` did not improve throughput in this workload. At 220 workers it made both QPS and cop wait worse. At 330 workers it reduced average cop wait, but QPS dropped sharply and average latency increased, while TiKV CPU usage rose.
-
-## Readpool 24 Worker Sweep
-
-| Concurrency | QPS | Avg latency | P95 latency | TiKV cop wait avg | TiKV cop wait max | TiKV waiting semaphore avg/max | TiKV CPU avg/max |
-|---:|---:|---:|---:|---:|---:|---:|---:|
-| 66 | 270.92 | 243.2 ms | 748.2 ms | 231.8 ms | 359.5 ms | 621.9 / 1,185.0 | 34.71 / 42.04 cores |
-| 220 | 318.37 | 686.0 ms | 833.3 ms | 1,573.1 ms | 3,044.9 ms | 3,463.2 / 5,801.0 | 26.92 / 36.82 cores |
-| 330 | 234.81 | 1,389.9 ms | 4,697.5 ms | 1,745.9 ms | 2,338.9 ms | 4,602.3 / 8,312.0 | 34.54 / 42.24 cores |
-
-Observation: 66 workers does not reproduce the high cop wait seen at 220/330 workers. With this weighted query mix, TiKV CPU can already be high at 66 workers, but the semaphore backlog is still much smaller.
+Observation: 66 workers does not reproduce the high cop wait seen at 220/330 workers. It still drives TiKV CPU high for this weighted query mix, but cop wait remains much lower.
 
 ## Summary
 
@@ -78,86 +63,48 @@ Worker assignment is per query class. Every runnable query class gets at least o
 
 | Concurrency | Query classes | Duration s | Successful ops | QPS | Avg ms | P95 ms | Max ms |
 |---:|---:|---:|---:|---:|---:|---:|---:|
-| 220 | 22 | 600 | 193728 | 318.37 | 686.0 | 833.3 | 103874.0 |
-| 330 | 22 | 600 | 144243 | 234.81 | 1389.9 | 4697.5 | 69226.5 |
+| 66 | 22 | 600 | 163040 | 270.92 | 243.2 | 748.2 | 16072.6 |
 
 ### Grafana / Prometheus Resource Metrics
 
 CPU and memory values below are pulled from the Grafana Prometheus datasource for each run window. CPU capacity percentage uses the replica count recorded for that run.
 
-#### Concurrency 220
+#### Concurrency 66
 
-- Window: `2026-05-11T12:59:13.708380+00:00` to `2026-05-11T13:09:22.214505+00:00`
-- Grafana time range: [http://a2e41aa49d08647d1b55ecd7b146bbf6-2611d84fa96ba26a.elb.us-east-2.amazonaws.com:3000?from=1778504353708&to=1778504962214](http://a2e41aa49d08647d1b55ecd7b146bbf6-2611d84fa96ba26a.elb.us-east-2.amazonaws.com:3000?from=1778504353708&to=1778504962214)
-- Worker assignment: `{'2': 5, '4': 17, '5': 17, '6': 5, '7': 5, '8': 17, '9': 4, '10': 13, '11': 4, '13': 4, '14': 13, '15': 13, '16': 13, '17': 13, '18': 4, '19': 13, '20': 4, '21': 13, '22': 4, '23': 13, '24': 13, '25': 13}`
-
-| Component | Replicas | CPU avg cores | CPU max cores | CPU max % capacity | Mem avg GiB | Mem max GiB | Note |
-|---|---:|---:|---:|---:|---:|---:|---|
-| tidb | 3 | 5.50 | 7.95 | 16.6% | 45.46 | 59.97 |  |
-| tikv | 3 | 26.92 | 36.82 | 76.7% | 107.24 | 110.84 |  |
-| tiflash | 6 | 77.60 | 85.69 | 89.3% | 83.62 | 113.04 | TiFlash proxy process CPU metric |
-
-| Query | Successful ops | Source avg | Source max | Source rows avg | Run avg ms | vs source avg | P95 ms | Max ms | Run rows avg |
-|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|
-| 2 | 1502 | 320.8ms | 14332.3ms | 234 | 1999.8 | 6.23x source | 7696.9 | 45213.9 | 600 |
-| 4 | 561 | 11882.9ms | 34102.7ms | 1000 | 18305.8 | 1.54x source | 48727.5 | 70719.1 | 1000 |
-| 5 | 489 | 29101.7ms | 60034.6ms | 65 | 21023.0 | 1.38x faster | 58159.8 | 79227.0 | 1000 |
-| 6 | 3876 | 44.8ms | 927.9ms | 168 | 774.8 | 17.29x source | 1695.9 | 2742.4 | 50 |
-| 7 | 40358 | 8.7ms | 487.0ms | 35 | 74.3 | 8.54x source | 171.0 | 3696.4 | 35 |
-| 8 | 417 | 16983.6ms | 32291.9ms | 6 | 24625.6 | 1.45x source | 62947.8 | 86024.0 | 132.0 |
-| 9 | 22150 | 28.1ms | 10778.1ms | 8 | 108.3 | 3.85x source | 172.2 | 29813.9 | 24 |
-| 10 | 376 | 41204.1ms | 51112.0ms | 136 | 20870.0 | 1.97x faster | 47596.5 | 70807.3 | 955.2 |
-| 11 | 3443 | 17.0ms | 228.7ms | 1 | 698.0 | 41.06x source | 1533.8 | 2512.8 | 1 |
-| 13 | 19275 | 29.8ms | 6157.8ms | 175 | 124.5 | 4.18x source | 272.8 | 20610.9 | 175 |
-| 14 | 433 | 28809.4ms | 45421.2ms | 1000 | 18165.2 | 1.59x faster | 38818.1 | 54687.7 | 1000 |
-| 15 | 426 | 24650.8ms | 42060.9ms | 1000 | 18454.8 | 1.34x faster | 41056.7 | 59653.7 | 1000 |
-| 16 | 395 | 47800.9ms | 60019.8ms | 500 | 19858.7 | 2.41x faster | 45960.2 | 73242.2 | 1000 |
-| 17 | 392 | 29564.9ms | 37139.7ms | 0 | 20110.9 | 1.47x faster | 41589.2 | 66804.2 | 1000 |
-| 18 | 56361 | 3.7ms | 325.7ms | 4 | 42.6 | 11.51x source | 107.7 | 1538.8 | 5 |
-| 19 | 349 | 39798.6ms | 60018.5ms | 500 | 22495.1 | 1.77x faster | 42338.2 | 74777.3 | 1000 |
-| 20 | 38184 | 17.8ms | 5900.3ms | 1 | 62.8 | 3.53x source | 149.3 | 1904.8 | 1 |
-| 21 | 181 | 23577.6ms | 30859.8ms | 1000 | 43630.3 | 1.85x source | 92936.1 | 103874.0 | 1000 |
-| 22 | 3289 | 25.9ms | 233.2ms | 20 | 730.3 | 28.20x source | 1612.0 | 2723.5 | 20 |
-| 23 | 390 | 33550.1ms | 35378.6ms | 0 | 20161.2 | 1.66x faster | 42259.9 | 68299.8 | 956.8 |
-| 24 | 459 | 60085.2ms | 60085.2ms | 0 | 17168.5 | 3.50x faster | 21558.1 | 25020.1 | 1000 |
-| 25 | 422 | 59691.1ms | 59691.1ms | 1000 | 18674.7 | 3.20x faster | 37903.2 | 60340.1 | 1000 |
-
-#### Concurrency 330
-
-- Window: `2026-05-11T13:09:37.487783+00:00` to `2026-05-11T13:19:51.776171+00:00`
-- Grafana time range: [http://a2e41aa49d08647d1b55ecd7b146bbf6-2611d84fa96ba26a.elb.us-east-2.amazonaws.com:3000?from=1778504977487&to=1778505591776](http://a2e41aa49d08647d1b55ecd7b146bbf6-2611d84fa96ba26a.elb.us-east-2.amazonaws.com:3000?from=1778504977487&to=1778505591776)
-- Worker assignment: `{'2': 7, '4': 23, '5': 21, '6': 6, '7': 6, '8': 21, '9': 6, '10': 21, '11': 6, '13': 6, '14': 21, '15': 21, '16': 21, '17': 21, '18': 6, '19': 21, '20': 6, '21': 21, '22': 6, '23': 21, '24': 21, '25': 21}`
+- Window: `2026-05-11T13:33:02.107627+00:00` to `2026-05-11T13:43:03.903482+00:00`
+- Grafana time range: [http://a2e41aa49d08647d1b55ecd7b146bbf6-2611d84fa96ba26a.elb.us-east-2.amazonaws.com:3000?from=1778506382107&to=1778506983903](http://a2e41aa49d08647d1b55ecd7b146bbf6-2611d84fa96ba26a.elb.us-east-2.amazonaws.com:3000?from=1778506382107&to=1778506983903)
+- Worker assignment: `{'2': 2, '4': 5, '5': 5, '6': 2, '7': 2, '8': 5, '9': 2, '10': 5, '11': 2, '13': 2, '14': 5, '15': 5, '16': 5, '17': 5, '18': 2, '19': 5, '20': 2, '21': 1, '22': 1, '23': 1, '24': 1, '25': 1}`
 
 | Component | Replicas | CPU avg cores | CPU max cores | CPU max % capacity | Mem avg GiB | Mem max GiB | Note |
 |---|---:|---:|---:|---:|---:|---:|---|
-| tidb | 3 | 7.63 | 10.83 | 22.6% | 54.84 | 82.16 |  |
-| tikv | 3 | 34.54 | 42.24 | 88.0% | 108.97 | 113.96 |  |
-| tiflash | 6 | 79.81 | 87.69 | 91.3% | 107.09 | 138.99 | TiFlash proxy process CPU metric |
+| tidb | 3 | 4.83 | 5.63 | 11.7% | 34.79 | 39.23 |  |
+| tikv | 3 | 34.71 | 42.04 | 87.6% | 104.98 | 105.80 |  |
+| tiflash | 6 | 33.22 | 38.64 | 40.3% | 35.39 | 38.79 | TiFlash proxy process CPU metric |
 
 | Query | Successful ops | Source avg | Source max | Source rows avg | Run avg ms | vs source avg | P95 ms | Max ms | Run rows avg |
 |---:|---:|---:|---:|---:|---:|---|---:|---:|---:|
-| 2 | 1541 | 320.8ms | 14332.3ms | 234 | 2742.5 | 8.55x source | 8826.5 | 17254.5 | 600 |
-| 4 | 726 | 11882.9ms | 34102.7ms | 1000 | 19275.8 | 1.62x source | 36286.6 | 40590.9 | 1000 |
-| 5 | 573 | 29101.7ms | 60034.6ms | 65 | 22297.1 | 1.31x faster | 38287.2 | 46568.3 | 1000 |
-| 6 | 2126 | 44.8ms | 927.9ms | 168 | 1695.9 | 37.85x source | 3612.3 | 5527.4 | 50 |
-| 7 | 22601 | 8.7ms | 487.0ms | 35 | 159.2 | 18.30x source | 365.9 | 1076.5 | 35 |
-| 8 | 502 | 16983.6ms | 32291.9ms | 6 | 25559.6 | 1.50x source | 48285.5 | 52117.7 | 129.3 |
-| 9 | 25565 | 28.1ms | 10778.1ms | 8 | 140.8 | 5.01x source | 320.0 | 13023.6 | 24 |
-| 10 | 532 | 41204.1ms | 51112.0ms | 136 | 23977.4 | 1.72x faster | 39015.2 | 65142.6 | 957.8 |
-| 11 | 2352 | 17.0ms | 228.7ms | 1 | 1531.5 | 90.09x source | 3213.4 | 5466.2 | 1 |
-| 13 | 14405 | 29.8ms | 6157.8ms | 175 | 249.9 | 8.39x source | 568.5 | 5839.7 | 175 |
-| 14 | 541 | 28809.4ms | 45421.2ms | 1000 | 23622.0 | 1.22x faster | 44564.2 | 65863.1 | 1000 |
-| 15 | 548 | 24650.8ms | 42060.9ms | 1000 | 23423.2 | 1.05x faster | 48187.8 | 59883.1 | 1000 |
-| 16 | 492 | 47800.9ms | 60019.8ms | 500 | 25942.7 | 1.84x faster | 42890.3 | 59418.6 | 1000 |
-| 17 | 693 | 29564.9ms | 37139.7ms | 0 | 18451.4 | 1.60x faster | 35073.3 | 47207.9 | 1000 |
-| 18 | 39248 | 3.7ms | 325.7ms | 4 | 91.7 | 24.78x source | 225.7 | 663.8 | 5 |
-| 19 | 490 | 39798.6ms | 60018.5ms | 500 | 26062.2 | 1.53x faster | 52765.6 | 63782.9 | 1000 |
-| 20 | 27102 | 17.8ms | 5900.3ms | 1 | 132.8 | 7.46x source | 306.7 | 861.3 | 1 |
-| 21 | 257 | 23577.6ms | 30859.8ms | 1000 | 50138.1 | 2.13x source | 65788.4 | 69226.5 | 1000 |
-| 22 | 2263 | 25.9ms | 233.2ms | 20 | 1592.6 | 61.49x source | 3382.1 | 5474.0 | 20 |
-| 23 | 693 | 33550.1ms | 35378.6ms | 0 | 18342.3 | 1.83x faster | 34755.7 | 52327.7 | 960.7 |
-| 24 | 452 | 60085.2ms | 60085.2ms | 0 | 28383.3 | 2.12x faster | 36447.6 | 40513.1 | 1000 |
-| 25 | 541 | 59691.1ms | 59691.1ms | 1000 | 23534.7 | 2.54x faster | 42154.7 | 48495.1 | 1000 |
+| 2 | 2028 | 320.8ms | 14332.3ms | 234 | 592.2 | 1.85x source | 1079.5 | 3202.1 | 600 |
+| 4 | 809 | 11882.9ms | 34102.7ms | 1000 | 3715.6 | 3.20x faster | 6523.2 | 10860.0 | 1000 |
+| 5 | 693 | 29101.7ms | 60034.6ms | 65 | 4337.4 | 6.71x faster | 6808.7 | 9587.7 | 1000 |
+| 6 | 2559 | 44.8ms | 927.9ms | 168 | 469.1 | 10.47x source | 823.2 | 1278.3 | 50 |
+| 7 | 25159 | 8.7ms | 487.0ms | 35 | 47.7 | 5.48x source | 95.7 | 450.9 | 35 |
+| 8 | 647 | 16983.6ms | 32291.9ms | 6 | 4640.9 | 3.66x faster | 10430.6 | 12285.3 | 109.1 |
+| 9 | 28061 | 28.1ms | 10778.1ms | 8 | 42.8 | 1.52x source | 84.2 | 1647.8 | 24 |
+| 10 | 694 | 41204.1ms | 51112.0ms | 136 | 4327.4 | 9.52x faster | 7929.4 | 12261.8 | 956.4 |
+| 11 | 2807 | 17.0ms | 228.7ms | 1 | 427.8 | 25.16x source | 758.5 | 1090.5 | 1 |
+| 13 | 16603 | 29.8ms | 6157.8ms | 175 | 72.3 | 2.43x source | 142.0 | 913.6 | 175 |
+| 14 | 853 | 28809.4ms | 45421.2ms | 1000 | 3521.6 | 8.18x faster | 6758.0 | 10778.8 | 1000 |
+| 15 | 835 | 24650.8ms | 42060.9ms | 1000 | 3598.8 | 6.85x faster | 6985.3 | 12545.9 | 1000 |
+| 16 | 665 | 47800.9ms | 60019.8ms | 500 | 4520.7 | 10.57x faster | 6776.3 | 9915.3 | 1000 |
+| 17 | 733 | 29564.9ms | 37139.7ms | 0 | 4099.1 | 7.21x faster | 6950.0 | 11659.1 | 1000 |
+| 18 | 46398 | 3.7ms | 325.7ms | 4 | 25.9 | 7.00x source | 58.4 | 172.4 | 5 |
+| 19 | 735 | 39798.6ms | 60018.5ms | 500 | 4087.6 | 9.74x faster | 7937.1 | 11873.1 | 1000 |
+| 20 | 30854 | 17.8ms | 5900.3ms | 1 | 38.9 | 2.19x source | 81.1 | 208.9 | 1 |
+| 21 | 76 | 23577.6ms | 30859.8ms | 1000 | 7906.7 | 2.98x faster | 13506.9 | 16072.6 | 1000 |
+| 22 | 1350 | 25.9ms | 233.2ms | 20 | 444.4 | 17.16x source | 781.5 | 1230.5 | 20 |
+| 23 | 137 | 33550.1ms | 35378.6ms | 0 | 4386.5 | 7.65x faster | 7528.8 | 12837.1 | 955.9 |
+| 24 | 223 | 60085.2ms | 60085.2ms | 0 | 2696.7 | 22.28x faster | 3446.2 | 3791.4 | 1000 |
+| 25 | 121 | 59691.1ms | 59691.1ms | 1000 | 4964.3 | 12.02x faster | 6935.1 | 8913.3 | 1000 |
 
 
 ## Per-Query Details
