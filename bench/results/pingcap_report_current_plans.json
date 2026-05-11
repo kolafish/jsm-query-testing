@@ -1,0 +1,1429 @@
+{
+  "captured_at": "2026-05-11T03:09:03.783293+00:00",
+  "database": "jsm_assets4",
+  "explain_mode": "EXPLAIN",
+  "samples_per_query": 1,
+  "queries": {
+    "1": {
+      "status": "skipped",
+      "reason": "no sampled SQL"
+    },
+    "2": {
+      "status": "ok",
+      "samples": [
+        {
+          "sample": "s1",
+          "params": "workspace=8a6526e6-cd57-4216-bac6-358a6177d221, object_ids=25",
+          "sql": "SELECT obj_relationship.workspace_id, obj_relationship.partition_id, obj_relationship.id, obj_relationship.object_id, obj_relationship.referenced_object_id, obj_relationship.object_type_attribute_id, obj_relationship.object_type_id, obj_relationship.referenced_object_type_id FROM obj_relationship_new obj_relationship WHERE obj_relationship.object_id IN (0x3d54b7c18cde48c296776991d41c0dfa, 0xc887970dbde547ff98bf25d0cc21cf40, 0xcf7d1166d3b8425ca2d283f728d71871, 0x6ca95034821e4b89a302146d4664b1ae, 0xb290d40f1c004c579d80553213a504a5, 0x6afb38ce677b4f9ba874e6abbdbac0a8, 0x20c10228fe1d490e95e4ff4eb73326e5, 0x0de869b45262444ab3f08957d1338a8c, 0x181a210858f54606a72a6ef39d2c1b40, 0x7f5051a6eb094068933dc8c2d3f68f8d, 0x5e7d3931b1094607865b7cf3ccd6e436, 0xe41e795cb96546a280b82b71e0833c92, 0x7a67a9ded63b4ece96fc98bf41cacd08, 0x97079757e703439ea060479068182bec, 0xff3f64347c804ff6b9cebec83d89b943, 0x394324db445048e583106987b778b59a, 0xd37f44c32afc4b97880fc717492dfe4c, 0x85f411f4f1234651bdad2c1147d0b6a7, 0xd6fc65178c7e497eb6629cec44ea83e2, 0xbdb0d63ab8054bf9b5abfad861a34a8c, 0x0a8b3892cf4643b38e48046a34dbba5b, 0xfa800fc4290a44a2a96d7abc3ebbd837, 0x9565907878b24889887292929ece99c1, 0xcb0b61ea348543538fb4ee4c8e0b1a32, 0xaba978c7705046059db0a8e0ef5bfd6a)",
+          "raw_plan": "id\testRows\ttask\taccess object\toperator info\nProjection_4\t312.69\troot\t\tjsm_assets4.obj_relationship_new.workspace_id, jsm_assets4.obj_relationship_new.partition_id, jsm_assets4.obj_relationship_new.id, jsm_assets4.obj_relationship_new.object_id, jsm_assets4.obj_relationship_new.referenced_object_id, jsm_assets4.obj_relationship_new.object_type_attribute_id, jsm_assets4.obj_relationship_new.object_type_id, jsm_assets4.obj_relationship_new.referenced_object_type_id\n\u2514\u2500IndexLookUp_11\t312.69\troot\t\t\n  \u251c\u2500IndexRangeScan_9(Build)\t312.69\tcop[tikv]\ttable:obj_relationship, index:ix_obj_rel_object_id_without_partition(object_id)\trange:[\"\\n\\x8b8\\x92\\xcfFC\\xb3\\x8eH\\x04j4\u06fa[\",\"\\n\\x8b8\\x92\\xcfFC\\xb3\\x8eH\\x04j4\u06fa[\"], [\"\\r\\xe8i\\xb4RbDJ\\xb3\\xf0\\x89W\\xd13\\x8a\\x8c\",\"\\r\\xe8i\\xb4RbDJ\\xb3\\xf0\\x89W\\xd13\\x8a\\x8c\"], [\"\\x18\\x1a!\\bX\\xf5F\\x06\\xa7*n\\xf3\\x9d,\\x1b@\",\"\\x18\\x1a!\\bX\\xf5F\\x06\\xa7*n\\xf3\\x9d,\\x1b@\"], [\" \\xc1\\x02(\\xfe\\x1dI\\x0e\\x95\\xe4\\xffN\\xb73&\\xe5\",\" \\xc1\\x02(\\xfe\\x1dI\\x0e\\x95\\xe4\\xffN\\xb73&\\xe5\"], [\"9C$\\xdbDPH\\xe5\\x83\\x10i\\x87\\xb7x\\xb5\\x9a\",\"9C$\\xdbDPH\\xe5\\x83\\x10i\\x87\\xb7x\\xb5\\x9a\"], [\"=T\\xb7\\xc1\\x8c\\xdeH\\u0096wi\\x91\\xd4\\x1c\\r\\xfa\",\"=T\\xb7\\xc1\\x8c\\xdeH\\u0096wi\\x91\\xd4\\x1c\\r\\xfa\"], [\"^}91\\xb1\\tF\\a\\x86[|\\xf3\\xcc\\xd6\\xe46\",\"^}91\\xb1\\tF\\a\\x86[|\\xf3\\xcc\\xd6\\xe46\"], [\"j\\xfb8\\xceg{O\\x9b\\xa8t\u6afd\\xba\\xc0\\xa8\",\"j\\xfb8\\xceg{O\\x9b\\xa8t\u6afd\\xba\\xc0\\xa8\"], [\"l\\xa9P4\\x82\\x1eK\\x89\\xa3\\x02\\x14mFd\\xb1\\xae\",\"l\\xa9P4\\x82\\x1eK\\x89\\xa3\\x02\\x14mFd\\xb1\\xae\"], [\"zg\\xa9\\xde\\xd6;N\u0396\\xfc\\x98\\xbfA\\xca\\xcd\\b\",\"zg\\xa9\\xde\\xd6;N\u0396\\xfc\\x98\\xbfA\\xca\\xcd\\b\"], [\"\\x7fPQ\\xa6\\xeb\\t@h\\x93=\\xc8\\xc2\\xd3\\xf6\\x8f\\x8d\",\"\\x7fPQ\\xa6\\xeb\\t@h\\x93=\\xc8\\xc2\\xd3\\xf6\\x8f\\x8d\"], [\"\\x85\\xf4\\x11\\xf4\\xf1#FQ\\xbd\\xad,\\x11G\u0436\\xa7\",\"\\x85\\xf4\\x11\\xf4\\xf1#FQ\\xbd\\xad,\\x11G\u0436\\xa7\"], [\"\\x95e\\x90xx\\xb2H\\x89\\x88r\\x92\\x92\\x9e\u0399\\xc1\",\"\\x95e\\x90xx\\xb2H\\x89\\x88r\\x92\\x92\\x9e\u0399\\xc1\"], [\"\\x97\\a\\x97W\\xe7\\x03C\\x9e\\xa0`G\\x90h\\x18+\\xec\",\"\\x97\\a\\x97W\\xe7\\x03C\\x9e\\xa0`G\\x90h\\x18+\\xec\"], [\"\\xab\\xa9x\\xc7pPF\\x05\\x9d\\xb0\\xa8\\xe0\\xef[\\xfdj\",\"\\xab\\xa9x\\xc7pPF\\x05\\x9d\\xb0\\xa8\\xe0\\xef[\\xfdj\"], [\"\\xb2\\x90\\xd4\\x0f\\x1c\\x00LW\\x9d\\x80U2\\x13\\xa5\\x04\\xa5\",\"\\xb2\\x90\\xd4\\x0f\\x1c\\x00LW\\x9d\\x80U2\\x13\\xa5\\x04\\xa5\"], [\"\\xbd\\xb0\\xd6:\\xb8\\x05K\\xf9\\xb5\\xab\\xfa\\xd8a\\xa3J\\x8c\",\"\\xbd\\xb0\\xd6:\\xb8\\x05K\\xf9\\xb5\\xab\\xfa\\xd8a\\xa3J\\x8c\"], [\"\u0207\\x97\\r\\xbd\\xe5G\\xff\\x98\\xbf%\\xd0\\xcc!\\xcf@\",\"\u0207\\x97\\r\\xbd\\xe5G\\xff\\x98\\xbf%\\xd0\\xcc!\\xcf@\"], [\"\\xcb\\va\\xea4\\x85CS\\x8f\\xb4\\xeeL\\x8e\\v\\x1a2\",\"\\xcb\\va\\xea4\\x85CS\\x8f\\xb4\\xeeL\\x8e\\v\\x1a2\"], [\"\\xcf}\\x11f\u04f8B\\\\\\xa2\u0483\\xf7(\\xd7\\x18q\",\"\\xcf}\\x11f\u04f8B\\\\\\xa2\u0483\\xf7(\\xd7\\x18q\"], [\"\\xd3\\x7fD\\xc3*\\xfcK\\x97\\x88\\x0f\\xc7\\x17I-\\xfeL\",\"\\xd3\\x7fD\\xc3*\\xfcK\\x97\\x88\\x0f\\xc7\\x17I-\\xfeL\"], [\"\\xd6\\xfce\\x17\\x8c~I~\\xb6b\\x9c\\xecD\\xea\\x83\\xe2\",\"\\xd6\\xfce\\x17\\x8c~I~\\xb6b\\x9c\\xecD\\xea\\x83\\xe2\"], [\"\\xe4\\x1ey\\\\\\xb9eF\\xa2\\x80\\xb8+q\\xe0\\x83<\\x92\",\"\\xe4\\x1ey\\\\\\xb9eF\\xa2\\x80\\xb8+q\\xe0\\x83<\\x92\"], [\"\\xfa\\x80\\x0f\\xc4)\\nD\\xa2\\xa9mz\\xbc>\\xbb\\xd87\",\"\\xfa\\x80\\x0f\\xc4)\\nD\\xa2\\xa9mz\\xbc>\\xbb\\xd87\"], [\"\\xff?d4|\\x80O\\xf6\\xb9\u03be\\xc8=\\x89\\xb9C\",\"\\xff?d4|\\x80O\\xf6\\xb9\u03be\\xc8=\\x89\\xb9C\"], keep order:false\n  \u2514\u2500TableRowIDScan_10(Probe)\t312.69\tcop[tikv]\ttable:obj_relationship\tkeep order:false",
+          "signature": {
+            "operators": [
+              "Projection",
+              "IndexLookUp",
+              "IndexRangeScan",
+              "TableRowIDScan"
+            ],
+            "tasks": [
+              "root",
+              "root",
+              "cop[tikv]",
+              "cop[tikv]"
+            ],
+            "task_set": [
+              "cop[tikv]",
+              "root"
+            ],
+            "join_ops": [],
+            "access_paths": [
+              {
+                "operator": "IndexRangeScan",
+                "task": "cop[tikv]",
+                "table": "obj_relationship",
+                "index": "ix_obj_rel_object_id_without_partition",
+                "index_columns": "object_id"
+              },
+              {
+                "operator": "TableRowIDScan",
+                "task": "cop[tikv]",
+                "table": "obj_relationship",
+                "index": "",
+                "index_columns": ""
+              }
+            ],
+            "indexes": [
+              "obj_relationship.ix_obj_rel_object_id_without_partition(object_id)"
+            ],
+            "index_columns_paths": [
+              "obj_relationship(object_id)"
+            ],
+            "tables": [
+              "obj_relationship"
+            ],
+            "topology": "Projection -> IndexLookUp -> IndexRangeScan -> TableRowIDScan",
+            "task_topology": "Projection[root] -> IndexLookUp[root] -> IndexRangeScan[cop[tikv]] -> TableRowIDScan[cop[tikv]]"
+          },
+          "status": "ok"
+        }
+      ]
+    },
+    "3": {
+      "status": "skipped",
+      "reason": "no sampled SQL"
+    },
+    "4": {
+      "status": "ok",
+      "samples": [
+        {
+          "sample": "s1",
+          "params": "workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_types=5",
+          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='8a6526e6-cd57-4216-bac6-358a6177d221' AND (o.obj_type_id IN (0xad3f4feadb96456da7bffc4cd63f05f4, 0x1bfa019ca2164e97b43331fe25d01325, 0x1d9d47a406e14befa85e456dcec5b67b, 0x29ba27b2e1174ca3a0541b8e84c15d4e, 0x81790b7da4ec44de85e1c94e50c497a7) AND ((o.numeric_value_5 IS NOT NULL AND o.obj_type_id = 0xad3f4feadb96456da7bffc4cd63f05f4) OR (o.numeric_value_5 IS NOT NULL AND o.obj_type_id = 0x1bfa019ca2164e97b43331fe25d01325) OR (o.numeric_value_5 IS NOT NULL AND o.obj_type_id = 0x1d9d47a406e14befa85e456dcec5b67b) OR (o.numeric_value_5 IS NOT NULL AND o.obj_type_id = 0x29ba27b2e1174ca3a0541b8e84c15d4e) OR (o.numeric_value_5 IS NOT NULL AND o.obj_type_id = 0x81790b7da4ec44de85e1c94e50c497a7))) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
+          "raw_plan": "id\testRows\ttask\taccess object\toperator info\nLimit_14\t1000.00\troot\t\toffset:0, count:1000\n\u2514\u2500Projection_115\t1000.00\troot\t\tjsm_assets4.obj_new.workspace_id, jsm_assets4.obj_new.sequential_id, jsm_assets4.obj_new.label, jsm_assets4.obj_new.obj_type_id, jsm_assets4.obj_new.numeric_value_5\n  \u2514\u2500IndexLookUp_114\t1000.00\troot\t\t\n    \u251c\u2500Selection_112(Build)\t7500.14\tcop[tikv]\t\tin(jsm_assets4.obj_new.obj_type_id, \"0xad3f4feadb96456da7bffc4cd63f05f4\", \"0x1bfa019ca2164e97b43331fe25d01325\", \"0x1d9d47a406e14befa85e456dcec5b67b\", \"0x29ba27b2e1174ca3a0541b8e84c15d4e\", \"0x81790b7da4ec44de85e1c94e50c497a7\")\n    \u2502 \u2514\u2500IndexRangeScan_110\t35019.57\tcop[tikv]\ttable:o, index:ix_obj_label_objtypeid_new(workspace_id, label, obj_type_id, sequential_id)\trange:[\"8a6526e6-cd57-4216-bac6-358a6177d221\",\"8a6526e6-cd57-4216-bac6-358a6177d221\"], keep order:true\n    \u2514\u2500Selection_113(Probe)\t1000.00\tcop[tikv]\t\tor(or(and(not(isnull(jsm_assets4.obj_new.numeric_value_5)), eq(jsm_assets4.obj_new.obj_type_id, \"0xad3f4feadb96456da7bffc4cd63f05f4\")), and(not(isnull(jsm_assets4.obj_new.numeric_value_5)), eq(jsm_assets4.obj_new.obj_type_id, \"0x1bfa019ca2164e97b43331fe25d01325\"))), or(and(not(isnull(jsm_assets4.obj_new.numeric_value_5)), eq(jsm_assets4.obj_new.obj_type_id, \"0x1d9d47a406e14befa85e456dcec5b67b\")), or(and(not(isnull(jsm_assets4.obj_new.numeric_value_5)), eq(jsm_assets4.obj_new.obj_type_id, \"0x29ba27b2e1174ca3a0541b8e84c15d4e\")), and(not(isnull(jsm_assets4.obj_new.numeric_value_5)), eq(jsm_assets4.obj_new.obj_type_id, \"0x81790b7da4ec44de85e1c94e50c497a7\")))))\n      \u2514\u2500TableRowIDScan_111\t7500.14\tcop[tikv]\ttable:o\tkeep order:false",
+          "signature": {
+            "operators": [
+              "Limit",
+              "Projection",
+              "IndexLookUp",
+              "Selection",
+              "IndexRangeScan",
+              "Selection",
+              "TableRowIDScan"
+            ],
+            "tasks": [
+              "root",
+              "root",
+              "root",
+              "cop[tikv]",
+              "cop[tikv]",
+              "cop[tikv]",
+              "cop[tikv]"
+            ],
+            "task_set": [
+              "cop[tikv]",
+              "root"
+            ],
+            "join_ops": [],
+            "access_paths": [
+              {
+                "operator": "IndexRangeScan",
+                "task": "cop[tikv]",
+                "table": "o",
+                "index": "ix_obj_label_objtypeid_new",
+                "index_columns": "workspace_id, label, obj_type_id, sequential_id"
+              },
+              {
+                "operator": "TableRowIDScan",
+                "task": "cop[tikv]",
+                "table": "o",
+                "index": "",
+                "index_columns": ""
+              }
+            ],
+            "indexes": [
+              "o.ix_obj_label_objtypeid_new(workspace_id, label, obj_type_id, sequential_id)"
+            ],
+            "index_columns_paths": [
+              "o(workspace_id, label, obj_type_id, sequential_id)"
+            ],
+            "tables": [
+              "o"
+            ],
+            "topology": "Limit -> Projection -> IndexLookUp -> Selection -> IndexRangeScan -> Selection -> TableRowIDScan",
+            "task_topology": "Limit[root] -> Projection[root] -> IndexLookUp[root] -> Selection[cop[tikv]] -> IndexRangeScan[cop[tikv]] -> Selection[cop[tikv]] -> TableRowIDScan[cop[tikv]]"
+          },
+          "status": "ok"
+        }
+      ]
+    },
+    "5": {
+      "status": "ok",
+      "samples": [
+        {
+          "sample": "s1",
+          "params": "workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_type_branches=5",
+          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='8a6526e6-cd57-4216-bac6-358a6177d221' AND (o.obj_type_id IN (0x1bfa019ca2164e97b43331fe25d01325, 0x1d9d47a406e14befa85e456dcec5b67b, 0x81790b7da4ec44de85e1c94e50c497a7, 0x29ba27b2e1174ca3a0541b8e84c15d4e, 0xad3f4feadb96456da7bffc4cd63f05f4) AND (((JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"57bcd304-17ea-4e4b-9316-5d5193a72ba5\"', JSON_ARRAY('61b1c1e2977c5b00728b5a69'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"bfa02459-ed27-4699-80be-74abd546f842\"', JSON_ARRAY('jira-group16'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"bfa02459-ed27-4699-80be-74abd546f842\"', JSON_ARRAY('jira-group4'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"bfa02459-ed27-4699-80be-74abd546f842\"', JSON_ARRAY('jira-group6')))) AND o.obj_type_id=0x1bfa019ca2164e97b43331fe25d01325) OR ((JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"2a594586-2aed-43f5-9545-f20a1ac1fca9\"', JSON_ARRAY('61b1c873d5986c006aa9cad0'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"afce7106-823a-4e74-bca5-e89e98f3c06a\"', JSON_ARRAY('jira-group12'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"afce7106-823a-4e74-bca5-e89e98f3c06a\"', JSON_ARRAY('jira-group5'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"2a594586-2aed-43f5-9545-f20a1ac1fca9\"', JSON_ARRAY('61b1be48977c5b00728b2790')))) AND o.obj_type_id=0x1d9d47a406e14befa85e456dcec5b67b) OR ((JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"1eee37c0-0f68-41e4-abfa-9b166b9a0a18\"', JSON_ARRAY('jira-group4'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"42cf7e7a-80c9-472a-b5da-429c41632661\"', JSON_ARRAY('61b1b833b43d5b006ad6df46'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"1eee37c0-0f68-41e4-abfa-9b166b9a0a18\"', JSON_ARRAY('jira-group7'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"1eee37c0-0f68-41e4-abfa-9b166b9a0a18\"', JSON_ARRAY('jira-group1')))) AND o.obj_type_id=0x81790b7da4ec44de85e1c94e50c497a7) OR ((JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"1ab70ec5-6043-4626-974e-2f1c9b2c1841\"', JSON_ARRAY('61b191e3977c5b0072892742'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"1ab70ec5-6043-4626-974e-2f1c9b2c1841\"', JSON_ARRAY('61b1bcd7744c4d0069897157'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"ca0f6d36-5cc2-4f2f-a9de-24e6601f9eb2\"', JSON_ARRAY('jira-group5'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"1ab70ec5-6043-4626-974e-2f1c9b2c1841\"', JSON_ARRAY('61b1bbfb6d002b006b4f2925')))) AND o.obj_type_id=0x29ba27b2e1174ca3a0541b8e84c15d4e) OR ((JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"cb46cc57-4418-4849-b604-c321ad0e3a35\"', JSON_ARRAY('61b1b76bd5986c006aa8e95d'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"e2876f3e-fbd0-42cb-bd16-8c3b5f5ecdb9\"', JSON_ARRAY('jira-group1'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"e2876f3e-fbd0-42cb-bd16-8c3b5f5ecdb9\"', JSON_ARRAY('jira-group3'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"cb46cc57-4418-4849-b604-c321ad0e3a35\"', JSON_ARRAY('61b1c23f6d002b006b4f7d37')))) AND o.obj_type_id=0xad3f4feadb96456da7bffc4cd63f05f4))) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
+          "raw_plan": "id\testRows\ttask\taccess object\toperator info\nLimit_14\t1000.00\troot\t\toffset:0, count:1000\n\u2514\u2500Projection_115\t1000.00\troot\t\tjsm_assets4.obj_new.workspace_id, jsm_assets4.obj_new.sequential_id, jsm_assets4.obj_new.label, jsm_assets4.obj_new.obj_type_id, jsm_assets4.obj_new.other_values_indexed\n  \u2514\u2500IndexLookUp_114\t1000.00\troot\t\t\n    \u251c\u2500Selection_112(Build)\t7501.72\tcop[tikv]\t\tin(jsm_assets4.obj_new.obj_type_id, \"0x1bfa019ca2164e97b43331fe25d01325\", \"0x1d9d47a406e14befa85e456dcec5b67b\", \"0x81790b7da4ec44de85e1c94e50c497a7\", \"0x29ba27b2e1174ca3a0541b8e84c15d4e\", \"0xad3f4feadb96456da7bffc4cd63f05f4\")\n    \u2502 \u2514\u2500IndexRangeScan_110\t35026.95\tcop[tikv]\ttable:o, index:ix_obj_label_objtypeid_new(workspace_id, label, obj_type_id, sequential_id)\trange:[\"8a6526e6-cd57-4216-bac6-358a6177d221\",\"8a6526e6-cd57-4216-bac6-358a6177d221\"], keep order:true, stats:partial[other_values_indexed:unInitialized]\n    \u2514\u2500Selection_113(Probe)\t1000.00\tcop[tikv]\t\tor(or(and(or(or(json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"57bcd304-17ea-4e4b-9316-5d5193a72ba5\"\", json_array(cast(\"61b1c1e2977c5b00728b5a69\", json BINARY)))), json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"bfa02459-ed27-4699-80be-74abd546f842\"\", json_array(cast(\"jira-group16\", json BINARY))))), or(json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"bfa02459-ed27-4699-80be-74abd546f842\"\", json_array(cast(\"jira-group4\", json BINARY)))), json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"bfa02459-ed27-4699-80be-74abd546f842\"\", json_array(cast(\"jira-group6\", json BINARY)))))), eq(jsm_assets4.obj_new.obj_type_id, \"0x1bfa019ca2164e97b43331fe25d01325\")), and(or(or(json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"2a594586-2aed-43f5-9545-f20a1ac1fca9\"\", json_array(cast(\"61b1c873d5986c006aa9cad0\", json BINARY)))), json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"afce7106-823a-4e74-bca5-e89e98f3c06a\"\", json_array(cast(\"jira-group12\", json BINARY))))), or(json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"afce7106-823a-4e74-bca5-e89e98f3c06a\"\", json_array(cast(\"jira-group5\", json BINARY)))), json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"2a594586-2aed-43f5-9545-f20a1ac1fca9\"\", json_array(cast(\"61b1be48977c5b00728b2790\", json BINARY)))))), eq(jsm_assets4.obj_new.obj_type_id, \"0x1d9d47a406e14befa85e456dcec5b67b\"))), or(and(or(or(json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"1eee37c0-0f68-41e4-abfa-9b166b9a0a18\"\", json_array(cast(\"jira-group4\", json BINARY)))), json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"42cf7e7a-80c9-472a-b5da-429c41632661\"\", json_array(cast(\"61b1b833b43d5b006ad6df46\", json BINARY))))), or(json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"1eee37c0-0f68-41e4-abfa-9b166b9a0a18\"\", json_array(cast(\"jira-group7\", json BINARY)))), json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"1eee37c0-0f68-41e4-abfa-9b166b9a0a18\"\", json_array(cast(\"jira-group1\", json BINARY)))))), eq(jsm_assets4.obj_new.obj_type_id, \"0x81790b7da4ec44de85e1c94e50c497a7\")), or(and(or(or(json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"1ab70ec5-6043-4626-974e-2f1c9b2c1841\"\", json_array(cast(\"61b191e3977c5b0072892742\", json BINARY)))), json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"1ab70ec5-6043-4626-974e-2f1c9b2c1841\"\", json_array(cast(\"61b1bcd7744c4d0069897157\", json BINARY))))), or(json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"ca0f6d36-5cc2-4f2f-a9de-24e6601f9eb2\"\", json_array(cast(\"jira-group5\", json BINARY)))), json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"1ab70ec5-6043-4626-974e-2f1c9b2c1841\"\", json_array(cast(\"61b1bbfb6d002b006b4f2925\", json BINARY)))))), eq(jsm_assets4.obj_new.obj_type_id, \"0x29ba27b2e1174ca3a0541b8e84c15d4e\")), and(or(or(json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"cb46cc57-4418-4849-b604-c321ad0e3a35\"\", json_array(cast(\"61b1b76bd5986c006aa8e95d\", json BINARY)))), json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"e2876f3e-fbd0-42cb-bd16-8c3b5f5ecdb9\"\", json_array(cast(\"jira-group1\", json BINARY))))), or(json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"e2876f3e-fbd0-42cb-bd16-8c3b5f5ecdb9\"\", json_array(cast(\"jira-group3\", json BINARY)))), json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"cb46cc57-4418-4849-b604-c321ad0e3a35\"\", json_array(cast(\"61b1c23f6d002b006b4f7d37\", json BINARY)))))), eq(jsm_assets4.obj_new.obj_type_id, \"0xad3f4feadb96456da7bffc4cd63f05f4\")))))\n      \u2514\u2500TableRowIDScan_111\t7501.72\tcop[tikv]\ttable:o\tkeep order:false, stats:partial[other_values_indexed:unInitialized]",
+          "signature": {
+            "operators": [
+              "Limit",
+              "Projection",
+              "IndexLookUp",
+              "Selection",
+              "IndexRangeScan",
+              "Selection",
+              "TableRowIDScan"
+            ],
+            "tasks": [
+              "root",
+              "root",
+              "root",
+              "cop[tikv]",
+              "cop[tikv]",
+              "cop[tikv]",
+              "cop[tikv]"
+            ],
+            "task_set": [
+              "cop[tikv]",
+              "root"
+            ],
+            "join_ops": [],
+            "access_paths": [
+              {
+                "operator": "IndexRangeScan",
+                "task": "cop[tikv]",
+                "table": "o",
+                "index": "ix_obj_label_objtypeid_new",
+                "index_columns": "workspace_id, label, obj_type_id, sequential_id"
+              },
+              {
+                "operator": "TableRowIDScan",
+                "task": "cop[tikv]",
+                "table": "o",
+                "index": "",
+                "index_columns": ""
+              }
+            ],
+            "indexes": [
+              "o.ix_obj_label_objtypeid_new(workspace_id, label, obj_type_id, sequential_id)"
+            ],
+            "index_columns_paths": [
+              "o(workspace_id, label, obj_type_id, sequential_id)"
+            ],
+            "tables": [
+              "o"
+            ],
+            "topology": "Limit -> Projection -> IndexLookUp -> Selection -> IndexRangeScan -> Selection -> TableRowIDScan",
+            "task_topology": "Limit[root] -> Projection[root] -> IndexLookUp[root] -> Selection[cop[tikv]] -> IndexRangeScan[cop[tikv]] -> Selection[cop[tikv]] -> TableRowIDScan[cop[tikv]]"
+          },
+          "status": "ok"
+        }
+      ]
+    },
+    "6": {
+      "status": "ok",
+      "samples": [
+        {
+          "sample": "s1",
+          "params": "workspace=8a6526e6-cd57-4216-bac6-358a6177d221, ids=50",
+          "sql": "SELECT obj.* FROM obj_new obj WHERE obj.id IN (0xbf9242d795564affacb528e70164d521, 0xdc6365eb21094270ac4536b871313f37, 0xf21eb653b5d0435894383d549553e98e, 0x5e522f7eca9d43c5b412a84b625e3da5, 0x34f637a0ccfd421c88f7774b8e0ccafc, 0x1d658953532d43c995df751c9165d7e5, 0xae791e1441a74d058e618483c920a682, 0x045a20795346403790358c97bb041e01, 0x50c2f36231a548baa609488f70ef3fea, 0x7c2cbaea76614842b88cf7d41024ee85, 0x946ff8b44d0a40dd863b3f7bd0a9762a, 0xe86ca5bb14e94ab2ae79e660c662ce30, 0xb6a5664f296b4e6bae61e77c12bbca64, 0x7ff6d462ec2e4fda9bcca635eecdd9bc, 0x4f9904747979418ebebe8c6a62b873a0, 0xcf81e64cdc7e42d6b4d48dd852170492, 0x54f47b26d0e34b0aa4bc2186d4f39787, 0x145b3336d16e43e48d8d25658e777fb0, 0xe0765b5d5b344767af715c118558fa3e, 0x47ad2529ece1499388797966fbee9166, 0xef45b769eb784515a59a74ddaba4fab8, 0xc044402b245b406ca6e0c2abf6a2e3cb, 0x74577eadf9734cb097f68ec3546e53b1, 0x8224731012a64be59a8e17e920236e81, 0xb3294a50fb494ecd95970e209eb9852a, 0xc764f613b070433caa63ba322f34e855, 0xeb42ca4ee1bf42d994607f58767610b1, 0x1ec3deee9a044428ae8e2a93a98f0fcc, 0x74854f8bd85f458b9c95f8483f84b632, 0x0614df6aa236435182adc70a779d9d71, 0x5234dc67d1d04abe98ca205e3f6c2537, 0xfc1ca3e07d1a49cdaa16c4a17d9820b8, 0x43239a33fa374a858d178e8a349f24da, 0xceda146c3b494111815347fa250a2225, 0x6f4b2c6323144d20b51e72fbd9e16a44, 0x9590ce6ecd124c3489baf8e747d0adbd, 0x0135352075364340a9cacf38181e9a49, 0x5be09303296e45dc9b7809ef7d0a46dd, 0x812ac67f91b24862a994f36ec79c19a9, 0x7cb42ea50cd0458da1f91b08b3b791ae, 0xaeb4227d55e14004bbf4b3d0f03770a3, 0x849484e9cd8f462fae0741cdb429af97, 0xc98c1884b1544337b9e7d33cf46faf15, 0x97805b08a5b84a0eb79a161d77b72d10, 0xb537eedbbbea41fe93e1f314498e537a, 0x5ff5a20afe7046e28c96fddf5751d150, 0xa0bf1ccba83b4f6a99f4ed113d2e4eb5, 0x382a85f7490b4a73847cbbdff63b5dbe, 0x5bb61f64f46149ffbacf59ccab80fd40, 0xa9f9292ddf764d14a2636c3be3445956)",
+          "raw_plan": "id\testRows\ttask\taccess object\toperator info\nBatch_Point_Get_6\t50.00\troot\ttable:obj_new, index:primary_without_partition(id)\tkeep order:false, desc:false",
+          "signature": {
+            "operators": [
+              "Batch_Point_Get"
+            ],
+            "tasks": [
+              "root"
+            ],
+            "task_set": [
+              "root"
+            ],
+            "join_ops": [],
+            "access_paths": [],
+            "indexes": [],
+            "index_columns_paths": [],
+            "tables": [],
+            "topology": "Batch_Point_Get",
+            "task_topology": "Batch_Point_Get[root]"
+          },
+          "status": "ok"
+        }
+      ]
+    },
+    "7": {
+      "status": "ok",
+      "samples": [
+        {
+          "sample": "s1",
+          "params": "workspace=cafd5188-8a63-44e7-b4a9-e885c9664b9c, obj_type=ca0a6a3f-120d-4e81-a73a-35dc434b9590",
+          "sql": "SELECT otae1_0.id, otae1_0.additional_value, otae1_0.aql, otae1_0.created, otae1_0.default_type_id, otae1_0.deleted_at, otae1_0.description, otae1_0.external_id, otae1_0.group_id_type_value, otae1_0.hidden, otae1_0.include_child_object_types, otae1_0.is_deleted, otae1_0.label, otae1_0.maximum_cardinality, otae1_0.minimum_cardinality, otae1_0.name, otae1_0.object_type_id, otae1_0.ota_position, otae1_0.options, otae1_0.pending, otae1_0.reference_object_type_id, otae1_0.reference_type_id, otae1_0.regex_validation, otae1_0.removable, otae1_0.sequential_id, otae1_0.suffix, otae1_0.summable, otae1_0.type, otae1_0.type_value, otae1_0.unique_attribute, otae1_0.updated, otae1_0.workspace_id FROM obj_type_attr otae1_0 LEFT JOIN obj_type ot1_0 ON ot1_0.id = otae1_0.object_type_id AND ot1_0.workspace_id = 'cafd5188-8a63-44e7-b4a9-e885c9664b9c' AND ot1_0.is_deleted = 0 AND ot1_0.is_deleted = 0 WHERE otae1_0.workspace_id = 'cafd5188-8a63-44e7-b4a9-e885c9664b9c' AND otae1_0.is_deleted = 0 AND ot1_0.id IN (0xca0a6a3f120d4e81a73a35dc434b9590)",
+          "raw_plan": "id\testRows\ttask\taccess object\toperator info\nProjection_8\t11.07\troot\t\tjsm_assets4.obj_type_attr.id, jsm_assets4.obj_type_attr.additional_value, jsm_assets4.obj_type_attr.aql, jsm_assets4.obj_type_attr.created, jsm_assets4.obj_type_attr.default_type_id, jsm_assets4.obj_type_attr.deleted_at, jsm_assets4.obj_type_attr.description, jsm_assets4.obj_type_attr.external_id, jsm_assets4.obj_type_attr.group_id_type_value, jsm_assets4.obj_type_attr.hidden, jsm_assets4.obj_type_attr.include_child_object_types, jsm_assets4.obj_type_attr.is_deleted, jsm_assets4.obj_type_attr.label, jsm_assets4.obj_type_attr.maximum_cardinality, jsm_assets4.obj_type_attr.minimum_cardinality, jsm_assets4.obj_type_attr.name, jsm_assets4.obj_type_attr.object_type_id, jsm_assets4.obj_type_attr.ota_position, jsm_assets4.obj_type_attr.options, jsm_assets4.obj_type_attr.pending, jsm_assets4.obj_type_attr.reference_object_type_id, jsm_assets4.obj_type_attr.reference_type_id, jsm_assets4.obj_type_attr.regex_validation, jsm_assets4.obj_type_attr.removable, jsm_assets4.obj_type_attr.sequential_id, jsm_assets4.obj_type_attr.suffix, jsm_assets4.obj_type_attr.summable, jsm_assets4.obj_type_attr.type, jsm_assets4.obj_type_attr.type_value, jsm_assets4.obj_type_attr.unique_attribute, jsm_assets4.obj_type_attr.updated, jsm_assets4.obj_type_attr.workspace_id\n\u2514\u2500IndexHashJoin_20\t11.07\troot\t\tinner join, inner:IndexLookUp_41, outer key:jsm_assets4.obj_type.id, inner key:jsm_assets4.obj_type_attr.object_type_id, equal cond:eq(jsm_assets4.obj_type.id, jsm_assets4.obj_type_attr.object_type_id)\n  \u251c\u2500Selection_36(Build)\t1.00\troot\t\teq(jsm_assets4.obj_type.is_deleted, 0), eq(jsm_assets4.obj_type.workspace_id, \"cafd5188-8a63-44e7-b4a9-e885c9664b9c\")\n  \u2502 \u2514\u2500Point_Get_35\t1.00\troot\ttable:obj_type, clustered index:PRIMARY(id)\t\n  \u2514\u2500IndexLookUp_41(Probe)\t11.07\troot\t\t\n    \u251c\u2500Selection_39(Build)\t11.07\tcop[tikv]\t\teq(jsm_assets4.obj_type_attr.object_type_id, \"\u00ca\\nj?\u0012\\rN\u0081\u00a7:5\u00dcCK\u0095\u0090\")\n    \u2502 \u2514\u2500IndexRangeScan_37\t553.40\tcop[tikv]\ttable:otae1_0, index:ix_ota_ot_and_position(workspace_id, object_type_id, ota_position)\trange: decided by [eq(jsm_assets4.obj_type_attr.object_type_id, jsm_assets4.obj_type.id) eq(jsm_assets4.obj_type_attr.workspace_id, cafd5188-8a63-44e7-b4a9-e885c9664b9c)], keep order:false\n    \u2514\u2500Selection_40(Probe)\t11.07\tcop[tikv]\t\teq(jsm_assets4.obj_type_attr.is_deleted, 0)\n      \u2514\u2500TableRowIDScan_38\t11.07\tcop[tikv]\ttable:otae1_0\tkeep order:false",
+          "signature": {
+            "operators": [
+              "Projection",
+              "IndexHashJoin",
+              "Selection",
+              "Point_Get",
+              "IndexLookUp",
+              "Selection",
+              "IndexRangeScan",
+              "Selection",
+              "TableRowIDScan"
+            ],
+            "tasks": [
+              "root",
+              "root",
+              "root",
+              "root",
+              "root",
+              "cop[tikv]",
+              "cop[tikv]",
+              "cop[tikv]",
+              "cop[tikv]"
+            ],
+            "task_set": [
+              "cop[tikv]",
+              "root"
+            ],
+            "join_ops": [
+              "IndexHashJoin"
+            ],
+            "access_paths": [
+              {
+                "operator": "IndexRangeScan",
+                "task": "cop[tikv]",
+                "table": "otae1_0",
+                "index": "ix_ota_ot_and_position",
+                "index_columns": "workspace_id, object_type_id, ota_position"
+              },
+              {
+                "operator": "TableRowIDScan",
+                "task": "cop[tikv]",
+                "table": "otae1_0",
+                "index": "",
+                "index_columns": ""
+              }
+            ],
+            "indexes": [
+              "otae1_0.ix_ota_ot_and_position(workspace_id, object_type_id, ota_position)"
+            ],
+            "index_columns_paths": [
+              "otae1_0(workspace_id, object_type_id, ota_position)"
+            ],
+            "tables": [
+              "otae1_0"
+            ],
+            "topology": "Projection -> IndexHashJoin -> Selection -> Point_Get -> IndexLookUp -> Selection -> IndexRangeScan -> Selection -> TableRowIDScan",
+            "task_topology": "Projection[root] -> IndexHashJoin[root] -> Selection[root] -> Point_Get[root] -> IndexLookUp[root] -> Selection[cop[tikv]] -> IndexRangeScan[cop[tikv]] -> Selection[cop[tikv]] -> TableRowIDScan[cop[tikv]]"
+          },
+          "status": "ok"
+        }
+      ]
+    },
+    "8": {
+      "status": "ok",
+      "samples": [
+        {
+          "sample": "s1",
+          "params": "workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_type=ad3f4fea-db96-456d-a7bf-fc4cd63f05f4, text_value_22=\u2063Analysed\u2063",
+          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='8a6526e6-cd57-4216-bac6-358a6177d221' AND (o.obj_type_id IN (0xad3f4feadb96456da7bffc4cd63f05f4, 0x81790b7da4ec44de85e1c94e50c497a7, 0x1d9d47a406e14befa85e456dcec5b67b, 0x1bfa019ca2164e97b43331fe25d01325, 0x29ba27b2e1174ca3a0541b8e84c15d4e) AND (o.obj_type_id = 0xad3f4feadb96456da7bffc4cd63f05f4) AND (o.text_value_23 = 'Amana' AND MATCH(o.text_value_22) AGAINST ('\"\u2063Analysed\u2063\"' IN BOOLEAN MODE) AND o.text_value_22 LIKE '%\u2063Analysed\u2063%' AND o.text_value_22 != '' AND o.text_value_9 = 'Fagor' AND (o.numeric_value_3 = 20.000000000000000000000000000000 OR o.numeric_value_1 = 938.000000000000000000000000000000))) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
+          "raw_plan": "id\testRows\ttask\taccess object\toperator info\nTopN_10\t1.00\troot\t\tjsm_assets4.obj_new.label, offset:0, count:1000\n\u2514\u2500Projection_22\t1.00\troot\t\tjsm_assets4.obj_new.workspace_id, jsm_assets4.obj_new.sequential_id, jsm_assets4.obj_new.label, jsm_assets4.obj_new.obj_type_id, jsm_assets4.obj_new.text_value_9, jsm_assets4.obj_new.text_value_22, jsm_assets4.obj_new.text_value_23, jsm_assets4.obj_new.numeric_value_1, jsm_assets4.obj_new.numeric_value_3\n  \u2514\u2500IndexLookUp_21\t1.00\troot\t\t\n    \u251c\u2500Selection_18(Build)\t0.00\tcop[tici]\t\teq(jsm_assets4.obj_new.workspace_id, \"8a6526e6-cd57-4216-bac6-358a6177d221\"), like(jsm_assets4.obj_new.text_value_22, \"%\u2063Analysed\u2063%\", 92), ne(jsm_assets4.obj_new.text_value_22, \"\")\n    \u2502 \u2514\u2500IndexRangeScan_16\t1000.00\tcop[tici]\ttable:o, index:idx_fts_22(text_value_22)\trange:[\"8a6526e6-cd57-4216-bac6-358a6177d221\",\"8a6526e6-cd57-4216-bac6-358a6177d221\"], search func:fts_match_phrase(\"Analysed\", jsm_assets4.obj_new.text_value_22), keep order:false\n    \u2514\u2500TopN_20(Probe)\t1.00\tcop[tikv]\t\tjsm_assets4.obj_new.label, offset:0, count:1000\n      \u2514\u2500Selection_19\t1.00\tcop[tikv]\t\teq(jsm_assets4.obj_new.obj_type_id, \"0xad3f4feadb96456da7bffc4cd63f05f4\"), eq(jsm_assets4.obj_new.text_value_23, \"Amana\"), eq(jsm_assets4.obj_new.text_value_9, \"Fagor\"), or(eq(jsm_assets4.obj_new.numeric_value_3, 20.000000000000000000000000000000), eq(jsm_assets4.obj_new.numeric_value_1, 938.000000000000000000000000000000))\n        \u2514\u2500TableRowIDScan_17\t0.00\tcop[tikv]\ttable:o\tkeep order:false",
+          "signature": {
+            "operators": [
+              "TopN",
+              "Projection",
+              "IndexLookUp",
+              "Selection",
+              "IndexRangeScan",
+              "TopN",
+              "Selection",
+              "TableRowIDScan"
+            ],
+            "tasks": [
+              "root",
+              "root",
+              "root",
+              "cop[tici]",
+              "cop[tici]",
+              "cop[tikv]",
+              "cop[tikv]",
+              "cop[tikv]"
+            ],
+            "task_set": [
+              "cop[tici]",
+              "cop[tikv]",
+              "root"
+            ],
+            "join_ops": [],
+            "access_paths": [
+              {
+                "operator": "IndexRangeScan",
+                "task": "cop[tici]",
+                "table": "o",
+                "index": "idx_fts_22",
+                "index_columns": "text_value_22"
+              },
+              {
+                "operator": "TableRowIDScan",
+                "task": "cop[tikv]",
+                "table": "o",
+                "index": "",
+                "index_columns": ""
+              }
+            ],
+            "indexes": [
+              "o.idx_fts_22(text_value_22)"
+            ],
+            "index_columns_paths": [
+              "o(text_value_22)"
+            ],
+            "tables": [
+              "o"
+            ],
+            "topology": "TopN -> Projection -> IndexLookUp -> Selection -> IndexRangeScan -> TopN -> Selection -> TableRowIDScan",
+            "task_topology": "TopN[root] -> Projection[root] -> IndexLookUp[root] -> Selection[cop[tici]] -> IndexRangeScan[cop[tici]] -> TopN[cop[tikv]] -> Selection[cop[tikv]] -> TableRowIDScan[cop[tikv]]"
+          },
+          "status": "ok"
+        }
+      ]
+    },
+    "9": {
+      "status": "ok",
+      "samples": [
+        {
+          "sample": "s1",
+          "params": "workspace=9963b35f-9397-48ec-9403-adab57aef265, object_id=d8312458-5347-4044-93fb-a6699a237a0d",
+          "sql": "SELECT obj_relationship.workspace_id, obj_relationship.partition_id, obj_relationship.id, obj_relationship.object_id, obj_relationship.referenced_object_id, obj_relationship.object_type_attribute_id, obj_relationship.object_type_id, obj_relationship.referenced_object_type_id FROM obj_relationship_new obj_relationship WHERE obj_relationship.object_id = 0xd83124585347404493fba6699a237a0d",
+          "raw_plan": "id\testRows\ttask\taccess object\toperator info\nProjection_4\t12.51\troot\t\tjsm_assets4.obj_relationship_new.workspace_id, jsm_assets4.obj_relationship_new.partition_id, jsm_assets4.obj_relationship_new.id, jsm_assets4.obj_relationship_new.object_id, jsm_assets4.obj_relationship_new.referenced_object_id, jsm_assets4.obj_relationship_new.object_type_attribute_id, jsm_assets4.obj_relationship_new.object_type_id, jsm_assets4.obj_relationship_new.referenced_object_type_id\n\u2514\u2500IndexLookUp_14\t12.51\troot\t\t\n  \u251c\u2500IndexRangeScan_12(Build)\t12.51\tcop[tikv]\ttable:obj_relationship, index:ix_obj_rel_object_id_without_partition(object_id)\trange:[\"\\xd81$XSG@D\\x93\\xfb\\xa6i\\x9a#z\\r\",\"\\xd81$XSG@D\\x93\\xfb\\xa6i\\x9a#z\\r\"], keep order:false\n  \u2514\u2500TableRowIDScan_13(Probe)\t12.51\tcop[tikv]\ttable:obj_relationship\tkeep order:false",
+          "signature": {
+            "operators": [
+              "Projection",
+              "IndexLookUp",
+              "IndexRangeScan",
+              "TableRowIDScan"
+            ],
+            "tasks": [
+              "root",
+              "root",
+              "cop[tikv]",
+              "cop[tikv]"
+            ],
+            "task_set": [
+              "cop[tikv]",
+              "root"
+            ],
+            "join_ops": [],
+            "access_paths": [
+              {
+                "operator": "IndexRangeScan",
+                "task": "cop[tikv]",
+                "table": "obj_relationship",
+                "index": "ix_obj_rel_object_id_without_partition",
+                "index_columns": "object_id"
+              },
+              {
+                "operator": "TableRowIDScan",
+                "task": "cop[tikv]",
+                "table": "obj_relationship",
+                "index": "",
+                "index_columns": ""
+              }
+            ],
+            "indexes": [
+              "obj_relationship.ix_obj_rel_object_id_without_partition(object_id)"
+            ],
+            "index_columns_paths": [
+              "obj_relationship(object_id)"
+            ],
+            "tables": [
+              "obj_relationship"
+            ],
+            "topology": "Projection -> IndexLookUp -> IndexRangeScan -> TableRowIDScan",
+            "task_topology": "Projection[root] -> IndexLookUp[root] -> IndexRangeScan[cop[tikv]] -> TableRowIDScan[cop[tikv]]"
+          },
+          "status": "ok"
+        }
+      ]
+    },
+    "10": {
+      "status": "ok",
+      "samples": [
+        {
+          "sample": "s1",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, json_terms=4",
+          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND (JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"305e045b-affd-4a0d-9c42-6198a29d9be1\"', JSON_ARRAY('jira-group5'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"305e045b-affd-4a0d-9c42-6198a29d9be1\"', JSON_ARRAY('jira-group8'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"305e045b-affd-4a0d-9c42-6198a29d9be1\"', JSON_ARRAY('jira-group2'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"93a28091-1d1d-4a99-956f-56655d771eb1\"', JSON_ARRAY('61b1bf2ac75da800726b198f')))) AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
+          "raw_plan": "id\testRows\ttask\taccess object\toperator info\nLimit_14\t1000.00\troot\t\toffset:0, count:1000\n\u2514\u2500IndexLookUp_105\t1000.00\troot\t\t\n  \u251c\u2500Selection_103(Build)\t1653.15\tcop[tikv]\t\teq(jsm_assets4.obj_new.obj_type_id, \"0x266009e95e414bafab14eef7ffe5f2e0\")\n  \u2502 \u2514\u2500IndexRangeScan_101\t7427.41\tcop[tikv]\ttable:o, index:ix_obj_label_objtypeid_new(workspace_id, label, obj_type_id, sequential_id)\trange:[\"00eaf117-fdd6-4176-9926-45310e6b9f54\",\"00eaf117-fdd6-4176-9926-45310e6b9f54\"], keep order:true, stats:partial[other_values_indexed:unInitialized]\n  \u2514\u2500Selection_104(Probe)\t1000.00\tcop[tikv]\t\tor(or(json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"305e045b-affd-4a0d-9c42-6198a29d9be1\"\", json_array(cast(\"jira-group5\", json BINARY)))), json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"305e045b-affd-4a0d-9c42-6198a29d9be1\"\", json_array(cast(\"jira-group8\", json BINARY))))), or(json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"305e045b-affd-4a0d-9c42-6198a29d9be1\"\", json_array(cast(\"jira-group2\", json BINARY)))), json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"93a28091-1d1d-4a99-956f-56655d771eb1\"\", json_array(cast(\"61b1bf2ac75da800726b198f\", json BINARY))))))\n    \u2514\u2500TableRowIDScan_102\t1653.15\tcop[tikv]\ttable:o\tkeep order:false, stats:partial[other_values_indexed:unInitialized]",
+          "signature": {
+            "operators": [
+              "Limit",
+              "IndexLookUp",
+              "Selection",
+              "IndexRangeScan",
+              "Selection",
+              "TableRowIDScan"
+            ],
+            "tasks": [
+              "root",
+              "root",
+              "cop[tikv]",
+              "cop[tikv]",
+              "cop[tikv]",
+              "cop[tikv]"
+            ],
+            "task_set": [
+              "cop[tikv]",
+              "root"
+            ],
+            "join_ops": [],
+            "access_paths": [
+              {
+                "operator": "IndexRangeScan",
+                "task": "cop[tikv]",
+                "table": "o",
+                "index": "ix_obj_label_objtypeid_new",
+                "index_columns": "workspace_id, label, obj_type_id, sequential_id"
+              },
+              {
+                "operator": "TableRowIDScan",
+                "task": "cop[tikv]",
+                "table": "o",
+                "index": "",
+                "index_columns": ""
+              }
+            ],
+            "indexes": [
+              "o.ix_obj_label_objtypeid_new(workspace_id, label, obj_type_id, sequential_id)"
+            ],
+            "index_columns_paths": [
+              "o(workspace_id, label, obj_type_id, sequential_id)"
+            ],
+            "tables": [
+              "o"
+            ],
+            "topology": "Limit -> IndexLookUp -> Selection -> IndexRangeScan -> Selection -> TableRowIDScan",
+            "task_topology": "Limit[root] -> IndexLookUp[root] -> Selection[cop[tikv]] -> IndexRangeScan[cop[tikv]] -> Selection[cop[tikv]] -> TableRowIDScan[cop[tikv]]"
+          },
+          "status": "ok"
+        }
+      ]
+    },
+    "11": {
+      "status": "ok",
+      "samples": [
+        {
+          "sample": "s1",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=1",
+          "sql": "SELECT obj.* FROM obj_new obj WHERE obj.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND obj.sequential_id = 1",
+          "raw_plan": "id\testRows\ttask\taccess object\toperator info\nPoint_Get_6\t1.00\troot\ttable:obj_new, index:ix_sequential_id_unique(workspace_id, sequential_id)\t",
+          "signature": {
+            "operators": [
+              "Point_Get"
+            ],
+            "tasks": [
+              "root"
+            ],
+            "task_set": [
+              "root"
+            ],
+            "join_ops": [],
+            "access_paths": [],
+            "indexes": [],
+            "index_columns_paths": [],
+            "tables": [],
+            "topology": "Point_Get",
+            "task_topology": "Point_Get[root]"
+          },
+          "status": "ok"
+        }
+      ]
+    },
+    "12": {
+      "status": "skipped",
+      "reason": "no sampled SQL"
+    },
+    "13": {
+      "status": "ok",
+      "samples": [
+        {
+          "sample": "s1",
+          "params": "workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_types=5",
+          "sql": "SELECT otae1_0.id, otae1_0.additional_value, otae1_0.aql, otae1_0.created, otae1_0.default_type_id, otae1_0.deleted_at, otae1_0.description, otae1_0.external_id, otae1_0.group_id_type_value, otae1_0.hidden, otae1_0.include_child_object_types, otae1_0.is_deleted, otae1_0.label, otae1_0.maximum_cardinality, otae1_0.minimum_cardinality, otae1_0.name, otae1_0.object_type_id, otae1_0.ota_position, otae1_0.options, otae1_0.pending, otae1_0.reference_object_type_id, otae1_0.reference_type_id, otae1_0.regex_validation, otae1_0.removable, otae1_0.sequential_id, otae1_0.suffix, otae1_0.summable, otae1_0.type, otae1_0.type_value, otae1_0.unique_attribute, otae1_0.updated, otae1_0.workspace_id FROM obj_type_attr otae1_0 LEFT JOIN obj_type ot1_0 ON ot1_0.id = otae1_0.object_type_id AND ot1_0.workspace_id = '8a6526e6-cd57-4216-bac6-358a6177d221' AND ot1_0.is_deleted = 0 AND ot1_0.is_deleted = 0 WHERE otae1_0.workspace_id = '8a6526e6-cd57-4216-bac6-358a6177d221' AND otae1_0.is_deleted = 0 AND ot1_0.id IN (0x1bfa019ca2164e97b43331fe25d01325, 0x1d9d47a406e14befa85e456dcec5b67b, 0x29ba27b2e1174ca3a0541b8e84c15d4e, 0x81790b7da4ec44de85e1c94e50c497a7, 0xad3f4feadb96456da7bffc4cd63f05f4)",
+          "raw_plan": "id\testRows\ttask\taccess object\toperator info\nProjection_8\t35.00\troot\t\tjsm_assets4.obj_type_attr.id, jsm_assets4.obj_type_attr.additional_value, jsm_assets4.obj_type_attr.aql, jsm_assets4.obj_type_attr.created, jsm_assets4.obj_type_attr.default_type_id, jsm_assets4.obj_type_attr.deleted_at, jsm_assets4.obj_type_attr.description, jsm_assets4.obj_type_attr.external_id, jsm_assets4.obj_type_attr.group_id_type_value, jsm_assets4.obj_type_attr.hidden, jsm_assets4.obj_type_attr.include_child_object_types, jsm_assets4.obj_type_attr.is_deleted, jsm_assets4.obj_type_attr.label, jsm_assets4.obj_type_attr.maximum_cardinality, jsm_assets4.obj_type_attr.minimum_cardinality, jsm_assets4.obj_type_attr.name, jsm_assets4.obj_type_attr.object_type_id, jsm_assets4.obj_type_attr.ota_position, jsm_assets4.obj_type_attr.options, jsm_assets4.obj_type_attr.pending, jsm_assets4.obj_type_attr.reference_object_type_id, jsm_assets4.obj_type_attr.reference_type_id, jsm_assets4.obj_type_attr.regex_validation, jsm_assets4.obj_type_attr.removable, jsm_assets4.obj_type_attr.sequential_id, jsm_assets4.obj_type_attr.suffix, jsm_assets4.obj_type_attr.summable, jsm_assets4.obj_type_attr.type, jsm_assets4.obj_type_attr.type_value, jsm_assets4.obj_type_attr.unique_attribute, jsm_assets4.obj_type_attr.updated, jsm_assets4.obj_type_attr.workspace_id\n\u2514\u2500IndexHashJoin_20\t35.00\troot\t\tinner join, inner:IndexLookUp_41, outer key:jsm_assets4.obj_type.id, inner key:jsm_assets4.obj_type_attr.object_type_id, equal cond:eq(jsm_assets4.obj_type.id, jsm_assets4.obj_type_attr.object_type_id)\n  \u251c\u2500Selection_36(Build)\t1.00\troot\t\teq(jsm_assets4.obj_type.is_deleted, 0), eq(jsm_assets4.obj_type.workspace_id, \"8a6526e6-cd57-4216-bac6-358a6177d221\")\n  \u2502 \u2514\u2500Batch_Point_Get_35\t1.25\troot\ttable:obj_type, clustered index:PRIMARY(id)\tkeep order:false, desc:false\n  \u2514\u2500IndexLookUp_41(Probe)\t35.00\troot\t\t\n    \u251c\u2500Selection_39(Build)\t35.00\tcop[tikv]\t\tin(jsm_assets4.obj_type_attr.object_type_id, \"0x1bfa019ca2164e97b43331fe25d01325\", \"0x1d9d47a406e14befa85e456dcec5b67b\", \"0x29ba27b2e1174ca3a0541b8e84c15d4e\", \"0x81790b7da4ec44de85e1c94e50c497a7\", \"0xad3f4feadb96456da7bffc4cd63f05f4\")\n    \u2502 \u2514\u2500IndexRangeScan_37\t350.00\tcop[tikv]\ttable:otae1_0, index:ix_ota_ot_and_position(workspace_id, object_type_id, ota_position)\trange: decided by [eq(jsm_assets4.obj_type_attr.object_type_id, jsm_assets4.obj_type.id) eq(jsm_assets4.obj_type_attr.workspace_id, 8a6526e6-cd57-4216-bac6-358a6177d221)], keep order:false\n    \u2514\u2500Selection_40(Probe)\t35.00\tcop[tikv]\t\teq(jsm_assets4.obj_type_attr.is_deleted, 0)\n      \u2514\u2500TableRowIDScan_38\t35.00\tcop[tikv]\ttable:otae1_0\tkeep order:false",
+          "signature": {
+            "operators": [
+              "Projection",
+              "IndexHashJoin",
+              "Selection",
+              "Batch_Point_Get",
+              "IndexLookUp",
+              "Selection",
+              "IndexRangeScan",
+              "Selection",
+              "TableRowIDScan"
+            ],
+            "tasks": [
+              "root",
+              "root",
+              "root",
+              "root",
+              "root",
+              "cop[tikv]",
+              "cop[tikv]",
+              "cop[tikv]",
+              "cop[tikv]"
+            ],
+            "task_set": [
+              "cop[tikv]",
+              "root"
+            ],
+            "join_ops": [
+              "IndexHashJoin"
+            ],
+            "access_paths": [
+              {
+                "operator": "IndexRangeScan",
+                "task": "cop[tikv]",
+                "table": "otae1_0",
+                "index": "ix_ota_ot_and_position",
+                "index_columns": "workspace_id, object_type_id, ota_position"
+              },
+              {
+                "operator": "TableRowIDScan",
+                "task": "cop[tikv]",
+                "table": "otae1_0",
+                "index": "",
+                "index_columns": ""
+              }
+            ],
+            "indexes": [
+              "otae1_0.ix_ota_ot_and_position(workspace_id, object_type_id, ota_position)"
+            ],
+            "index_columns_paths": [
+              "otae1_0(workspace_id, object_type_id, ota_position)"
+            ],
+            "tables": [
+              "otae1_0"
+            ],
+            "topology": "Projection -> IndexHashJoin -> Selection -> Batch_Point_Get -> IndexLookUp -> Selection -> IndexRangeScan -> Selection -> TableRowIDScan",
+            "task_topology": "Projection[root] -> IndexHashJoin[root] -> Selection[root] -> Batch_Point_Get[root] -> IndexLookUp[root] -> Selection[cop[tikv]] -> IndexRangeScan[cop[tikv]] -> Selection[cop[tikv]] -> TableRowIDScan[cop[tikv]]"
+          },
+          "status": "ok"
+        }
+      ]
+    },
+    "14": {
+      "status": "ok",
+      "samples": [
+        {
+          "sample": "s1",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=\udbff\udfff",
+          "sql": "SELECT o.sequential_id, o.text_value_8 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_amana__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_8='\udbff\udfff' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.text_value_8 ASC LIMIT 1000 OFFSET 0",
+          "raw_plan": "id\testRows\ttask\taccess object\toperator info\nTopN_9\t1000.00\troot\t\tjsm_assets4.obj_new.text_value_8, offset:0, count:1000\n\u2514\u2500Selection_20\t528.55\troot\t\tor(ne(jsm_assets4.obj_new.text_value_7_lower, \"__not_amana__\"), eq(lower(jsm_assets4.obj_new.text_value_7), \"\udbff\udfff\"))\n  \u2514\u2500TableReader_19\t566.42\troot\t\tdata:Selection_17\n    \u2514\u2500Selection_17\t566.42\tcop[tikv]\t\teq(jsm_assets4.obj_new.obj_type_id, \"0x266009e95e414bafab14eef7ffe5f2e0\"), eq(jsm_assets4.obj_new.text_value_8, \"\udbff\udfff\"), not(isnull(jsm_assets4.obj_new.text_value_7))\n      \u2514\u2500TableRangeScan_16\t297945.06\tcop[tikv]\ttable:o\trange:[\"00eaf117-fdd6-4176-9926-45310e6b9f54\",\"00eaf117-fdd6-4176-9926-45310e6b9f54\"], keep order:false, stats:partial[text_value_7_lower:unInitialized]",
+          "signature": {
+            "operators": [
+              "TopN",
+              "Selection",
+              "TableReader",
+              "Selection",
+              "TableRangeScan"
+            ],
+            "tasks": [
+              "root",
+              "root",
+              "root",
+              "cop[tikv]",
+              "cop[tikv]"
+            ],
+            "task_set": [
+              "cop[tikv]",
+              "root"
+            ],
+            "join_ops": [],
+            "access_paths": [
+              {
+                "operator": "TableRangeScan",
+                "task": "cop[tikv]",
+                "table": "o",
+                "index": "",
+                "index_columns": ""
+              },
+              {
+                "operator": "TableReader",
+                "task": "root",
+                "table": "",
+                "index": "",
+                "index_columns": ""
+              }
+            ],
+            "indexes": [],
+            "index_columns_paths": [],
+            "tables": [
+              "o"
+            ],
+            "topology": "TopN -> Selection -> TableReader -> Selection -> TableRangeScan",
+            "task_topology": "TopN[root] -> Selection[root] -> TableReader[root] -> Selection[cop[tikv]] -> TableRangeScan[cop[tikv]]"
+          },
+          "status": "ok"
+        }
+      ]
+    },
+    "15": {
+      "status": "ok",
+      "samples": [
+        {
+          "sample": "s1",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=\udbff\udfff",
+          "sql": "SELECT o.sequential_id, o.text_value_1 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_amana__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_8='\udbff\udfff' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
+          "raw_plan": "id\testRows\ttask\taccess object\toperator info\nTopN_9\t1000.00\troot\t\tjsm_assets4.obj_new.text_value_1, offset:0, count:1000\n\u2514\u2500Selection_20\t528.55\troot\t\tor(ne(jsm_assets4.obj_new.text_value_7_lower, \"__not_amana__\"), eq(lower(jsm_assets4.obj_new.text_value_7), \"\udbff\udfff\"))\n  \u2514\u2500TableReader_19\t566.42\troot\t\tdata:Selection_17\n    \u2514\u2500Selection_17\t566.42\tcop[tikv]\t\teq(jsm_assets4.obj_new.obj_type_id, \"0x266009e95e414bafab14eef7ffe5f2e0\"), eq(jsm_assets4.obj_new.text_value_8, \"\udbff\udfff\"), not(isnull(jsm_assets4.obj_new.text_value_7))\n      \u2514\u2500TableRangeScan_16\t297945.06\tcop[tikv]\ttable:o\trange:[\"00eaf117-fdd6-4176-9926-45310e6b9f54\",\"00eaf117-fdd6-4176-9926-45310e6b9f54\"], keep order:false, stats:partial[text_value_7_lower:unInitialized]",
+          "signature": {
+            "operators": [
+              "TopN",
+              "Selection",
+              "TableReader",
+              "Selection",
+              "TableRangeScan"
+            ],
+            "tasks": [
+              "root",
+              "root",
+              "root",
+              "cop[tikv]",
+              "cop[tikv]"
+            ],
+            "task_set": [
+              "cop[tikv]",
+              "root"
+            ],
+            "join_ops": [],
+            "access_paths": [
+              {
+                "operator": "TableRangeScan",
+                "task": "cop[tikv]",
+                "table": "o",
+                "index": "",
+                "index_columns": ""
+              },
+              {
+                "operator": "TableReader",
+                "task": "root",
+                "table": "",
+                "index": "",
+                "index_columns": ""
+              }
+            ],
+            "indexes": [],
+            "index_columns_paths": [],
+            "tables": [
+              "o"
+            ],
+            "topology": "TopN -> Selection -> TableReader -> Selection -> TableRangeScan",
+            "task_topology": "TopN[root] -> Selection[root] -> TableReader[root] -> Selection[cop[tikv]] -> TableRangeScan[cop[tikv]]"
+          },
+          "status": "ok"
+        }
+      ]
+    },
+    "16": {
+      "status": "ok",
+      "samples": [
+        {
+          "sample": "s1",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_16=Whirlpool",
+          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_amana__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_16='Whirlpool' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
+          "raw_plan": "id\testRows\ttask\taccess object\toperator info\nTopN_9\t383.70\troot\t\tjsm_assets4.obj_new.numeric_value_4, offset:0, count:1000\n\u2514\u2500Selection_20\t55.98\troot\t\tor(ne(jsm_assets4.obj_new.text_value_7_lower, \"__not_amana__\"), eq(lower(jsm_assets4.obj_new.text_value_7), \"\udbff\udfff\"))\n  \u2514\u2500TableReader_19\t59.99\troot\t\tdata:Selection_17\n    \u2514\u2500Selection_17\t59.99\tcop[tikv]\t\teq(jsm_assets4.obj_new.obj_type_id, \"0x266009e95e414bafab14eef7ffe5f2e0\"), eq(jsm_assets4.obj_new.text_value_16, \"Whirlpool\"), not(isnull(jsm_assets4.obj_new.text_value_7))\n      \u2514\u2500TableRangeScan_16\t297945.06\tcop[tikv]\ttable:o\trange:[\"00eaf117-fdd6-4176-9926-45310e6b9f54\",\"00eaf117-fdd6-4176-9926-45310e6b9f54\"], keep order:false, stats:partial[text_value_7_lower:unInitialized]",
+          "signature": {
+            "operators": [
+              "TopN",
+              "Selection",
+              "TableReader",
+              "Selection",
+              "TableRangeScan"
+            ],
+            "tasks": [
+              "root",
+              "root",
+              "root",
+              "cop[tikv]",
+              "cop[tikv]"
+            ],
+            "task_set": [
+              "cop[tikv]",
+              "root"
+            ],
+            "join_ops": [],
+            "access_paths": [
+              {
+                "operator": "TableRangeScan",
+                "task": "cop[tikv]",
+                "table": "o",
+                "index": "",
+                "index_columns": ""
+              },
+              {
+                "operator": "TableReader",
+                "task": "root",
+                "table": "",
+                "index": "",
+                "index_columns": ""
+              }
+            ],
+            "indexes": [],
+            "index_columns_paths": [],
+            "tables": [
+              "o"
+            ],
+            "topology": "TopN -> Selection -> TableReader -> Selection -> TableRangeScan",
+            "task_topology": "TopN[root] -> Selection[root] -> TableReader[root] -> Selection[cop[tikv]] -> TableRangeScan[cop[tikv]]"
+          },
+          "status": "ok"
+        }
+      ]
+    },
+    "17": {
+      "status": "ok",
+      "samples": [
+        {
+          "sample": "s1",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, json_terms=8",
+          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND (JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"305e045b-affd-4a0d-9c42-6198a29d9be1\"', JSON_ARRAY('jira-group5'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"305e045b-affd-4a0d-9c42-6198a29d9be1\"', JSON_ARRAY('jira-group8'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"305e045b-affd-4a0d-9c42-6198a29d9be1\"', JSON_ARRAY('jira-group2'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"93a28091-1d1d-4a99-956f-56655d771eb1\"', JSON_ARRAY('61b1bf2ac75da800726b198f'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"305e045b-affd-4a0d-9c42-6198a29d9be1\"', JSON_ARRAY('jira-group19'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"93a28091-1d1d-4a99-956f-56655d771eb1\"', JSON_ARRAY('61b1beabd2e64c0071db24b4'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"305e045b-affd-4a0d-9c42-6198a29d9be1\"', JSON_ARRAY('jira-group11'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"93a28091-1d1d-4a99-956f-56655d771eb1\"', JSON_ARRAY('61b1ba77c510bc006b66f112')))) AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
+          "raw_plan": "id\testRows\ttask\taccess object\toperator info\nLimit_14\t1000.00\troot\t\toffset:0, count:1000\n\u2514\u2500Projection_115\t1000.00\troot\t\tjsm_assets4.obj_new.workspace_id, jsm_assets4.obj_new.sequential_id, jsm_assets4.obj_new.label, jsm_assets4.obj_new.obj_type_id, jsm_assets4.obj_new.other_values_indexed\n  \u2514\u2500IndexLookUp_114\t1000.00\troot\t\t\n    \u251c\u2500Selection_112(Build)\t1654.21\tcop[tikv]\t\teq(jsm_assets4.obj_new.obj_type_id, \"0x266009e95e414bafab14eef7ffe5f2e0\")\n    \u2502 \u2514\u2500IndexRangeScan_110\t7420.30\tcop[tikv]\ttable:o, index:ix_obj_label_objtypeid_new(workspace_id, label, obj_type_id, sequential_id)\trange:[\"00eaf117-fdd6-4176-9926-45310e6b9f54\",\"00eaf117-fdd6-4176-9926-45310e6b9f54\"], keep order:true, stats:partial[other_values_indexed:unInitialized]\n    \u2514\u2500Selection_113(Probe)\t1000.00\tcop[tikv]\t\tor(or(or(json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"305e045b-affd-4a0d-9c42-6198a29d9be1\"\", json_array(cast(\"jira-group5\", json BINARY)))), json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"305e045b-affd-4a0d-9c42-6198a29d9be1\"\", json_array(cast(\"jira-group8\", json BINARY))))), or(json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"305e045b-affd-4a0d-9c42-6198a29d9be1\"\", json_array(cast(\"jira-group2\", json BINARY)))), json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"93a28091-1d1d-4a99-956f-56655d771eb1\"\", json_array(cast(\"61b1bf2ac75da800726b198f\", json BINARY)))))), or(or(json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"305e045b-affd-4a0d-9c42-6198a29d9be1\"\", json_array(cast(\"jira-group19\", json BINARY)))), json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"93a28091-1d1d-4a99-956f-56655d771eb1\"\", json_array(cast(\"61b1beabd2e64c0071db24b4\", json BINARY))))), or(json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"305e045b-affd-4a0d-9c42-6198a29d9be1\"\", json_array(cast(\"jira-group11\", json BINARY)))), json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"93a28091-1d1d-4a99-956f-56655d771eb1\"\", json_array(cast(\"61b1ba77c510bc006b66f112\", json BINARY)))))))\n      \u2514\u2500TableRowIDScan_111\t1654.21\tcop[tikv]\ttable:o\tkeep order:false, stats:partial[other_values_indexed:unInitialized]",
+          "signature": {
+            "operators": [
+              "Limit",
+              "Projection",
+              "IndexLookUp",
+              "Selection",
+              "IndexRangeScan",
+              "Selection",
+              "TableRowIDScan"
+            ],
+            "tasks": [
+              "root",
+              "root",
+              "root",
+              "cop[tikv]",
+              "cop[tikv]",
+              "cop[tikv]",
+              "cop[tikv]"
+            ],
+            "task_set": [
+              "cop[tikv]",
+              "root"
+            ],
+            "join_ops": [],
+            "access_paths": [
+              {
+                "operator": "IndexRangeScan",
+                "task": "cop[tikv]",
+                "table": "o",
+                "index": "ix_obj_label_objtypeid_new",
+                "index_columns": "workspace_id, label, obj_type_id, sequential_id"
+              },
+              {
+                "operator": "TableRowIDScan",
+                "task": "cop[tikv]",
+                "table": "o",
+                "index": "",
+                "index_columns": ""
+              }
+            ],
+            "indexes": [
+              "o.ix_obj_label_objtypeid_new(workspace_id, label, obj_type_id, sequential_id)"
+            ],
+            "index_columns_paths": [
+              "o(workspace_id, label, obj_type_id, sequential_id)"
+            ],
+            "tables": [
+              "o"
+            ],
+            "topology": "Limit -> Projection -> IndexLookUp -> Selection -> IndexRangeScan -> Selection -> TableRowIDScan",
+            "task_topology": "Limit[root] -> Projection[root] -> IndexLookUp[root] -> Selection[cop[tikv]] -> IndexRangeScan[cop[tikv]] -> Selection[cop[tikv]] -> TableRowIDScan[cop[tikv]]"
+          },
+          "status": "ok"
+        }
+      ]
+    },
+    "18": {
+      "status": "ok",
+      "samples": [
+        {
+          "sample": "s1",
+          "params": "workspace=8a6526e6-cd57-4216-bac6-358a6177d221, obj_types=5",
+          "sql": "SELECT ote1_0.* FROM obj_type ote1_0 WHERE ote1_0.workspace_id='8a6526e6-cd57-4216-bac6-358a6177d221' AND ote1_0.is_deleted = 0 AND ote1_0.id IN (0x1bfa019ca2164e97b43331fe25d01325, 0x1d9d47a406e14befa85e456dcec5b67b, 0x29ba27b2e1174ca3a0541b8e84c15d4e, 0x81790b7da4ec44de85e1c94e50c497a7, 0xad3f4feadb96456da7bffc4cd63f05f4)",
+          "raw_plan": "id\testRows\ttask\taccess object\toperator info\nSelection_7\t1.00\troot\t\teq(jsm_assets4.obj_type.is_deleted, 0), eq(jsm_assets4.obj_type.workspace_id, \"8a6526e6-cd57-4216-bac6-358a6177d221\")\n\u2514\u2500Batch_Point_Get_6\t1.25\troot\ttable:obj_type, clustered index:PRIMARY(id)\tkeep order:false, desc:false",
+          "signature": {
+            "operators": [
+              "Selection",
+              "Batch_Point_Get"
+            ],
+            "tasks": [
+              "root",
+              "root"
+            ],
+            "task_set": [
+              "root"
+            ],
+            "join_ops": [],
+            "access_paths": [],
+            "indexes": [],
+            "index_columns_paths": [],
+            "tables": [],
+            "topology": "Selection -> Batch_Point_Get",
+            "task_topology": "Selection[root] -> Batch_Point_Get[root]"
+          },
+          "status": "ok"
+        }
+      ]
+    },
+    "19": {
+      "status": "ok",
+      "samples": [
+        {
+          "sample": "s1",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_16=Whirlpool",
+          "sql": "SELECT o.sequential_id, o.numeric_value_4 FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_amana__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_16='Whirlpool' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.numeric_value_4 ASC LIMIT 1000 OFFSET 0",
+          "raw_plan": "id\testRows\ttask\taccess object\toperator info\nTopN_9\t383.70\troot\t\tjsm_assets4.obj_new.numeric_value_4, offset:0, count:1000\n\u2514\u2500Selection_20\t55.98\troot\t\tor(ne(jsm_assets4.obj_new.text_value_7_lower, \"__not_amana__\"), eq(lower(jsm_assets4.obj_new.text_value_7), \"\udbff\udfff\"))\n  \u2514\u2500TableReader_19\t59.99\troot\t\tdata:Selection_17\n    \u2514\u2500Selection_17\t59.99\tcop[tikv]\t\teq(jsm_assets4.obj_new.obj_type_id, \"0x266009e95e414bafab14eef7ffe5f2e0\"), eq(jsm_assets4.obj_new.text_value_16, \"Whirlpool\"), not(isnull(jsm_assets4.obj_new.text_value_7))\n      \u2514\u2500TableRangeScan_16\t297945.06\tcop[tikv]\ttable:o\trange:[\"00eaf117-fdd6-4176-9926-45310e6b9f54\",\"00eaf117-fdd6-4176-9926-45310e6b9f54\"], keep order:false, stats:partial[text_value_7_lower:unInitialized]",
+          "signature": {
+            "operators": [
+              "TopN",
+              "Selection",
+              "TableReader",
+              "Selection",
+              "TableRangeScan"
+            ],
+            "tasks": [
+              "root",
+              "root",
+              "root",
+              "cop[tikv]",
+              "cop[tikv]"
+            ],
+            "task_set": [
+              "cop[tikv]",
+              "root"
+            ],
+            "join_ops": [],
+            "access_paths": [
+              {
+                "operator": "TableRangeScan",
+                "task": "cop[tikv]",
+                "table": "o",
+                "index": "",
+                "index_columns": ""
+              },
+              {
+                "operator": "TableReader",
+                "task": "root",
+                "table": "",
+                "index": "",
+                "index_columns": ""
+              }
+            ],
+            "indexes": [],
+            "index_columns_paths": [],
+            "tables": [
+              "o"
+            ],
+            "topology": "TopN -> Selection -> TableReader -> Selection -> TableRangeScan",
+            "task_topology": "TopN[root] -> Selection[root] -> TableReader[root] -> Selection[cop[tikv]] -> TableRangeScan[cop[tikv]]"
+          },
+          "status": "ok"
+        }
+      ]
+    },
+    "20": {
+      "status": "ok",
+      "samples": [
+        {
+          "sample": "s1",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, sequential_id=1",
+          "sql": "SELECT otae1_0.id, otae1_0.additional_value, otae1_0.aql, otae1_0.created, otae1_0.default_type_id, otae1_0.deleted_at, otae1_0.description, otae1_0.external_id, otae1_0.group_id_type_value, otae1_0.hidden, otae1_0.include_child_object_types, otae1_0.is_deleted, otae1_0.label, otae1_0.maximum_cardinality, otae1_0.minimum_cardinality, otae1_0.name, otae1_0.object_type_id, otae1_0.ota_position, otae1_0.options, otae1_0.pending, otae1_0.reference_object_type_id, otae1_0.reference_type_id, otae1_0.regex_validation, otae1_0.removable, otae1_0.sequential_id, otae1_0.suffix, otae1_0.summable, otae1_0.type, otae1_0.type_value, otae1_0.unique_attribute, otae1_0.updated, otae1_0.workspace_id FROM obj_type_attr otae1_0 WHERE otae1_0.workspace_id = '00eaf117-fdd6-4176-9926-45310e6b9f54' AND otae1_0.is_deleted = 0 AND otae1_0.sequential_id = 1",
+          "raw_plan": "id\testRows\ttask\taccess object\toperator info\nProjection_4\t1.00\troot\t\tjsm_assets4.obj_type_attr.id, jsm_assets4.obj_type_attr.additional_value, jsm_assets4.obj_type_attr.aql, jsm_assets4.obj_type_attr.created, jsm_assets4.obj_type_attr.default_type_id, jsm_assets4.obj_type_attr.deleted_at, jsm_assets4.obj_type_attr.description, jsm_assets4.obj_type_attr.external_id, jsm_assets4.obj_type_attr.group_id_type_value, jsm_assets4.obj_type_attr.hidden, jsm_assets4.obj_type_attr.include_child_object_types, jsm_assets4.obj_type_attr.is_deleted, jsm_assets4.obj_type_attr.label, jsm_assets4.obj_type_attr.maximum_cardinality, jsm_assets4.obj_type_attr.minimum_cardinality, jsm_assets4.obj_type_attr.name, jsm_assets4.obj_type_attr.object_type_id, jsm_assets4.obj_type_attr.ota_position, jsm_assets4.obj_type_attr.options, jsm_assets4.obj_type_attr.pending, jsm_assets4.obj_type_attr.reference_object_type_id, jsm_assets4.obj_type_attr.reference_type_id, jsm_assets4.obj_type_attr.regex_validation, jsm_assets4.obj_type_attr.removable, jsm_assets4.obj_type_attr.sequential_id, jsm_assets4.obj_type_attr.suffix, jsm_assets4.obj_type_attr.summable, jsm_assets4.obj_type_attr.type, jsm_assets4.obj_type_attr.type_value, jsm_assets4.obj_type_attr.unique_attribute, jsm_assets4.obj_type_attr.updated, jsm_assets4.obj_type_attr.workspace_id\n\u2514\u2500IndexLookUp_12\t1.00\troot\t\t\n  \u251c\u2500IndexRangeScan_9(Build)\t1.00\tcop[tikv]\ttable:otae1_0, index:obj_type_attr__workspace_id__sequential_id__idx(workspace_id, sequential_id)\trange:[\"00eaf117-fdd6-4176-9926-45310e6b9f54\" 1,\"00eaf117-fdd6-4176-9926-45310e6b9f54\" 1], keep order:false\n  \u2514\u2500Selection_11(Probe)\t1.00\tcop[tikv]\t\teq(jsm_assets4.obj_type_attr.is_deleted, 0)\n    \u2514\u2500TableRowIDScan_10\t1.00\tcop[tikv]\ttable:otae1_0\tkeep order:false",
+          "signature": {
+            "operators": [
+              "Projection",
+              "IndexLookUp",
+              "IndexRangeScan",
+              "Selection",
+              "TableRowIDScan"
+            ],
+            "tasks": [
+              "root",
+              "root",
+              "cop[tikv]",
+              "cop[tikv]",
+              "cop[tikv]"
+            ],
+            "task_set": [
+              "cop[tikv]",
+              "root"
+            ],
+            "join_ops": [],
+            "access_paths": [
+              {
+                "operator": "IndexRangeScan",
+                "task": "cop[tikv]",
+                "table": "otae1_0",
+                "index": "obj_type_attr__workspace_id__sequential_id__idx",
+                "index_columns": "workspace_id, sequential_id"
+              },
+              {
+                "operator": "TableRowIDScan",
+                "task": "cop[tikv]",
+                "table": "otae1_0",
+                "index": "",
+                "index_columns": ""
+              }
+            ],
+            "indexes": [
+              "otae1_0.obj_type_attr__workspace_id__sequential_id__idx(workspace_id, sequential_id)"
+            ],
+            "index_columns_paths": [
+              "otae1_0(workspace_id, sequential_id)"
+            ],
+            "tables": [
+              "otae1_0"
+            ],
+            "topology": "Projection -> IndexLookUp -> IndexRangeScan -> Selection -> TableRowIDScan",
+            "task_topology": "Projection[root] -> IndexLookUp[root] -> IndexRangeScan[cop[tikv]] -> Selection[cop[tikv]] -> TableRowIDScan[cop[tikv]]"
+          },
+          "status": "ok"
+        }
+      ]
+    },
+    "21": {
+      "status": "ok",
+      "samples": [
+        {
+          "sample": "s1",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, text_value_24=Bosch, sub_text_value_8=\udbff\udfff",
+          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id IN (0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707) AND (o.text_value_24='Bosch' AND o.obj_type_id IN (0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707)) AND EXISTS (SELECT 1 FROM obj_relationship_new subr INNER JOIN obj_new subo1 ON subr.object_id=subo1.id AND subo1.obj_type_id IN (0x266009e95e414bafab14eef7ffe5f2e0, 0xfa8499385ed14c6089b9adb37223c21c, 0x7d9ffc8b03a94ef69bbfb2e5f939ba14, 0xdc814b704b9e458d94fe350ddfc49d98, 0x77744fc5c48e44e8a7f11213703b7707) WHERE o.id=subr.referenced_object_id AND subo1.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND subo1.text_value_8='\udbff\udfff')) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
+          "raw_plan": "id\testRows\ttask\taccess object\toperator info\nTopN_20\t224.87\troot\t\tjsm_assets4.obj_new.label, offset:0, count:1000\n\u2514\u2500HashJoin_37\t224.87\troot\t\tsemi join, left side:TableReader_87, equal:[eq(jsm_assets4.obj_new.id, jsm_assets4.obj_relationship_new.referenced_object_id)]\n  \u251c\u2500TableReader_87(Build)\t281.09\troot\t\tMppVersion: 3, data:ExchangeSender_86\n  \u2502 \u2514\u2500ExchangeSender_86\t281.09\tmpp[tiflash]\t\tExchangeType: PassThrough\n  \u2502   \u2514\u2500Selection_85\t281.09\tmpp[tiflash]\t\teq(jsm_assets4.obj_new.text_value_24, \"Bosch\")\n  \u2502     \u2514\u2500TableRangeScan_84\t6340.75\tmpp[tiflash]\ttable:o\trange:[\"00eaf117-fdd6-4176-9926-45310e6b9f54\",\"00eaf117-fdd6-4176-9926-45310e6b9f54\"], pushed down filter:in(jsm_assets4.obj_new.obj_type_id, \"0x266009e95e414bafab14eef7ffe5f2e0\", \"0xfa8499385ed14c6089b9adb37223c21c\", \"0x7d9ffc8b03a94ef69bbfb2e5f939ba14\", \"0xdc814b704b9e458d94fe350ddfc49d98\", \"0x77744fc5c48e44e8a7f11213703b7707\"), keep order:false\n  \u2514\u2500IndexHashJoin_135(Probe)\t32824.80\troot\t\tinner join, inner:IndexReader_204, outer key:jsm_assets4.obj_new.id, inner key:jsm_assets4.obj_relationship_new.object_id, equal cond:eq(jsm_assets4.obj_new.id, jsm_assets4.obj_relationship_new.object_id)\n    \u251c\u2500TableReader_159(Build)\t2624.41\troot\t\tMppVersion: 3, data:ExchangeSender_158\n    \u2502 \u2514\u2500ExchangeSender_158\t2624.41\tmpp[tiflash]\t\tExchangeType: PassThrough\n    \u2502   \u2514\u2500Selection_157\t2624.41\tmpp[tiflash]\t\teq(jsm_assets4.obj_new.text_value_8, \"\udbff\udfff\")\n    \u2502     \u2514\u2500TableRangeScan_156\t6340.75\tmpp[tiflash]\ttable:subo1\trange:[\"00eaf117-fdd6-4176-9926-45310e6b9f54\",\"00eaf117-fdd6-4176-9926-45310e6b9f54\"], pushed down filter:in(jsm_assets4.obj_new.obj_type_id, \"0x266009e95e414bafab14eef7ffe5f2e0\", \"0xfa8499385ed14c6089b9adb37223c21c\", \"0x7d9ffc8b03a94ef69bbfb2e5f939ba14\", \"0xdc814b704b9e458d94fe350ddfc49d98\", \"0x77744fc5c48e44e8a7f11213703b7707\"), keep order:false\n    \u2514\u2500IndexReader_204(Probe)\t32824.80\troot\t\tindex:IndexRangeScan_203\n      \u2514\u2500IndexRangeScan_203\t32824.80\tcop[tikv]\ttable:subr, index:idx_obj_relationship_new_object_ws_ota_ref(object_id, workspace_id, object_type_attribute_id, referenced_object_id)\trange: decided by [eq(jsm_assets4.obj_relationship_new.object_id, jsm_assets4.obj_new.id)], keep order:false",
+          "signature": {
+            "operators": [
+              "TopN",
+              "HashJoin",
+              "TableReader",
+              "ExchangeSender",
+              "Selection",
+              "TableRangeScan",
+              "IndexHashJoin",
+              "TableReader",
+              "ExchangeSender",
+              "Selection",
+              "TableRangeScan",
+              "IndexReader",
+              "IndexRangeScan"
+            ],
+            "tasks": [
+              "root",
+              "root",
+              "root",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "root",
+              "root",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "root",
+              "cop[tikv]"
+            ],
+            "task_set": [
+              "cop[tikv]",
+              "mpp[tiflash]",
+              "root"
+            ],
+            "join_ops": [
+              "HashJoin",
+              "IndexHashJoin"
+            ],
+            "access_paths": [
+              {
+                "operator": "TableRangeScan",
+                "task": "mpp[tiflash]",
+                "table": "o",
+                "index": "",
+                "index_columns": ""
+              },
+              {
+                "operator": "TableRangeScan",
+                "task": "mpp[tiflash]",
+                "table": "subo1",
+                "index": "",
+                "index_columns": ""
+              },
+              {
+                "operator": "IndexRangeScan",
+                "task": "cop[tikv]",
+                "table": "subr",
+                "index": "idx_obj_relationship_new_object_ws_ota_ref",
+                "index_columns": "object_id, workspace_id, object_type_attribute_id, referenced_object_id"
+              },
+              {
+                "operator": "TableReader",
+                "task": "root",
+                "table": "",
+                "index": "",
+                "index_columns": ""
+              },
+              {
+                "operator": "TableReader",
+                "task": "root",
+                "table": "",
+                "index": "",
+                "index_columns": ""
+              },
+              {
+                "operator": "IndexReader",
+                "task": "root",
+                "table": "",
+                "index": "",
+                "index_columns": ""
+              }
+            ],
+            "indexes": [
+              "subr.idx_obj_relationship_new_object_ws_ota_ref(object_id, workspace_id, object_type_attribute_id, referenced_object_id)"
+            ],
+            "index_columns_paths": [
+              "subr(object_id, workspace_id, object_type_attribute_id, referenced_object_id)"
+            ],
+            "tables": [
+              "o",
+              "subo1",
+              "subr"
+            ],
+            "topology": "TopN -> HashJoin -> TableReader -> ExchangeSender -> Selection -> TableRangeScan -> IndexHashJoin -> TableReader -> ExchangeSender -> Selection -> TableRangeScan -> IndexReader -> IndexRangeScan",
+            "task_topology": "TopN[root] -> HashJoin[root] -> TableReader[root] -> ExchangeSender[mpp[tiflash]] -> Selection[mpp[tiflash]] -> TableRangeScan[mpp[tiflash]] -> IndexHashJoin[root] -> TableReader[root] -> ExchangeSender[mpp[tiflash]] -> Selection[mpp[tiflash]] -> TableRangeScan[mpp[tiflash]] -> IndexReader[root] -> IndexRangeScan[cop[tikv]]"
+          },
+          "status": "ok"
+        }
+      ]
+    },
+    "22": {
+      "status": "ok",
+      "samples": [
+        {
+          "sample": "s1",
+          "params": "workspace=8a6526e6-cd57-4216-bac6-358a6177d221, partition_id=1, sequential_ids=20",
+          "sql": "SELECT obj.* FROM obj_new obj WHERE obj.workspace_id='8a6526e6-cd57-4216-bac6-358a6177d221' AND obj.partition_id=1 AND obj.sequential_id IN (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20)",
+          "raw_plan": "id\testRows\ttask\taccess object\toperator info\nSelection_7\t20.00\troot\t\teq(jsm_assets4.obj_new.partition_id, 1)\n\u2514\u2500Batch_Point_Get_6\t20.00\troot\ttable:obj_new, index:ix_sequential_id_unique(workspace_id, sequential_id)\tkeep order:false, desc:false",
+          "signature": {
+            "operators": [
+              "Selection",
+              "Batch_Point_Get"
+            ],
+            "tasks": [
+              "root",
+              "root"
+            ],
+            "task_set": [
+              "root"
+            ],
+            "join_ops": [],
+            "access_paths": [],
+            "indexes": [],
+            "index_columns_paths": [],
+            "tables": [],
+            "topology": "Selection -> Batch_Point_Get",
+            "task_topology": "Selection[root] -> Batch_Point_Get[root]"
+          },
+          "status": "ok"
+        }
+      ]
+    },
+    "23": {
+      "status": "ok",
+      "samples": [
+        {
+          "sample": "s1",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, json_terms=4",
+          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND (JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"305e045b-affd-4a0d-9c42-6198a29d9be1\"', JSON_ARRAY('jira-group5'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"305e045b-affd-4a0d-9c42-6198a29d9be1\"', JSON_ARRAY('jira-group8'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"305e045b-affd-4a0d-9c42-6198a29d9be1\"', JSON_ARRAY('jira-group2'))) OR JSON_CONTAINS(o.other_values_indexed, JSON_SET(CAST('{}' AS JSON), '$.\"93a28091-1d1d-4a99-956f-56655d771eb1\"', JSON_ARRAY('61b1bf2ac75da800726b198f')))) AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
+          "raw_plan": "id\testRows\ttask\taccess object\toperator info\nLimit_14\t1000.00\troot\t\toffset:0, count:1000\n\u2514\u2500Projection_115\t1000.00\troot\t\tjsm_assets4.obj_new.workspace_id, jsm_assets4.obj_new.sequential_id, jsm_assets4.obj_new.label, jsm_assets4.obj_new.obj_type_id, jsm_assets4.obj_new.other_values_indexed\n  \u2514\u2500IndexLookUp_114\t1000.00\troot\t\t\n    \u251c\u2500Selection_112(Build)\t1653.15\tcop[tikv]\t\teq(jsm_assets4.obj_new.obj_type_id, \"0x266009e95e414bafab14eef7ffe5f2e0\")\n    \u2502 \u2514\u2500IndexRangeScan_110\t7427.41\tcop[tikv]\ttable:o, index:ix_obj_label_objtypeid_new(workspace_id, label, obj_type_id, sequential_id)\trange:[\"00eaf117-fdd6-4176-9926-45310e6b9f54\",\"00eaf117-fdd6-4176-9926-45310e6b9f54\"], keep order:true, stats:partial[other_values_indexed:unInitialized]\n    \u2514\u2500Selection_113(Probe)\t1000.00\tcop[tikv]\t\tor(or(json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"305e045b-affd-4a0d-9c42-6198a29d9be1\"\", json_array(cast(\"jira-group5\", json BINARY)))), json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"305e045b-affd-4a0d-9c42-6198a29d9be1\"\", json_array(cast(\"jira-group8\", json BINARY))))), or(json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"305e045b-affd-4a0d-9c42-6198a29d9be1\"\", json_array(cast(\"jira-group2\", json BINARY)))), json_contains(jsm_assets4.obj_new.other_values_indexed, json_set(cast(cast(\"{}\", json BINARY), json BINARY), \"$.\"93a28091-1d1d-4a99-956f-56655d771eb1\"\", json_array(cast(\"61b1bf2ac75da800726b198f\", json BINARY))))))\n      \u2514\u2500TableRowIDScan_111\t1653.15\tcop[tikv]\ttable:o\tkeep order:false, stats:partial[other_values_indexed:unInitialized]",
+          "signature": {
+            "operators": [
+              "Limit",
+              "Projection",
+              "IndexLookUp",
+              "Selection",
+              "IndexRangeScan",
+              "Selection",
+              "TableRowIDScan"
+            ],
+            "tasks": [
+              "root",
+              "root",
+              "root",
+              "cop[tikv]",
+              "cop[tikv]",
+              "cop[tikv]",
+              "cop[tikv]"
+            ],
+            "task_set": [
+              "cop[tikv]",
+              "root"
+            ],
+            "join_ops": [],
+            "access_paths": [
+              {
+                "operator": "IndexRangeScan",
+                "task": "cop[tikv]",
+                "table": "o",
+                "index": "ix_obj_label_objtypeid_new",
+                "index_columns": "workspace_id, label, obj_type_id, sequential_id"
+              },
+              {
+                "operator": "TableRowIDScan",
+                "task": "cop[tikv]",
+                "table": "o",
+                "index": "",
+                "index_columns": ""
+              }
+            ],
+            "indexes": [
+              "o.ix_obj_label_objtypeid_new(workspace_id, label, obj_type_id, sequential_id)"
+            ],
+            "index_columns_paths": [
+              "o(workspace_id, label, obj_type_id, sequential_id)"
+            ],
+            "tables": [
+              "o"
+            ],
+            "topology": "Limit -> Projection -> IndexLookUp -> Selection -> IndexRangeScan -> Selection -> TableRowIDScan",
+            "task_topology": "Limit[root] -> Projection[root] -> IndexLookUp[root] -> Selection[cop[tikv]] -> IndexRangeScan[cop[tikv]] -> Selection[cop[tikv]] -> TableRowIDScan[cop[tikv]]"
+          },
+          "status": "ok"
+        }
+      ]
+    },
+    "24": {
+      "status": "ok",
+      "samples": [
+        {
+          "sample": "s1",
+          "params": "workspace=8a6526e6-cd57-4216-bac6-358a6177d221, depth3_label=LG-52576",
+          "sql": "SELECT o.sequential_id, o.label FROM obj_new o WHERE o.workspace_id='8a6526e6-cd57-4216-bac6-358a6177d221' AND (o.obj_type_id IN (0x81790b7da4ec44de85e1c94e50c497a7, 0xad3f4feadb96456da7bffc4cd63f05f4, 0x1d9d47a406e14befa85e456dcec5b67b, 0x1bfa019ca2164e97b43331fe25d01325, 0x29ba27b2e1174ca3a0541b8e84c15d4e) AND EXISTS (SELECT 1 FROM obj_relationship_new subr INNER JOIN obj_new subo1 ON subr.referenced_object_id=subo1.id WHERE o.id=subr.object_id AND subo1.workspace_id='8a6526e6-cd57-4216-bac6-358a6177d221' AND EXISTS (SELECT 1 FROM obj_relationship_new subr1 INNER JOIN obj_new subo2 ON subr1.referenced_object_id=subo2.id WHERE subo1.id=subr1.object_id AND subo2.workspace_id='8a6526e6-cd57-4216-bac6-358a6177d221' AND EXISTS (SELECT 1 FROM obj_relationship_new subr2 INNER JOIN obj_new subo3 ON subr2.referenced_object_id=subo3.id WHERE subo2.id=subr2.object_id AND subo3.workspace_id='8a6526e6-cd57-4216-bac6-358a6177d221' AND subo3.label='LG-52576')))) ORDER BY o.label ASC LIMIT 1000 OFFSET 0",
+          "raw_plan": "id\testRows\ttask\taccess object\toperator info\nTopN_39\t1000.00\troot\t\tjsm_assets4.obj_new.label, offset:0, count:1000\n\u2514\u2500TableReader_482\t1000.00\troot\t\tMppVersion: 3, data:ExchangeSender_481\n  \u2514\u2500ExchangeSender_481\t1000.00\tmpp[tiflash]\t\tExchangeType: PassThrough\n    \u2514\u2500TopN_480\t1000.00\tmpp[tiflash]\t\tjsm_assets4.obj_new.label, offset:0, count:1000\n      \u2514\u2500Projection_479\t2398702.68\tmpp[tiflash]\t\tjsm_assets4.obj_new.sequential_id, jsm_assets4.obj_new.label, jsm_assets4.obj_new.id\n        \u2514\u2500HashJoin_478\t2398702.68\tmpp[tiflash]\t\tsemi join, left side:ExchangeReceiver_58, equal:[eq(jsm_assets4.obj_new.id, jsm_assets4.obj_relationship_new.object_id)], stream_count: 16\n          \u251c\u2500ExchangeReceiver_58(Build)\t802702.92\tmpp[tiflash]\t\tstream_count: 16\n          \u2502 \u2514\u2500ExchangeSender_57\t802702.92\tmpp[tiflash]\t\tExchangeType: HashPartition, Compression: FAST, Hash Cols: [name: jsm_assets4.obj_new.id, collate: binary], stream_count: 16\n          \u2502   \u2514\u2500TableRangeScan_56\t802702.92\tmpp[tiflash]\ttable:o\trange:[\"8a6526e6-cd57-4216-bac6-358a6177d221\",\"8a6526e6-cd57-4216-bac6-358a6177d221\"], pushed down filter:in(jsm_assets4.obj_new.obj_type_id, \"0x81790b7da4ec44de85e1c94e50c497a7\", \"0xad3f4feadb96456da7bffc4cd63f05f4\", \"0x1d9d47a406e14befa85e456dcec5b67b\", \"0x1bfa019ca2164e97b43331fe25d01325\", \"0x29ba27b2e1174ca3a0541b8e84c15d4e\"), keep order:false\n          \u2514\u2500ExchangeReceiver_99(Probe)\t29665250.36\tmpp[tiflash]\t\t\n            \u2514\u2500ExchangeSender_98\t29665250.36\tmpp[tiflash]\t\tExchangeType: HashPartition, Compression: FAST, Hash Cols: [name: jsm_assets4.obj_relationship_new.object_id, collate: binary]\n              \u2514\u2500Projection_97\t29665250.36\tmpp[tiflash]\t\tjsm_assets4.obj_relationship_new.object_id\n                \u2514\u2500HashJoin_59\t29665250.36\tmpp[tiflash]\t\tsemi join, left side:Projection_60, equal:[eq(jsm_assets4.obj_new.id, jsm_assets4.obj_relationship_new.object_id)], stream_count: 16\n                  \u251c\u2500ExchangeReceiver_96(Build)\t29665250.36\tmpp[tiflash]\t\tstream_count: 16\n                  \u2502 \u2514\u2500ExchangeSender_95\t29665250.36\tmpp[tiflash]\t\tExchangeType: HashPartition, Compression: FAST, Hash Cols: [name: jsm_assets4.obj_relationship_new.object_id, collate: binary], stream_count: 16\n                  \u2502   \u2514\u2500Projection_94\t29665250.36\tmpp[tiflash]\t\tjsm_assets4.obj_relationship_new.object_id\n                  \u2502     \u2514\u2500HashJoin_74\t29665250.36\tmpp[tiflash]\t\tsemi join, left side:Projection_75, equal:[eq(jsm_assets4.obj_new.id, jsm_assets4.obj_relationship_new.object_id)]\n                  \u2502       \u251c\u2500ExchangeReceiver_93(Build)\t15.20\tmpp[tiflash]\t\t\n                  \u2502       \u2502 \u2514\u2500ExchangeSender_92\t15.20\tmpp[tiflash]\t\tExchangeType: Broadcast, Compression: FAST\n                  \u2502       \u2502   \u2514\u2500Projection_91\t15.20\tmpp[tiflash]\t\tjsm_assets4.obj_relationship_new.object_id\n                  \u2502       \u2502     \u2514\u2500HashJoin_86\t15.20\tmpp[tiflash]\t\tinner join, equal:[eq(jsm_assets4.obj_new.id, jsm_assets4.obj_relationship_new.referenced_object_id)]\n                  \u2502       \u2502       \u251c\u2500ExchangeReceiver_89(Build)\t0.57\tmpp[tiflash]\t\t\n                  \u2502       \u2502       \u2502 \u2514\u2500ExchangeSender_88\t0.57\tmpp[tiflash]\t\tExchangeType: Broadcast, Compression: FAST\n                  \u2502       \u2502       \u2502   \u2514\u2500TableRangeScan_87\t0.57\tmpp[tiflash]\ttable:subo3\trange:[\"8a6526e6-cd57-4216-bac6-358a6177d221\",\"8a6526e6-cd57-4216-bac6-358a6177d221\"], pushed down filter:eq(jsm_assets4.obj_new.label, \"LG-52576\"), keep order:false\n                  \u2502       \u2502       \u2514\u2500TableFullScan_90(Probe)\t139988146.00\tmpp[tiflash]\ttable:subr2\tkeep order:false\n                  \u2502       \u2514\u2500Projection_75(Probe)\t37081562.95\tmpp[tiflash]\t\tjsm_assets4.obj_relationship_new.object_id, jsm_assets4.obj_new.id\n                  \u2502         \u2514\u2500Projection_83\t37081562.95\tmpp[tiflash]\t\tjsm_assets4.obj_new.id, jsm_assets4.obj_relationship_new.object_id, jsm_assets4.obj_relationship_new.referenced_object_id\n                  \u2502           \u2514\u2500HashJoin_76\t37081562.95\tmpp[tiflash]\t\tinner join, equal:[eq(jsm_assets4.obj_new.id, jsm_assets4.obj_relationship_new.referenced_object_id)], stream_count: 16\n                  \u2502             \u251c\u2500ExchangeReceiver_79(Build)\t2998376.64\tmpp[tiflash]\t\tstream_count: 16\n                  \u2502             \u2502 \u2514\u2500ExchangeSender_78\t2998376.64\tmpp[tiflash]\t\tExchangeType: HashPartition, Compression: FAST, Hash Cols: [name: jsm_assets4.obj_new.id, collate: binary], stream_count: 16\n                  \u2502             \u2502   \u2514\u2500TableRangeScan_77\t2998376.64\tmpp[tiflash]\ttable:subo2\trange:[\"8a6526e6-cd57-4216-bac6-358a6177d221\",\"8a6526e6-cd57-4216-bac6-358a6177d221\"], keep order:false\n                  \u2502             \u2514\u2500ExchangeReceiver_82(Probe)\t139988146.00\tmpp[tiflash]\t\t\n                  \u2502               \u2514\u2500ExchangeSender_81\t139988146.00\tmpp[tiflash]\t\tExchangeType: HashPartition, Compression: FAST, Hash Cols: [name: jsm_assets4.obj_relationship_new.referenced_object_id, collate: binary]\n                  \u2502                 \u2514\u2500TableFullScan_80\t139988146.00\tmpp[tiflash]\ttable:subr1\tkeep order:false\n                  \u2514\u2500Projection_60(Probe)\t37081562.95\tmpp[tiflash]\t\tjsm_assets4.obj_relationship_new.object_id, jsm_assets4.obj_new.id\n                    \u2514\u2500Projection_69\t37081562.95\tmpp[tiflash]\t\tjsm_assets4.obj_new.id, jsm_assets4.obj_relationship_new.object_id, jsm_assets4.obj_relationship_new.referenced_object_id\n                      \u2514\u2500HashJoin_62\t37081562.95\tmpp[tiflash]\t\tinner join, equal:[eq(jsm_assets4.obj_new.id, jsm_assets4.obj_relationship_new.referenced_object_id)], stream_count: 16\n                        \u251c\u2500ExchangeReceiver_65(Build)\t2998376.64\tmpp[tiflash]\t\tstream_count: 16\n                        \u2502 \u2514\u2500ExchangeSender_64\t2998376.64\tmpp[tiflash]\t\tExchangeType: HashPartition, Compression: FAST, Hash Cols: [name: jsm_assets4.obj_new.id, collate: binary], stream_count: 16\n                        \u2502   \u2514\u2500TableRangeScan_63\t2998376.64\tmpp[tiflash]\ttable:subo1\trange:[\"8a6526e6-cd57-4216-bac6-358a6177d221\",\"8a6526e6-cd57-4216-bac6-358a6177d221\"], keep order:false\n                        \u2514\u2500ExchangeReceiver_68(Probe)\t139988146.00\tmpp[tiflash]\t\t\n                          \u2514\u2500ExchangeSender_67\t139988146.00\tmpp[tiflash]\t\tExchangeType: HashPartition, Compression: FAST, Hash Cols: [name: jsm_assets4.obj_relationship_new.referenced_object_id, collate: binary]\n                            \u2514\u2500TableFullScan_66\t139988146.00\tmpp[tiflash]\ttable:subr\tkeep order:false",
+          "signature": {
+            "operators": [
+              "TopN",
+              "TableReader",
+              "ExchangeSender",
+              "TopN",
+              "Projection",
+              "HashJoin",
+              "ExchangeReceiver",
+              "ExchangeSender",
+              "TableRangeScan",
+              "ExchangeReceiver",
+              "ExchangeSender",
+              "Projection",
+              "HashJoin",
+              "ExchangeReceiver",
+              "ExchangeSender",
+              "Projection",
+              "HashJoin",
+              "ExchangeReceiver",
+              "ExchangeSender",
+              "Projection",
+              "HashJoin",
+              "ExchangeReceiver",
+              "ExchangeSender",
+              "TableRangeScan",
+              "TableFullScan",
+              "Projection",
+              "Projection",
+              "HashJoin",
+              "ExchangeReceiver",
+              "ExchangeSender",
+              "TableRangeScan",
+              "ExchangeReceiver",
+              "ExchangeSender",
+              "TableFullScan",
+              "Projection",
+              "Projection",
+              "HashJoin",
+              "ExchangeReceiver",
+              "ExchangeSender",
+              "TableRangeScan",
+              "ExchangeReceiver",
+              "ExchangeSender",
+              "TableFullScan"
+            ],
+            "tasks": [
+              "root",
+              "root",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]",
+              "mpp[tiflash]"
+            ],
+            "task_set": [
+              "mpp[tiflash]",
+              "root"
+            ],
+            "join_ops": [
+              "HashJoin",
+              "HashJoin",
+              "HashJoin",
+              "HashJoin",
+              "HashJoin",
+              "HashJoin"
+            ],
+            "access_paths": [
+              {
+                "operator": "TableRangeScan",
+                "task": "mpp[tiflash]",
+                "table": "o",
+                "index": "",
+                "index_columns": ""
+              },
+              {
+                "operator": "TableRangeScan",
+                "task": "mpp[tiflash]",
+                "table": "subo3",
+                "index": "",
+                "index_columns": ""
+              },
+              {
+                "operator": "TableFullScan",
+                "task": "mpp[tiflash]",
+                "table": "subr2",
+                "index": "",
+                "index_columns": ""
+              },
+              {
+                "operator": "TableRangeScan",
+                "task": "mpp[tiflash]",
+                "table": "subo2",
+                "index": "",
+                "index_columns": ""
+              },
+              {
+                "operator": "TableFullScan",
+                "task": "mpp[tiflash]",
+                "table": "subr1",
+                "index": "",
+                "index_columns": ""
+              },
+              {
+                "operator": "TableRangeScan",
+                "task": "mpp[tiflash]",
+                "table": "subo1",
+                "index": "",
+                "index_columns": ""
+              },
+              {
+                "operator": "TableFullScan",
+                "task": "mpp[tiflash]",
+                "table": "subr",
+                "index": "",
+                "index_columns": ""
+              },
+              {
+                "operator": "TableReader",
+                "task": "root",
+                "table": "",
+                "index": "",
+                "index_columns": ""
+              }
+            ],
+            "indexes": [],
+            "index_columns_paths": [],
+            "tables": [
+              "o",
+              "subo1",
+              "subo2",
+              "subo3",
+              "subr",
+              "subr1",
+              "subr2"
+            ],
+            "topology": "TopN -> TableReader -> ExchangeSender -> TopN -> Projection -> HashJoin -> ExchangeReceiver -> ExchangeSender -> TableRangeScan -> ExchangeReceiver -> ExchangeSender -> Projection -> HashJoin -> ExchangeReceiver -> ExchangeSender -> Projection -> HashJoin -> ExchangeReceiver -> ExchangeSender -> Projection -> HashJoin -> ExchangeReceiver -> ExchangeSender -> TableRangeScan -> TableFullScan -> Projection -> Projection -> HashJoin -> ExchangeReceiver -> ExchangeSender -> TableRangeScan -> ExchangeReceiver -> ExchangeSender -> TableFullScan -> Projection -> Projection -> HashJoin -> ExchangeReceiver -> ExchangeSender -> TableRangeScan -> ExchangeReceiver -> ExchangeSender -> TableFullScan",
+            "task_topology": "TopN[root] -> TableReader[root] -> ExchangeSender[mpp[tiflash]] -> TopN[mpp[tiflash]] -> Projection[mpp[tiflash]] -> HashJoin[mpp[tiflash]] -> ExchangeReceiver[mpp[tiflash]] -> ExchangeSender[mpp[tiflash]] -> TableRangeScan[mpp[tiflash]] -> ExchangeReceiver[mpp[tiflash]] -> ExchangeSender[mpp[tiflash]] -> Projection[mpp[tiflash]] -> HashJoin[mpp[tiflash]] -> ExchangeReceiver[mpp[tiflash]] -> ExchangeSender[mpp[tiflash]] -> Projection[mpp[tiflash]] -> HashJoin[mpp[tiflash]] -> ExchangeReceiver[mpp[tiflash]] -> ExchangeSender[mpp[tiflash]] -> Projection[mpp[tiflash]] -> HashJoin[mpp[tiflash]] -> ExchangeReceiver[mpp[tiflash]] -> ExchangeSender[mpp[tiflash]] -> TableRangeScan[mpp[tiflash]] -> TableFullScan[mpp[tiflash]] -> Projection[mpp[tiflash]] -> Projection[mpp[tiflash]] -> HashJoin[mpp[tiflash]] -> ExchangeReceiver[mpp[tiflash]] -> ExchangeSender[mpp[tiflash]] -> TableRangeScan[mpp[tiflash]] -> ExchangeReceiver[mpp[tiflash]] -> ExchangeSender[mpp[tiflash]] -> TableFullScan[mpp[tiflash]] -> Projection[mpp[tiflash]] -> Projection[mpp[tiflash]] -> HashJoin[mpp[tiflash]] -> ExchangeReceiver[mpp[tiflash]] -> ExchangeSender[mpp[tiflash]] -> TableRangeScan[mpp[tiflash]] -> ExchangeReceiver[mpp[tiflash]] -> ExchangeSender[mpp[tiflash]] -> TableFullScan[mpp[tiflash]]"
+          },
+          "status": "ok"
+        }
+      ]
+    },
+    "25": {
+      "status": "ok",
+      "samples": [
+        {
+          "sample": "s1",
+          "params": "workspace=00eaf117-fdd6-4176-9926-45310e6b9f54, obj_type=266009e9-5e41-4baf-ab14-eef7ffe5f2e0, text_value_8=\udbff\udfff",
+          "sql": "SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b9f54' AND (o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0 AND ((NOT o.text_value_7_lower = '__not_amana__' OR LOWER(o.text_value_7) = '\udbff\udfff') AND o.text_value_7 IS NOT NULL AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)  AND (o.text_value_8='\udbff\udfff' AND o.obj_type_id=0x266009e95e414bafab14eef7ffe5f2e0)) ORDER BY o.text_value_1 ASC LIMIT 1000 OFFSET 0",
+          "raw_plan": "id\testRows\ttask\taccess object\toperator info\nTopN_10\t1000.00\troot\t\tjsm_assets4.obj_new.text_value_1, offset:0, count:1000\n\u2514\u2500Selection_28\t3623.11\troot\t\tor(ne(jsm_assets4.obj_new.text_value_7_lower, \"__not_amana__\"), eq(lower(jsm_assets4.obj_new.text_value_7), \"\udbff\udfff\"))\n  \u2514\u2500IndexLookUp_27\t3882.74\troot\t\t\n    \u251c\u2500IndexRangeScan_21(Build)\t9689.70\tcop[tikv]\ttable:o, index:idx_obj_new_ws_ot_tv7_num1_seq(workspace_id, obj_type_id, text_value_7, numeric_value_1, sequential_id)\trange:[\"00eaf117-fdd6-4176-9926-45310e6b9f54\" \"&`\\t\\xe9^AK\\xaf\\xab\\x14\\xee\\xf7\\xff\\xe5\\xf2\\xe0\" -inf,\"00eaf117-fdd6-4176-9926-45310e6b9f54\" \"&`\\t\\xe9^AK\\xaf\\xab\\x14\\xee\\xf7\\xff\\xe5\\xf2\\xe0\" +inf], keep order:false, stats:partial[text_value_7_lower:unInitialized]\n    \u2514\u2500Selection_23(Probe)\t3882.74\tcop[tikv]\t\teq(jsm_assets4.obj_new.text_value_8, \"\udbff\udfff\")\n      \u2514\u2500TableRowIDScan_22\t9689.70\tcop[tikv]\ttable:o\tkeep order:false, stats:partial[text_value_7_lower:unInitialized]",
+          "signature": {
+            "operators": [
+              "TopN",
+              "Selection",
+              "IndexLookUp",
+              "IndexRangeScan",
+              "Selection",
+              "TableRowIDScan"
+            ],
+            "tasks": [
+              "root",
+              "root",
+              "root",
+              "cop[tikv]",
+              "cop[tikv]",
+              "cop[tikv]"
+            ],
+            "task_set": [
+              "cop[tikv]",
+              "root"
+            ],
+            "join_ops": [],
+            "access_paths": [
+              {
+                "operator": "IndexRangeScan",
+                "task": "cop[tikv]",
+                "table": "o",
+                "index": "idx_obj_new_ws_ot_tv7_num1_seq",
+                "index_columns": "workspace_id, obj_type_id, text_value_7, numeric_value_1, sequential_id"
+              },
+              {
+                "operator": "TableRowIDScan",
+                "task": "cop[tikv]",
+                "table": "o",
+                "index": "",
+                "index_columns": ""
+              }
+            ],
+            "indexes": [
+              "o.idx_obj_new_ws_ot_tv7_num1_seq(workspace_id, obj_type_id, text_value_7, numeric_value_1, sequential_id)"
+            ],
+            "index_columns_paths": [
+              "o(workspace_id, obj_type_id, text_value_7, numeric_value_1, sequential_id)"
+            ],
+            "tables": [
+              "o"
+            ],
+            "topology": "TopN -> Selection -> IndexLookUp -> IndexRangeScan -> Selection -> TableRowIDScan",
+            "task_topology": "TopN[root] -> Selection[root] -> IndexLookUp[root] -> IndexRangeScan[cop[tikv]] -> Selection[cop[tikv]] -> TableRowIDScan[cop[tikv]]"
+          },
+          "status": "ok"
+        }
+      ]
+    }
+  },
+  "path": "/Users/jin/Desktop/jsm-query-testing/bench/results/pingcap_report_current_plans.json"
+}
