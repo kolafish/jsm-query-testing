@@ -19,6 +19,46 @@ def compact_sql(sql):
     return re.sub(r"\s+", " ", sql or "").strip()
 
 
+def format_sql(sql):
+    text = compact_sql(sql)
+    if not text:
+        return ""
+    replacements = [
+        (r"\bselect\b", "SELECT"),
+        (r"\bfrom\b", "\nFROM"),
+        (r"\bwhere\b", "\nWHERE"),
+        (r"\border\s+by\b", "\nORDER BY"),
+        (r"\bgroup\s+by\b", "\nGROUP BY"),
+        (r"\bhaving\b", "\nHAVING"),
+        (r"\blimit\b", "\nLIMIT"),
+        (r"\boffset\b", "\nOFFSET"),
+        (r"\binner\s+join\b", "\n  INNER JOIN"),
+        (r"\bleft\s+join\b", "\n  LEFT JOIN"),
+        (r"\bright\s+join\b", "\n  RIGHT JOIN"),
+        (r"\bjoin\b", "\n  JOIN"),
+        (r"\bon\b", "\n    ON"),
+        (r"\bexists\s*\(", "\n  EXISTS ("),
+    ]
+    for pattern, repl in replacements:
+        text = re.sub(pattern, repl, text, flags=re.IGNORECASE)
+    text = re.sub(r"\s+,\s+", ",\n  ", text)
+    text = re.sub(r"\s+\band\b\s+", "\n  AND ", text, flags=re.IGNORECASE)
+    text = re.sub(r"\s+\bor\b\s+", "\n  OR ", text, flags=re.IGNORECASE)
+    text = re.sub(r"\(\s+", "(", text)
+    text = re.sub(r"\s+\)", ")", text)
+    return "\n".join(line.rstrip() for line in text.strip().splitlines())
+
+
+def display_plan(record):
+    return (
+        record.get("max_plan")
+        or record.get("sample_plan")
+        or record.get("sample_plan_excerpt")
+        or ""
+    )
+    return "\n".join(line.rstrip() for line in plan.replace("\t", "    ").splitlines())
+
+
 def fmt_int(value):
     return f"{float(value):,.0f}"
 
@@ -133,7 +173,7 @@ def pattern_rows(patterns):
 def digest_rows(records):
     rows = []
     for i, r in enumerate(records[:20], 1):
-        sql = compact_sql(r.get("sample_sql", ""))
+        sql = format_sql(r.get("sample_sql", ""))
         rows.append(
             f"""
             <tr>
@@ -144,7 +184,7 @@ def digest_rows(records):
               <td class="num">{fmt_ms(r["max_query_time_ms"])}</td>
               <td class="num">{fmt_int(r["avg_process_keys"])}</td>
               <td>{tags(r.get("pattern"))}</td>
-              <td class="sql-brief">{esc(sql[:190] + ("..." if len(sql) > 190 else ""))}</td>
+              <td class="sql-cell"><pre class="inline-sql">{esc(sql)}</pre></td>
             </tr>
             """
         )
@@ -199,9 +239,9 @@ def detail_cards(records):
                 </div>
               </div>
               <h3>Normalized SQL</h3>
-              <pre class="sql">{esc(compact_sql(r.get("sample_sql", "")))}</pre>
-              <h3>Plan Excerpt</h3>
-              <pre class="plan">{esc(r.get("sample_plan_excerpt", ""))}</pre>
+              <pre class="sql">{esc(format_sql(r.get("sample_sql", "")))}</pre>
+              <h3>Raw Execution Plan (Full)</h3>
+              <pre class="plan">{esc(display_plan(r))}</pre>
             </details>
             """
         )
@@ -308,7 +348,15 @@ def render(data):
     }
     .num, .rank { text-align: right; font-variant-numeric: tabular-nums; }
     .rank { width: 44px; color: var(--muted); }
-    .sql-brief { color: #334155; font-size: 12px; overflow-wrap: anywhere; }
+    .digest-table { table-layout: auto; min-width: 1280px; }
+    .digest-table th:nth-child(1), .digest-table td:nth-child(1) { width: 44px; }
+    .digest-table th:nth-child(2), .digest-table td:nth-child(2) { width: 170px; }
+    .digest-table th:nth-child(3), .digest-table td:nth-child(3) { width: 82px; }
+    .digest-table th:nth-child(4), .digest-table td:nth-child(4) { width: 112px; }
+    .digest-table th:nth-child(5), .digest-table td:nth-child(5) { width: 112px; }
+    .digest-table th:nth-child(6), .digest-table td:nth-child(6) { width: 112px; }
+    .digest-table th:nth-child(7), .digest-table td:nth-child(7) { width: 210px; }
+    .sql-cell { min-width: 440px; }
     .bar { display: inline-block; width: 118px; height: 9px; background: #e2e8f0; border-radius: 999px; overflow: hidden; margin-right: 8px; vertical-align: middle; }
     .bar span { display: block; height: 100%; background: linear-gradient(90deg, var(--teal), var(--blue)); }
     .bar-label { font-variant-numeric: tabular-nums; color: #334155; }
@@ -383,7 +431,22 @@ def render(data):
       line-height: 1.55;
       max-height: 390px;
     }
-    .plan { color: #d1fae5; }
+    .inline-sql {
+      margin: 0;
+      max-height: 220px;
+      background: #f8fafc;
+      color: #1f2937;
+      border-color: #e2e8f0;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+    .sql { max-height: 520px; }
+    .plan {
+      color: #d1fae5;
+      max-height: 760px;
+      white-space: pre;
+      overflow-wrap: normal;
+    }
     .footer {
       margin-top: 28px;
       color: var(--muted);
@@ -452,7 +515,7 @@ def render(data):
 
         <section class="panel">
           <h2>Top Digests By Load</h2>
-          <table>
+          <table class="digest-table">
             <thead>
               <tr>
                 <th>#</th><th>Load</th><th>Count</th><th>Avg Latency</th><th>Max Latency</th><th>Avg Keys</th><th>Pattern</th><th>SQL</th>
