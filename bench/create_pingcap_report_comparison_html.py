@@ -96,15 +96,28 @@ def status_class(status: str) -> str:
     }.get(status, "muted")
 
 
-def speed_summary(current_avg: float | None, source_avg: float | None) -> tuple[str, str]:
-    if current_avg is None or source_avg in (None, 0):
+def speed_summary(benchmark_avg: float | None, source_avg: float | None) -> tuple[str, str]:
+    if benchmark_avg is None or source_avg in (None, 0):
         return "-", "muted"
-    ratio = current_avg / source_avg
+    ratio = benchmark_avg / source_avg
     if ratio < 0.8:
-        return f"当前快 {1 / ratio:.2f}x", "fast"
+        return f"压测快 {1 / ratio:.2f}x", "fast"
     if ratio > 1.25:
         return f"客户快 {ratio:.2f}x", "slow"
     return f"接近 {ratio:.2f}x", "even"
+
+
+def display_difference(text: str) -> str:
+    replacements = {
+        "当前没有 sampled SQL": "压测环境没有 sampled SQL",
+        "current EXPLAIN": "EXPLAIN",
+        "当前 optimizer": "压测环境 optimizer",
+        "当前主要生成": "压测环境主要生成",
+        "当前选择": "压测环境选择",
+    }
+    for old, new in replacements.items():
+        text = text.replace(old, new)
+    return text
 
 
 def source_metric(item: dict[str, Any], sampled: dict[str, Any], key: str) -> Any:
@@ -239,7 +252,7 @@ def render(sampled: dict[str, Any], plan: dict[str, Any]) -> str:
         speed_text, speed_class = speed_summary(benchmark_avg, source_avg)
         comparison = item.get("comparison", {})
         plan_status = comparison.get("status", "pending")
-        diff = main_difference(item)
+        diff = display_difference(main_difference(item))
         current_rep = item.get("representative_current") or {}
         source = item.get("source", {})
         source_plan_line = plan_one_liner(source.get("signature"))
@@ -298,19 +311,19 @@ def render(sampled: dict[str, Any], plan: dict[str, Any]) -> str:
             "<section><h3>SQL</h3>"
             "<div class=\"split\">"
             f"<div><h4>客户报告 SQL</h4><pre>{esc(source_sql)}</pre></div>"
-            f"<div><h4>当前集群 SQL</h4><pre>{esc(current_sql)}</pre></div>"
+            f"<div><h4>压测环境 SQL</h4><pre>{esc(current_sql)}</pre></div>"
             "</div>"
             "</section>"
             "<section><h3>Plan 摘要</h3>"
             "<div class=\"split\">"
             f"<div><h4>客户报告</h4><p>{esc(source_plan_line)}</p></div>"
-            f"<div><h4>当前集群</h4><p>{esc(current_plan_line)}</p></div>"
+            f"<div><h4>压测环境</h4><p>{esc(current_plan_line)}</p></div>"
             "</div>"
             "</section>"
             "<section><h3>完整执行计划</h3>"
             "<div class=\"split plans\">"
             f"<div><h4>客户报告 Plan</h4><pre>{esc(source_raw_plan)}</pre></div>"
-            f"<div><h4>当前集群 Plan</h4><pre>{esc(current_raw_plan)}</pre></div>"
+            f"<div><h4>压测环境 Plan</h4><pre>{esc(current_raw_plan)}</pre></div>"
             "</div>"
             "</section>"
             "</details>"
