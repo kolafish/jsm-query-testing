@@ -16,11 +16,11 @@ export KUBECONFIG=/home/ec2-user/.kube/atlassian-jsm-tici
 
 ### 启动集群
 
-下面命令只启动新集群的 EC2 nodegroup，不会重新建表或恢复数据。当前计划对比和轻量验证规模使用 `4` 台 default 节点承载 `3` 个 TiDB pod 和监控/通用组件；TiFlash 由于当前 failover status 仍保留 3 个 replacement pod，实际需要 `6` 台 TiFlash 节点才能让集群 Ready。
+下面命令只启动新集群的 EC2 nodegroup，不会重新建表或恢复数据。当前规模使用 `4` 台 16 vCPU / 64 GiB default 节点承载 `3` 个 TiDB pod 和监控/通用组件；TiKV 使用 `3` 台 16 vCPU / 64 GiB 节点；TiFlash 由于当前 failover status 仍保留 3 个 replacement pod，实际需要 `6` 台 TiFlash 节点才能让集群 Ready。
 
 ```bash
-eksctl scale nodegroup --cluster Atlassian-jsm-tici --name node16c32 --nodes 4 --nodes-min 0 --nodes-max 20 --region us-east-2
-eksctl scale nodegroup --cluster Atlassian-jsm-tici --name node-tikv --nodes 3 --nodes-min 0 --nodes-max 20 --region us-east-2
+eksctl scale nodegroup --cluster Atlassian-jsm-tici --name node16c64 --nodes 4 --nodes-min 0 --nodes-max 20 --region us-east-2
+eksctl scale nodegroup --cluster Atlassian-jsm-tici --name node-tikv-16c64 --nodes 3 --nodes-min 0 --nodes-max 20 --region us-east-2
 eksctl scale nodegroup --cluster Atlassian-jsm-tici --name node-tiflash --nodes 6 --nodes-min 0 --nodes-max 40 --region us-east-2
 
 kubectl -n tidb-cluster get pods
@@ -32,8 +32,8 @@ kubectl -n tidb-cluster get pods
 
 ```bash
 eksctl scale nodegroup --cluster Atlassian-jsm-tici --name node-tiflash --nodes 0 --nodes-min 0 --nodes-max 20 --region us-east-2
-eksctl scale nodegroup --cluster Atlassian-jsm-tici --name node-tikv --nodes 0 --nodes-min 0 --nodes-max 20 --region us-east-2
-eksctl scale nodegroup --cluster Atlassian-jsm-tici --name node16c32 --nodes 0 --nodes-min 0 --nodes-max 20 --region us-east-2
+eksctl scale nodegroup --cluster Atlassian-jsm-tici --name node-tikv-16c64 --nodes 0 --nodes-min 0 --nodes-max 20 --region us-east-2
+eksctl scale nodegroup --cluster Atlassian-jsm-tici --name node16c64 --nodes 0 --nodes-min 0 --nodes-max 20 --region us-east-2
 ```
 
 ### 访问 TiDB
@@ -85,9 +85,11 @@ Grafana LoadBalancer:
 
 | Node group | Instance type | 当前数量 | 用途 |
 |---|---|---:|---|
-| `node16c32` | `c8i.4xlarge` | 4 | TiDB / PD / TiCI / TiCDC / monitor / benchmark client |
-| `node-tikv` | `c8i.4xlarge` | 3 | TiKV |
+| `node16c64` | `m8i.4xlarge` | 4 | TiDB / PD / TiCI / TiCDC / monitor / benchmark client |
+| `node-tikv-16c64` | `m8i.4xlarge` | 3 | TiKV |
 | `node-tiflash` | `m8i.4xlarge` | 6 | TiFlash |
+| `node16c32` | `c8i.4xlarge` | 0 | legacy default nodegroup, retained for rollback |
+| `node-tikv` | `c8i.4xlarge` | 0 | legacy TiKV nodegroup, retained for rollback |
 
 TiDB service 连接分布验证：
 
