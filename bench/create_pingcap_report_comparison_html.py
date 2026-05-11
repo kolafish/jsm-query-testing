@@ -419,7 +419,7 @@ pre.sql { white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word
 <p>Generated at {esc(generated_at)}. Source report: <code>{esc(source_report)}</code>.</p>
 </header>
 <main>
-<p class="note">这个页面把客户报告里的 25 条 query 与 `jsm_assets4` 的压测结果放在一起。主表的“压测”列使用 {OVERVIEW_CONCURRENCY} 并发那组 per-query-pool 结果；单 query 样本和 p95 放在逐条详情里。</p>
+<p class="note">这个页面把客户报告里的 25 条 query 与 `jsm_assets4` 的压测结果放在一起。主表的“压测”列使用 {OVERVIEW_CONCURRENCY} 并发那组 per-query-pool 结果；单 query 样本和 p95 放在逐条详情里。压测环境执行计划来自同一批 sampled SQL 的单独 `EXPLAIN ANALYZE`，包含 actRows 和 execution info；66 并发压测结果只保存 latency/rows，没有逐请求保存 plan digest。</p>
 <div class="cards">{render_metric_cards(sampled, plan)}</div>
 <h2>总览表</h2>
 <div class="table-wrap">

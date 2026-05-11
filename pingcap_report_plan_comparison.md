@@ -1,6 +1,6 @@
 # PingCAP Report Plan Comparison
 
-Generated at: `2026-05-11T04:00:38.419673+00:00`
+Generated at: `2026-05-11T04:49:45.845204+00:00`
 
 Source report: `reports/pingcap-query-performance-2026-05-06/full_report_for_pingcap.md`
 
