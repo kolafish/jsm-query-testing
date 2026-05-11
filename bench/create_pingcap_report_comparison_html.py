@@ -351,7 +351,7 @@ def render(sampled: dict[str, Any], plan: dict[str, Any]) -> str:
             "</div>"
             "</section>"
             "<section><h3>完整执行计划（客户文档 vs 压测环境）</h3>"
-            "<div class=\"split plans\">"
+            "<div class=\"plan-stack plans\">"
             f"<div><h4>客户文档执行计划</h4><pre>{esc(source_raw_plan)}</pre></div>"
             f"<div><h4>压测环境执行计划</h4><pre>{esc(current_raw_plan)}</pre></div>"
             "</div>"
@@ -401,6 +401,8 @@ td.diff-cell { white-space: normal; min-width: 360px; max-width: 560px; overflow
 .detail-grid { display: grid; grid-template-columns: minmax(360px, 1fr) minmax(360px, 1fr); gap: 16px; }
 .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; align-items: start; }
 .split > div { min-width: 0; }
+.plan-stack { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
+.plan-stack > div { min-width: 0; }
 pre { box-sizing: border-box; max-width: 100%; margin: 0; padding: 12px; max-height: 520px; overflow: auto; background: #10242a; color: #ecf6f2; border-radius: 10px; font: 12px/1.45 "SFMono-Regular", Consolas, monospace; white-space: pre; }
 pre.sql { white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; }
 .plans pre { max-height: 680px; }
