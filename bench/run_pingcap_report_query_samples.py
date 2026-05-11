@@ -26,7 +26,9 @@ from typing import Any
 import pymysql
 
 
-REPORT = Path("/Users/jin/Downloads/full_report_for_pingcap.md")
+LOCAL_REPORT = Path("/Users/jin/Downloads/full_report_for_pingcap.md")
+REPO_REPORT = Path("reports/pingcap-query-performance-2026-05-06/full_report_for_pingcap.md")
+REPORT = LOCAL_REPORT if LOCAL_REPORT.exists() else REPO_REPORT
 OUT_MD = Path("pingcap_report_jsm_assets4_query_sample_comparison.md")
 OUT_JSON = Path("bench/results/pingcap_report_jsm_assets4_query_sample_comparison.json")
 DB = "jsm_assets4"
@@ -781,29 +783,83 @@ def summarize_latencies(latencies: list[float], rows: list[int]) -> dict[str, An
     }
 
 
+def parse_query_weights(raw: str) -> dict[int, int]:
+    weights: dict[int, int] = {}
+    if not raw.strip():
+        return weights
+    for part in raw.split(","):
+        item = part.strip()
+        if not item:
+            continue
+        if "=" not in item:
+            raise ValueError(f"invalid query weight '{item}', expected QUERY_ID=WEIGHT")
+        qid_raw, weight_raw = item.split("=", 1)
+        qid = int(qid_raw.strip())
+        weight = int(weight_raw.strip())
+        if qid <= 0:
+            raise ValueError(f"invalid query id in '{item}'")
+        if weight <= 0:
+            raise ValueError(f"invalid query weight in '{item}'")
+        weights[qid] = weight
+    return weights
+
+
+def build_worker_assignments(level: int, runnable: list[int], weights: dict[int, int]) -> list[int]:
+    if not runnable:
+        return []
+    if level <= 0:
+        raise ValueError("concurrency level must be positive")
+
+    weighted: list[int] = []
+    for qid in runnable:
+        weighted.extend([qid] * weights.get(qid, 1))
+
+    if level < len(runnable):
+        return [weighted[i % len(weighted)] for i in range(level)]
+
+    assignments = list(runnable)
+    remaining = level - len(assignments)
+    assignments.extend(weighted[i % len(weighted)] for i in range(remaining))
+    return assignments
+
+
 def run_worker(worker_id: int, qid: int, samples: list[dict[str, Any]], deadline: float, args: argparse.Namespace):
     conn = connect(args)
-    ops: list[dict[str, Any]] = []
+    stats: dict[str, Any] = {
+        "worker_id": worker_id,
+        "query_id": qid,
+        "ops": 0,
+        "ok": 0,
+        "errors": 0,
+        "latencies": [],
+        "rows": [],
+        "error_samples": [],
+    }
     sample_idx = 0
     try:
         while time.time() < deadline:
             sample = samples[sample_idx % len(samples)]
             sample_idx += 1
             status, rows, elapsed, error = run_sql(conn, sample["sql"])
-            ops.append(
-                {
-                    "worker_id": worker_id,
-                    "query_id": qid,
-                    "sample": sample["sample"],
-                    "status": status,
-                    "rows": rows,
-                    "latency_ms": round(elapsed, 1) if elapsed is not None else None,
-                    "error": error,
-                }
-            )
+            stats["ops"] += 1
+            if status == "ok":
+                stats["ok"] += 1
+                if elapsed is not None:
+                    stats["latencies"].append(round(elapsed, 1))
+                if rows is not None:
+                    stats["rows"].append(rows)
+            else:
+                stats["errors"] += 1
+                if len(stats["error_samples"]) < 10:
+                    stats["error_samples"].append(
+                        {
+                            "sample": sample["sample"],
+                            "error": error,
+                        }
+                    )
     finally:
         conn.close()
-    return ops
+    return stats
 
 
 def run_concurrency_level(
@@ -812,55 +868,62 @@ def run_concurrency_level(
     args: argparse.Namespace,
 ) -> dict[str, Any]:
     runnable = sorted(qid for qid, samples in variants.items() if qid not in MISSING_TABLES and samples)
-    assignments = [runnable[i % len(runnable)] for i in range(level)]
+    assignments = build_worker_assignments(level, runnable, args.query_weights)
     start_wall = dt.datetime.now(dt.timezone.utc)
     start_epoch = time.time()
     deadline = start_epoch + args.concurrency_duration
-    print(f"concurrency={level} start runnable_query_classes={len(runnable)} duration_s={args.concurrency_duration}")
-    all_ops: list[dict[str, Any]] = []
+    print(f"concurrency={level} start runnable_query_classes={len(runnable)} duration_s={args.concurrency_duration}", flush=True)
+    worker_results: list[dict[str, Any]] = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=level) as pool:
         futures = [
             pool.submit(run_worker, i + 1, qid, variants[qid][: args.samples], deadline, args)
             for i, qid in enumerate(assignments)
         ]
         for fut in concurrent.futures.as_completed(futures):
-            all_ops.extend(fut.result())
+            worker_results.append(fut.result())
     end_epoch = time.time()
     end_wall = dt.datetime.now(dt.timezone.utc)
-    ok = [op for op in all_ops if op["status"] == "ok"]
-    latencies = [op["latency_ms"] for op in ok if op.get("latency_ms") is not None]
-    rows = [op["rows"] for op in ok if op.get("rows") is not None]
+    latencies: list[float] = []
+    rows: list[int] = []
     by_query: dict[str, dict[str, Any]] = {}
     for qid in runnable:
-        qops = [op for op in all_ops if op["query_id"] == qid]
-        qok = [op for op in qops if op["status"] == "ok"]
-        qlat = [op["latency_ms"] for op in qok if op.get("latency_ms") is not None]
-        qrows = [op["rows"] for op in qok if op.get("rows") is not None]
+        qworkers = [result for result in worker_results if result["query_id"] == qid]
+        qlat = [latency for result in qworkers for latency in result["latencies"]]
+        qrows = [row_count for result in qworkers for row_count in result["rows"]]
+        qops = sum(result["ops"] for result in qworkers)
+        qok = sum(result["ok"] for result in qworkers)
+        qerrors = sum(result["errors"] for result in qworkers)
+        latencies.extend(qlat)
+        rows.extend(qrows)
         qsummary = summarize_latencies(qlat, qrows)
         qsummary.update(
             {
-                "ops": len(qops),
-                "ok": len(qok),
-                "errors": len(qops) - len(qok),
+                "ops": qops,
+                "ok": qok,
+                "errors": qerrors,
                 "workers": assignments.count(qid),
             }
         )
         by_query[str(qid)] = qsummary
+    total_ops = sum(result["ops"] for result in worker_results)
+    total_ok = sum(result["ok"] for result in worker_results)
+    total_errors = sum(result["errors"] for result in worker_results)
     summary = summarize_latencies(latencies, rows)
     summary.update(
         {
             "concurrency": level,
             "query_classes": len(runnable),
-            "ops": len(all_ops),
-            "ok": len(ok),
-            "errors": len(all_ops) - len(ok),
+            "ops": total_ops,
+            "ok": total_ok,
+            "errors": total_errors,
             "elapsed_s": round(end_epoch - start_epoch, 1),
-            "qps": round(len(ok) / (end_epoch - start_epoch), 2) if end_epoch > start_epoch else None,
+            "qps": round(total_ok / (end_epoch - start_epoch), 2) if end_epoch > start_epoch else None,
         }
     )
     print(
         f"concurrency={level} done ops={summary['ops']} ok={summary['ok']} "
-        f"errors={summary['errors']} qps={summary['qps']} avg_ms={summary['avg_ms']}"
+        f"errors={summary['errors']} qps={summary['qps']} avg_ms={summary['avg_ms']}",
+        flush=True,
     )
     return {
         "concurrency": level,
@@ -1016,7 +1079,7 @@ def write_markdown(results: dict[str, Any], out: Path) -> None:
             "",
             "## Concurrent Runs",
             "",
-            "Worker assignment is per query class. When concurrency equals the runnable query class count, each query class gets one worker. When concurrency is higher, workers are assigned round-robin across the runnable query classes.",
+            "Worker assignment is per query class. Every runnable query class gets at least one worker when concurrency is high enough. Extra workers are assigned by `--query-worker-weights`; without weights they are assigned evenly.",
             "",
             "| Concurrency | Query classes | Duration s | Successful ops | QPS | Avg ms | P95 ms | Max ms |",
             "|---:|---:|---:|---:|---:|---:|---:|---:|",
@@ -1041,6 +1104,7 @@ def write_markdown(results: dict[str, Any], out: Path) -> None:
                 "",
                 f"- Window: `{run['start_time']}` to `{run['end_time']}`",
                 f"- Grafana time range: [{grafana_link}]({grafana_link})",
+                f"- Worker assignment: `{run.get('worker_assignment', {})}`",
             ]
             if run["summary"].get("errors"):
                 failed = [
@@ -1158,72 +1222,87 @@ def main() -> None:
     parser.add_argument("--concurrency-levels", type=int, nargs="*", default=[])
     parser.add_argument("--concurrency-duration", type=int, default=120)
     parser.add_argument("--concurrency-pause", type=int, default=30)
+    parser.add_argument(
+        "--query-worker-weights",
+        default="",
+        help="comma-separated QUERY_ID=WEIGHT list; every runnable query keeps at least one worker, and extra workers are assigned by weight",
+    )
     parser.add_argument("--prometheus-url", default="http://127.0.0.1:19090")
     parser.add_argument("--grafana-url", default=DEFAULT_GRAFANA_URL)
     parser.add_argument("--reuse-samples-json", type=Path, default=None)
+    parser.add_argument("--skip-sample-run", action="store_true", help="reuse prior query sample results and only run the concurrency suite")
+    parser.add_argument("--report", type=Path, default=REPORT)
+    parser.add_argument("--out-json", type=Path, default=OUT_JSON)
+    parser.add_argument("--out-md", type=Path, default=OUT_MD)
     args = parser.parse_args()
+    args.query_weights = parse_query_weights(args.query_worker_weights)
+    if args.skip_sample_run and not args.reuse_samples_json:
+        parser.error("--skip-sample-run requires --reuse-samples-json")
 
-    report_text = REPORT.read_text()
+    report_text = args.report.read_text()
     source_metrics = parse_source_metrics(report_text)
 
-    conn = connect(args)
-    cur = conn.cursor(pymysql.cursors.DictCursor)
-    try:
-        if args.reuse_samples_json:
-            variants = load_variants_from_results(args.reuse_samples_json)
-        else:
+    if args.reuse_samples_json:
+        variants = load_variants_from_results(args.reuse_samples_json)
+    else:
+        conn = connect(args)
+        cur = conn.cursor(pymysql.cursors.DictCursor)
+        try:
             variants = build_queries(cur, args.samples)
-    finally:
-        cur.close()
+        finally:
+            cur.close()
+            conn.close()
 
-    run_conn = connect(args)
     queries: dict[str, Any] = {}
-    try:
-        for qid in range(1, 26):
-            if qid in MISSING_TABLES:
-                queries[str(qid)] = {
-                    "query_id": qid,
-                    "status": "skipped",
-                    "reason": MISSING_TABLES[qid],
-                    "samples": [],
-                    "summary": summarize([]),
-                }
-                continue
-            samples = variants.get(qid, [])
-            if args.limit_query and qid != args.limit_query:
-                continue
-            if not samples:
-                queries[str(qid)] = {
-                    "query_id": qid,
-                    "status": "skipped",
-                    "reason": "no sample parameters could be materialized from jsm_assets4",
-                    "samples": [],
-                    "summary": summarize([]),
-                }
-                continue
-            executed = []
-            for sample in samples[: args.samples]:
-                status, rows, elapsed, error = run_sql(run_conn, sample["sql"])
-                item = dict(sample)
-                item.update(
-                    {
-                        "status": status,
-                        "rows": rows,
-                        "latency_ms": round(elapsed, 1) if elapsed is not None else None,
-                        "error": error,
+    if args.skip_sample_run:
+        queries = json.loads(args.reuse_samples_json.read_text()).get("queries", {})
+    else:
+        run_conn = connect(args)
+        try:
+            for qid in range(1, 26):
+                if qid in MISSING_TABLES:
+                    queries[str(qid)] = {
+                        "query_id": qid,
+                        "status": "skipped",
+                        "reason": MISSING_TABLES[qid],
+                        "samples": [],
+                        "summary": summarize([]),
                     }
-                )
-                executed.append(item)
-                print(f"query={qid} sample={sample['sample']} status={status} rows={rows} latency_ms={item['latency_ms']} error={error}")
-            queries[str(qid)] = {
-                "query_id": qid,
-                "status": "ok" if all(s["status"] == "ok" for s in executed) else "partial",
-                "samples": executed,
-                "summary": summarize(executed),
-            }
-    finally:
-        run_conn.close()
-        conn.close()
+                    continue
+                samples = variants.get(qid, [])
+                if args.limit_query and qid != args.limit_query:
+                    continue
+                if not samples:
+                    queries[str(qid)] = {
+                        "query_id": qid,
+                        "status": "skipped",
+                        "reason": "no sample parameters could be materialized from jsm_assets4",
+                        "samples": [],
+                        "summary": summarize([]),
+                    }
+                    continue
+                executed = []
+                for sample in samples[: args.samples]:
+                    status, rows, elapsed, error = run_sql(run_conn, sample["sql"])
+                    item = dict(sample)
+                    item.update(
+                        {
+                            "status": status,
+                            "rows": rows,
+                            "latency_ms": round(elapsed, 1) if elapsed is not None else None,
+                            "error": error,
+                        }
+                    )
+                    executed.append(item)
+                    print(f"query={qid} sample={sample['sample']} status={status} rows={rows} latency_ms={item['latency_ms']} error={error}")
+                queries[str(qid)] = {
+                    "query_id": qid,
+                    "status": "ok" if all(s["status"] == "ok" for s in executed) else "partial",
+                    "samples": executed,
+                    "summary": summarize(executed),
+                }
+        finally:
+            run_conn.close()
 
     concurrency_runs = []
     if args.concurrency_levels and not args.limit_query:
@@ -1232,18 +1311,19 @@ def main() -> None:
     results = {
         "run_time": dt.datetime.now(dt.timezone.utc).isoformat(),
         "database": DB,
-        "source_report": str(REPORT),
+        "source_report": str(args.report),
         "sample_limit": args.samples,
         "grafana_url": args.grafana_url,
+        "query_worker_weights": args.query_weights,
         "source_metrics": source_metrics,
         "queries": queries,
         "concurrency_runs": concurrency_runs,
     }
-    OUT_JSON.parent.mkdir(parents=True, exist_ok=True)
-    OUT_JSON.write_text(json.dumps(results, indent=2, default=str))
-    write_markdown(results, OUT_MD)
-    print(f"wrote {OUT_JSON}")
-    print(f"wrote {OUT_MD}")
+    args.out_json.parent.mkdir(parents=True, exist_ok=True)
+    args.out_json.write_text(json.dumps(results, indent=2, default=str))
+    write_markdown(results, args.out_md)
+    print(f"wrote {args.out_json}")
+    print(f"wrote {args.out_md}")
 
 
 if __name__ == "__main__":

@@ -134,6 +134,8 @@ TiDB service 连接分布验证：
   - 客户报告与当前 `jsm_assets4` 测试结果的 query latency、rows、plan shape 对比页面
 - `pingcap_report_plan_comparison.md`
   - 客户报告与当前 `jsm_assets4` 的执行计划差异摘要
+- `pingcap_report_weighted_cop_c220_10min_20260511.md`
+  - 保留全部 runnable query、提高慢 query worker 权重后的 TiKV cop wait 复现实验结果
 
 压测相关代码：
 - `bench/dataset_1_qps_corpus.json`
