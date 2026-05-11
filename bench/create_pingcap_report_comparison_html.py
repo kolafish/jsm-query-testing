@@ -18,6 +18,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 SAMPLE_JSON = REPO_ROOT / "bench/results/pingcap_report_jsm_assets4_query_sample_comparison.json"
 PLAN_JSON = REPO_ROOT / "bench/results/pingcap_report_plan_comparison.json"
 OUT_HTML = REPO_ROOT / "pingcap_report_query_comparison.html"
+OVERVIEW_CONCURRENCY = 66
 
 
 def current_grafana_url(sampled: dict[str, Any]) -> str:
@@ -212,6 +213,11 @@ def render(sampled: dict[str, Any], plan: dict[str, Any]) -> str:
     rows_html: list[str] = []
     detail_html: list[str] = []
     concurrency_runs = sampled.get("concurrency_runs", [])
+    overview_run = next(
+        (run for run in concurrency_runs if run.get("concurrency") == OVERVIEW_CONCURRENCY),
+        {},
+    )
+    overview_by_query = overview_run.get("by_query", {})
 
     for item in plan.get("items", []):
         qid = str(item["query_id"])
@@ -221,11 +227,16 @@ def render(sampled: dict[str, Any], plan: dict[str, Any]) -> str:
         source_avg = parse_ms(source_metric(item, sampled, "source_avg_latency") or source_metric(item, sampled, "Avg latency"))
         source_max = parse_ms(source_metric(item, sampled, "source_max_latency") or source_metric(item, sampled, "Max latency"))
         source_rows = parse_number(source_metric(item, sampled, "source_avg_rows") or source_metric(item, sampled, "Avg result rows"))
-        current_avg = parse_ms(summary.get("avg_ms"))
-        current_p95 = percentile(latencies, 0.95)
-        current_max = parse_ms(summary.get("max_ms"))
-        current_rows = parse_number(summary.get("avg_rows"))
-        speed_text, speed_class = speed_summary(current_avg, source_avg)
+        sample_avg = parse_ms(summary.get("avg_ms"))
+        sample_p95 = percentile(latencies, 0.95)
+        sample_max = parse_ms(summary.get("max_ms"))
+        sample_rows_avg = parse_number(summary.get("avg_rows"))
+        benchmark = overview_by_query.get(qid, {})
+        benchmark_avg = parse_ms(benchmark.get("avg_ms"))
+        benchmark_p95 = parse_ms(benchmark.get("p95_ms"))
+        benchmark_max = parse_ms(benchmark.get("max_ms"))
+        benchmark_rows = parse_number(benchmark.get("avg_rows"))
+        speed_text, speed_class = speed_summary(benchmark_avg, source_avg)
         comparison = item.get("comparison", {})
         plan_status = comparison.get("status", "pending")
         diff = main_difference(item)
@@ -242,14 +253,14 @@ def render(sampled: dict[str, Any], plan: dict[str, Any]) -> str:
         rows_html.append(
             "<tr>"
             f"<td><a href=\"#q{qid}\">Q{qid}</a></td>"
+            f"<td><span class=\"speed {speed_class}\">{esc(speed_text)}</span></td>"
+            f"<td><span class=\"badge {status_class(plan_status)}\">{esc(status_label(plan_status))}</span></td>"
             f"<td>{fmt_ms(source_avg)}</td>"
             f"<td>{fmt_ms(source_max)}</td>"
             f"<td>{fmt_num(source_rows)}</td>"
-            f"<td>{fmt_ms(current_avg)}</td>"
-            f"<td>{fmt_ms(current_max)}</td>"
-            f"<td>{fmt_num(current_rows)}</td>"
-            f"<td><span class=\"speed {speed_class}\">{esc(speed_text)}</span></td>"
-            f"<td><span class=\"badge {status_class(plan_status)}\">{esc(status_label(plan_status))}</span></td>"
+            f"<td>{fmt_ms(benchmark_avg)}</td>"
+            f"<td>{fmt_ms(benchmark_max)}</td>"
+            f"<td>{fmt_num(benchmark_rows)}</td>"
             f"<td>{esc(compact(diff, 180))}</td>"
             "</tr>"
         )
@@ -271,8 +282,9 @@ def render(sampled: dict[str, Any], plan: dict[str, Any]) -> str:
             "<section><h3>指标</h3>"
             "<table class=\"mini\"><tbody>"
             f"<tr><th>客户 avg / max / avg rows</th><td>{fmt_ms(source_avg)} / {fmt_ms(source_max)} / {fmt_num(source_rows)}</td></tr>"
-            f"<tr><th>当前样本 avg / p95 / max / avg rows</th><td>{fmt_ms(current_avg)} / {fmt_ms(current_p95)} / {fmt_ms(current_max)} / {fmt_num(current_rows)}</td></tr>"
-            f"<tr><th>快慢判断</th><td>{esc(speed_text)}</td></tr>"
+            f"<tr><th>压测 {OVERVIEW_CONCURRENCY} 并发 avg / p95 / max / avg rows</th><td>{fmt_ms(benchmark_avg)} / {fmt_ms(benchmark_p95)} / {fmt_ms(benchmark_max)} / {fmt_num(benchmark_rows)}</td></tr>"
+            f"<tr><th>单 query 样本 avg / p95 / max / avg rows</th><td>{fmt_ms(sample_avg)} / {fmt_ms(sample_p95)} / {fmt_ms(sample_max)} / {fmt_num(sample_rows_avg)}</td></tr>"
+            f"<tr><th>快慢判断</th><td>{esc(speed_text)}（压测 {OVERVIEW_CONCURRENCY} 并发 vs 客户 avg）</td></tr>"
             f"<tr><th>Plan 结论</th><td>{esc(status_label(plan_status))}: {esc(diff)}</td></tr>"
             "</tbody></table>"
             "</section>"
@@ -362,16 +374,16 @@ pre { margin: 0; padding: 12px; max-height: 520px; overflow: auto; background: #
 <p>Generated at {esc(generated_at)}. Source report: <code>{esc(source_report)}</code>.</p>
 </header>
 <main>
-<p class="note">这个页面把客户报告里的 25 条 query 与当前 `jsm_assets4` 测试结果放在一起。主表保留 avg、max、rows、谁快谁慢和 plan 是否一致；当前样本与并发压测的 p95 放在逐条详情里。</p>
+<p class="note">这个页面把客户报告里的 25 条 query 与 `jsm_assets4` 的压测结果放在一起。主表的“压测”列使用 {OVERVIEW_CONCURRENCY} 并发那组 per-query-pool 结果；单 query 样本和 p95 放在逐条详情里。</p>
 <div class="cards">{render_metric_cards(sampled, plan)}</div>
 <h2>总览表</h2>
 <div class="table-wrap">
 <table>
 <thead><tr>
-<th>Query</th>
+<th>Query</th><th>谁快谁慢</th><th>Plan 是否一致</th>
 <th>客户 Avg</th><th>客户 Max</th><th>客户 Avg rows</th>
-<th>当前 Avg</th><th>当前 Max</th><th>当前 Avg rows</th>
-<th>谁快谁慢</th><th>Plan 是否一致</th><th>主要差异</th>
+<th>压测 Avg</th><th>压测 Max</th><th>压测 Avg rows</th>
+<th>主要差异</th>
 </tr></thead>
 <tbody>{''.join(rows_html)}</tbody>
 </table>
