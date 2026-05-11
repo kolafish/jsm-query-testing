@@ -120,6 +120,36 @@ def display_difference(text: str) -> str:
     return text
 
 
+def format_sql(sql: str) -> str:
+    text = re.sub(r"\s+", " ", str(sql or "").strip())
+    if not text:
+        return ""
+    keyword_patterns = [
+        (r"\bUNION\s+DISTINCT\b", "\nUNION DISTINCT\n"),
+        (r"\bUNION\s+ALL\b", "\nUNION ALL\n"),
+        (r"\bUNION\b", "\nUNION\n"),
+        (r"\bSELECT\b", "SELECT"),
+        (r"\bFROM\b", "\nFROM"),
+        (r"\bLEFT\s+JOIN\b", "\nLEFT JOIN"),
+        (r"\bRIGHT\s+JOIN\b", "\nRIGHT JOIN"),
+        (r"\bINNER\s+JOIN\b", "\nINNER JOIN"),
+        (r"\bJOIN\b", "\nJOIN"),
+        (r"\bON\b", "\n  ON"),
+        (r"\bWHERE\b", "\nWHERE"),
+        (r"\bGROUP\s+BY\b", "\nGROUP BY"),
+        (r"\bORDER\s+BY\b", "\nORDER BY"),
+        (r"\bLIMIT\b", "\nLIMIT"),
+        (r"\bOFFSET\b", "\nOFFSET"),
+    ]
+    for pattern, replacement in keyword_patterns:
+        text = re.sub(pattern, replacement, text, flags=re.IGNORECASE)
+    text = re.sub(r"\s*,\s*", ",\n  ", text)
+    text = re.sub(r"\s+\bAND\b\s+", "\n  AND ", text, flags=re.IGNORECASE)
+    text = re.sub(r"\s+\bOR\b\s+", "\n  OR ", text, flags=re.IGNORECASE)
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    return "\n".join(line.rstrip() for line in text.strip().splitlines())
+
+
 def source_metric(item: dict[str, Any], sampled: dict[str, Any], key: str) -> Any:
     qid = str(item["query_id"])
     return (
@@ -274,7 +304,7 @@ def render(sampled: dict[str, Any], plan: dict[str, Any]) -> str:
             f"<td>{fmt_ms(benchmark_avg)}</td>"
             f"<td>{fmt_ms(benchmark_max)}</td>"
             f"<td>{fmt_num(benchmark_rows)}</td>"
-            f"<td>{esc(compact(diff, 180))}</td>"
+            f"<td class=\"diff-cell\">{esc(compact(diff, 180))}</td>"
             "</tr>"
         )
 
@@ -310,8 +340,8 @@ def render(sampled: dict[str, Any], plan: dict[str, Any]) -> str:
             "</section>"
             "<section><h3>SQL</h3>"
             "<div class=\"split\">"
-            f"<div><h4>客户报告 SQL</h4><pre>{esc(source_sql)}</pre></div>"
-            f"<div><h4>压测环境 SQL</h4><pre>{esc(current_sql)}</pre></div>"
+            f"<div><h4>客户报告 SQL</h4><pre class=\"sql\">{esc(format_sql(source_sql))}</pre></div>"
+            f"<div><h4>压测环境 SQL</h4><pre class=\"sql\">{esc(format_sql(current_sql))}</pre></div>"
             "</div>"
             "</section>"
             "<section><h3>Plan 摘要</h3>"
@@ -320,10 +350,10 @@ def render(sampled: dict[str, Any], plan: dict[str, Any]) -> str:
             f"<div><h4>压测环境</h4><p>{esc(current_plan_line)}</p></div>"
             "</div>"
             "</section>"
-            "<section><h3>完整执行计划</h3>"
+            "<section><h3>完整执行计划（客户文档 vs 压测环境）</h3>"
             "<div class=\"split plans\">"
-            f"<div><h4>客户报告 Plan</h4><pre>{esc(source_raw_plan)}</pre></div>"
-            f"<div><h4>压测环境 Plan</h4><pre>{esc(current_raw_plan)}</pre></div>"
+            f"<div><h4>客户文档执行计划</h4><pre>{esc(source_raw_plan)}</pre></div>"
+            f"<div><h4>压测环境执行计划</h4><pre>{esc(current_raw_plan)}</pre></div>"
             "</div>"
             "</section>"
             "</details>"
@@ -351,6 +381,7 @@ th, td { padding: 8px 10px; border-bottom: 1px solid #eadfcd; vertical-align: to
 th { position: sticky; top: 0; z-index: 1; background: #efe4d0; text-align: left; white-space: nowrap; }
 td { white-space: nowrap; }
 td:last-child { white-space: normal; min-width: 280px; }
+td.diff-cell { white-space: normal; min-width: 360px; max-width: 560px; overflow-wrap: anywhere; word-break: break-word; }
 .mini th { position: static; background: #f1eadf; }
 .mini td, .mini th { white-space: normal; font-size: 13px; }
 .badge, .speed { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 650; white-space: nowrap; }
@@ -370,6 +401,7 @@ td:last-child { white-space: normal; min-width: 280px; }
 .detail-grid { display: grid; grid-template-columns: minmax(360px, 1fr) minmax(360px, 1fr); gap: 16px; }
 .split { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 pre { margin: 0; padding: 12px; max-height: 520px; overflow: auto; background: #10242a; color: #ecf6f2; border-radius: 10px; font: 12px/1.45 "SFMono-Regular", Consolas, monospace; white-space: pre; }
+pre.sql { white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; }
 .plans pre { max-height: 680px; }
 @media (max-width: 980px) { .split, .detail-grid { grid-template-columns: 1fr; } main, header { padding-left: 16px; padding-right: 16px; } }
 """
