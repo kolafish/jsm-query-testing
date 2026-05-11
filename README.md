@@ -130,6 +130,10 @@ TiDB service 连接分布验证：
   - 当前 mixed workload QPS 压测结果和结论
 - `jsm_dataset_1_fts_join_qps_benchmark_results.md`
   - 当前 `FTS + JOIN` 与 `LIKE + JOIN` 专项 QPS 对比结果和结论
+- `pingcap_report_query_comparison.html`
+  - 客户报告与当前 `jsm_assets4` 测试结果的 query latency、rows、plan shape 对比页面
+- `pingcap_report_plan_comparison.md`
+  - 客户报告与当前 `jsm_assets4` 的执行计划差异摘要
 
 压测相关代码：
 - `bench/dataset_1_qps_corpus.json`
