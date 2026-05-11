@@ -1,0 +1,1047 @@
+
+    <!doctype html>
+    <html lang="en">
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>PingCAP Cluster Slow Query Analysis</title>
+      <style>
+    :root {
+      --bg: #f6f7f9;
+      --paper: #ffffff;
+      --text: #17202a;
+      --muted: #617083;
+      --line: #dfe5ec;
+      --blue: #2563eb;
+      --teal: #0891b2;
+      --green: #15803d;
+      --amber: #b45309;
+      --red: #b91c1c;
+      --violet: #6d28d9;
+      --shadow: 0 16px 38px rgba(15, 23, 42, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 14px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    header {
+      background: #0f172a;
+      color: #fff;
+      padding: 34px 40px 30px;
+      border-bottom: 5px solid #0e7490;
+    }
+    main { max-width: 1440px; margin: 0 auto; padding: 28px 32px 48px; }
+    h1 { margin: 0 0 8px; font-size: 30px; line-height: 1.15; letter-spacing: 0; }
+    h2 { margin: 34px 0 14px; font-size: 20px; letter-spacing: 0; }
+    h3 { margin: 18px 0 8px; font-size: 14px; letter-spacing: 0; }
+    p { margin: 0 0 12px; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .subhead { color: #cbd5e1; max-width: 980px; font-size: 15px; }
+    .meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; color: #dbeafe; }
+    .pill { border: 1px solid rgba(255,255,255,.24); padding: 5px 10px; border-radius: 999px; }
+    .summary {
+      background: var(--paper);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px 20px;
+      margin-bottom: 24px;
+    }
+    .summary strong { color: #0f766e; }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 26px;
+    }
+    .metric {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px 16px;
+      min-height: 112px;
+    }
+    .metric-label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+    .metric-value { margin-top: 8px; font-size: 26px; font-weight: 720; letter-spacing: 0; }
+    .metric-hint { color: var(--muted); margin-top: 3px; font-size: 12px; }
+    .panel {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+      margin-bottom: 22px;
+      overflow: hidden;
+    }
+    .split {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(420px, .72fr);
+      gap: 18px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+    th, td {
+      border-bottom: 1px solid var(--line);
+      padding: 9px 8px;
+      vertical-align: top;
+      text-align: left;
+    }
+    th {
+      color: #334155;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      background: #f8fafc;
+    }
+    .num, .rank { text-align: right; font-variant-numeric: tabular-nums; }
+    .rank { width: 44px; color: var(--muted); }
+    .sql-brief { color: #334155; font-size: 12px; overflow-wrap: anywhere; }
+    .bar { display: inline-block; width: 118px; height: 9px; background: #e2e8f0; border-radius: 999px; overflow: hidden; margin-right: 8px; vertical-align: middle; }
+    .bar span { display: block; height: 100%; background: linear-gradient(90deg, var(--teal), var(--blue)); }
+    .bar-label { font-variant-numeric: tabular-nums; color: #334155; }
+    .tag {
+      display: inline-block;
+      margin: 0 4px 4px 0;
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+    .tag-json { background: #fee2e2; color: var(--red); }
+    .tag-rel { background: #ffedd5; color: var(--amber); }
+    .tag-fts { background: #e0e7ff; color: var(--violet); }
+    .tag-eav { background: #dcfce7; color: var(--green); }
+    .tag-obj { background: #e0f2fe; color: #0369a1; }
+    .tag-other { background: #f1f5f9; color: #475569; }
+    .digest-card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      margin: 14px 0;
+      overflow: hidden;
+    }
+    .digest-card summary {
+      cursor: pointer;
+      display: flex;
+      gap: 14px;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 18px;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--line);
+    }
+    .digest-title { font-weight: 760; font-size: 15px; }
+    .digest-meta { color: var(--muted); font-variant-numeric: tabular-nums; }
+    .digest-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(320px, .85fr);
+      gap: 20px;
+      padding: 4px 18px 0;
+    }
+    .stats-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .stats-list div {
+      display: grid;
+      grid-template-columns: 130px minmax(0, 1fr);
+      gap: 10px;
+      padding: 7px 9px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fbfdff;
+    }
+    .stats-list span { color: var(--muted); }
+    .stats-list b { overflow-wrap: anywhere; }
+    pre {
+      margin: 8px 18px 18px;
+      padding: 13px 14px;
+      border: 1px solid #d8e0ea;
+      border-radius: 8px;
+      background: #0b1220;
+      color: #dbeafe;
+      overflow: auto;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      font-size: 12px;
+      line-height: 1.55;
+      max-height: 390px;
+    }
+    .plan { color: #d1fae5; }
+    .footer {
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    @media (max-width: 1100px) {
+      header { padding: 28px 22px; }
+      main { padding: 20px 16px 36px; }
+      .metrics { grid-template-columns: repeat(2, minmax(150px, 1fr)); }
+      .split, .digest-grid { grid-template-columns: 1fr; }
+      table { min-width: 980px; }
+      .panel { overflow-x: auto; }
+    }
+    </style>
+    </head>
+    <body>
+      <header>
+        <h1>PingCAP Cluster Slow Query Analysis</h1>
+        <p class="subhead">Human-readable summary of the additional TiDB CLUSTER_SLOW_QUERY export. The report focuses on load concentration, repeated slow query patterns, hot TiKV cop wait nodes, and concrete optimization directions.</p>
+        <div class="meta">
+          <span class="pill">Time range: 2026-05-06 16:49:01.792456 to 2026-05-06 18:26:16.435955</span>
+          <span class="pill">Generated: 2026-05-11 11:15</span>
+          <span class="pill">DB: jsm_assets2</span>
+        </div>
+      </header>
+      <main>
+        <section class="summary">
+          <p><strong>One-sentence conclusion:</strong> the new slow queries are still dominated by obj_new JSON/EAV filtering, relationship fanout, and FTS candidate expansion, with high TiKV cop wait amplifying latency on hot nodes.</p>
+          <p><strong>Primary action:</strong> mitigate TiKV IO pressure first while evaluating JSON multi-value/generated-column indexing, relationship covering indexes, and compound filter + sort indexes for the recurring obj_new patterns.</p>
+        </section>
+
+        <section class="metrics">
+          
+      <section class="metric">
+        <div class="metric-label">Rows</div>
+        <div class="metric-value">50,074</div>
+        <div class="metric-hint">slow log entries</div>
+      </section>
+    
+          
+      <section class="metric">
+        <div class="metric-label">Distinct Digests</div>
+        <div class="metric-value">136</div>
+        <div class="metric-hint">normalized SQL groups</div>
+      </section>
+    
+          
+      <section class="metric">
+        <div class="metric-label">Total Query Time</div>
+        <div class="metric-value">548,334.3s</div>
+        <div class="metric-hint">accumulated, concurrent</div>
+      </section>
+    
+          
+      <section class="metric">
+        <div class="metric-label">Top 5 Coverage</div>
+        <div class="metric-value">47.9%</div>
+        <div class="metric-hint">of total load</div>
+      </section>
+    
+          
+      <section class="metric">
+        <div class="metric-label">Top 10 Coverage</div>
+        <div class="metric-value">66.8%</div>
+        <div class="metric-hint">of total load</div>
+      </section>
+    
+          
+      <section class="metric">
+        <div class="metric-label">Top 25 Coverage</div>
+        <div class="metric-value">89.5%</div>
+        <div class="metric-hint">of total load</div>
+      </section>
+    
+        </section>
+
+        <section class="split">
+          <div class="panel">
+            <h2>Load By Pattern</h2>
+            <table>
+              <thead><tr><th>Pattern</th><th>Load</th><th>Total Time</th><th>Rows</th><th>Digests</th></tr></thead>
+              <tbody>
+            <tr>
+              <td>obj_new</td>
+              <td><div class="bar"><span style="width:33.84%"></span></div><span class="bar-label">33.8%</span></td>
+              <td class="num">185,573.4s</td>
+              <td class="num">16,287</td>
+              <td class="num">44</td>
+            </tr>
+            
+
+            <tr>
+              <td>JSON filter</td>
+              <td><div class="bar"><span style="width:22.93%"></span></div><span class="bar-label">22.9%</span></td>
+              <td class="num">125,726.6s</td>
+              <td class="num">5,282</td>
+              <td class="num">7</td>
+            </tr>
+            
+
+            <tr>
+              <td>relationship semi-join</td>
+              <td><div class="bar"><span style="width:16.61%"></span></div><span class="bar-label">16.6%</span></td>
+              <td class="num">91,093.7s</td>
+              <td class="num">4,252</td>
+              <td class="num">9</td>
+            </tr>
+            
+
+            <tr>
+              <td>FTS</td>
+              <td><div class="bar"><span style="width:8.97%"></span></div><span class="bar-label">9.0%</span></td>
+              <td class="num">49,186.0s</td>
+              <td class="num">4,161</td>
+              <td class="num">6</td>
+            </tr>
+            
+
+            <tr>
+              <td>EAV value filter</td>
+              <td><div class="bar"><span style="width:8.31%"></span></div><span class="bar-label">8.3%</span></td>
+              <td class="num">45,546.5s</td>
+              <td class="num">3,545</td>
+              <td class="num">38</td>
+            </tr>
+            
+
+            <tr>
+              <td>relationship lookup</td>
+              <td><div class="bar"><span style="width:5.70%"></span></div><span class="bar-label">5.7%</span></td>
+              <td class="num">31,257.8s</td>
+              <td class="num">8,659</td>
+              <td class="num">2</td>
+            </tr>
+            
+
+            <tr>
+              <td>IndexLookUp</td>
+              <td><div class="bar"><span style="width:3.52%"></span></div><span class="bar-label">3.5%</span></td>
+              <td class="num">19,282.8s</td>
+              <td class="num">7,503</td>
+              <td class="num">12</td>
+            </tr>
+            
+
+            <tr>
+              <td>other</td>
+              <td><div class="bar"><span style="width:0.12%"></span></div><span class="bar-label">0.1%</span></td>
+              <td class="num">663.0s</td>
+              <td class="num">377</td>
+              <td class="num">13</td>
+            </tr>
+            
+
+            <tr>
+              <td>stats:pseudo</td>
+              <td><div class="bar"><span style="width:0.00%"></span></div><span class="bar-label">0.0%</span></td>
+              <td class="num">4.6s</td>
+              <td class="num">8</td>
+              <td class="num">5</td>
+            </tr>
+            </tbody>
+            </table>
+          </div>
+          <div class="panel">
+            <h2>TiKV cop_wait Hotspots</h2>
+            <table>
+              <thead><tr><th>#</th><th>TiKV</th><th>Associated Load</th><th>Rows</th><th>Avg Max Wait</th><th>Max Wait</th></tr></thead>
+              <tbody>
+            <tr>
+              <td class="rank">1</td>
+              <td><code>basic-tikv-18.basic-tikv-peer.tidb-fts.svc:20160</code></td>
+              <td><div class="bar"><span style="width:100.00%"></span></div><span class="bar-label">241,790.2s</span></td>
+              <td class="num">13,600</td>
+              <td class="num">7,008.4ms</td>
+              <td class="num">14,710.6ms</td>
+            </tr>
+            
+
+            <tr>
+              <td class="rank">2</td>
+              <td><code>basic-tikv-13.basic-tikv-peer.tidb-fts.svc:20160</code></td>
+              <td><div class="bar"><span style="width:49.83%"></span></div><span class="bar-label">120,481.8s</span></td>
+              <td class="num">10,138</td>
+              <td class="num">5,406.7ms</td>
+              <td class="num">11,274.6ms</td>
+            </tr>
+            
+
+            <tr>
+              <td class="rank">3</td>
+              <td><code>basic-tikv-17.basic-tikv-peer.tidb-fts.svc:20160</code></td>
+              <td><div class="bar"><span style="width:25.51%"></span></div><span class="bar-label">61,674.5s</span></td>
+              <td class="num">5,319</td>
+              <td class="num">4,373.3ms</td>
+              <td class="num">8,031.0ms</td>
+            </tr>
+            
+
+            <tr>
+              <td class="rank">4</td>
+              <td><code>basic-tikv-6.basic-tikv-peer.tidb-fts.svc:20160</code></td>
+              <td><div class="bar"><span style="width:15.88%"></span></div><span class="bar-label">38,395.4s</span></td>
+              <td class="num">4,582</td>
+              <td class="num">3,601.4ms</td>
+              <td class="num">6,910.3ms</td>
+            </tr>
+            
+
+            <tr>
+              <td class="rank">5</td>
+              <td><code>basic-tikv-7.basic-tikv-peer.tidb-fts.svc:20160</code></td>
+              <td><div class="bar"><span style="width:12.44%"></span></div><span class="bar-label">30,079.9s</span></td>
+              <td class="num">5,798</td>
+              <td class="num">3,107.5ms</td>
+              <td class="num">6,504.8ms</td>
+            </tr>
+            
+
+            <tr>
+              <td class="rank">6</td>
+              <td><code>basic-tikv-4.basic-tikv-peer.tidb-fts.svc:20160</code></td>
+              <td><div class="bar"><span style="width:5.52%"></span></div><span class="bar-label">13,349.8s</span></td>
+              <td class="num">1,804</td>
+              <td class="num">3,344.4ms</td>
+              <td class="num">7,116.5ms</td>
+            </tr>
+            
+
+            <tr>
+              <td class="rank">7</td>
+              <td><code>basic-tikv-14.basic-tikv-peer.tidb-fts.svc:20160</code></td>
+              <td><div class="bar"><span style="width:4.55%"></span></div><span class="bar-label">11,000.0s</span></td>
+              <td class="num">1,116</td>
+              <td class="num">3,981.2ms</td>
+              <td class="num">8,595.2ms</td>
+            </tr>
+            
+
+            <tr>
+              <td class="rank">8</td>
+              <td><code>basic-tikv-2.basic-tikv-peer.tidb-fts.svc:20160</code></td>
+              <td><div class="bar"><span style="width:4.53%"></span></div><span class="bar-label">10,941.4s</span></td>
+              <td class="num">958</td>
+              <td class="num">4,056.4ms</td>
+              <td class="num">9,266.2ms</td>
+            </tr>
+            
+
+            <tr>
+              <td class="rank">9</td>
+              <td><code>basic-tikv-10.basic-tikv-peer.tidb-fts.svc:20160</code></td>
+              <td><div class="bar"><span style="width:2.33%"></span></div><span class="bar-label">5,643.3s</span></td>
+              <td class="num">748</td>
+              <td class="num">2,562.7ms</td>
+              <td class="num">8,347.6ms</td>
+            </tr>
+            
+
+            <tr>
+              <td class="rank">10</td>
+              <td><code>basic-tikv-12.basic-tikv-peer.tidb-fts.svc:20160</code></td>
+              <td><div class="bar"><span style="width:1.70%"></span></div><span class="bar-label">4,116.4s</span></td>
+              <td class="num">1,998</td>
+              <td class="num">1,877.7ms</td>
+              <td class="num">5,733.2ms</td>
+            </tr>
+            </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Top Digests By Load</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>#</th><th>Load</th><th>Count</th><th>Avg Latency</th><th>Max Latency</th><th>Avg Keys</th><th>Pattern</th><th>SQL</th>
+              </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td class="rank">1</td>
+              <td><div class="bar"><span style="width:12.85%"></span></div><span class="bar-label">12.8%</span></td>
+              <td class="num">2,965</td>
+              <td class="num">23,758.0ms</td>
+              <td class="num">60,094.5ms</td>
+              <td class="num">1,119,574</td>
+              <td><span class="tag tag-json">JSON filter</span><span class="tag tag-obj">obj_new</span><span class="tag tag-other">IndexLookUp</span><span class="tag tag-other">TableRowIDScan</span><span class="tag tag-other">stats:partial</span></td>
+              <td class="sql-brief">select `o` . `sequential_id` , `o` . `label` from `obj_new` `o` where `o` . `workspace_id` = ? and ( `o` . `obj_type_id` = ? and ( ( `json_contains` ( `o` . `other_values_indexed` , `json_se...</td>
+            </tr>
+            
+
+            <tr>
+              <td class="rank">2</td>
+              <td><div class="bar"><span style="width:10.65%"></span></div><span class="bar-label">10.7%</span></td>
+              <td class="num">1,262</td>
+              <td class="num">46,289.6ms</td>
+              <td class="num">61,133.3ms</td>
+              <td class="num">4,836,801</td>
+              <td><span class="tag tag-rel">relationship semi-join</span><span class="tag tag-obj">obj_new</span><span class="tag tag-eav">EAV value filter</span><span class="tag tag-other">TiFlash</span><span class="tag tag-other">IndexLookUp</span></td>
+              <td class="sql-brief">select `o` . `sequential_id` , `o` . `label` from `obj_new` `o` where `o` . `workspace_id` = ? and ( `o` . `obj_type_id` in ( ... ) and ( `o` . `text_value_24` = ? and `o` . `obj_type_id` in...</td>
+            </tr>
+            
+
+            <tr>
+              <td class="rank">3</td>
+              <td><div class="bar"><span style="width:10.04%"></span></div><span class="bar-label">10.0%</span></td>
+              <td class="num">5,882</td>
+              <td class="num">9,360.8ms</td>
+              <td class="num">52,871.3ms</td>
+              <td class="num">444,952</td>
+              <td><span class="tag tag-obj">obj_new</span><span class="tag tag-other">IndexLookUp</span><span class="tag tag-other">TableRowIDScan</span><span class="tag tag-other">TiFlash</span></td>
+              <td class="sql-brief">select `o` . `sequential_id` , `o` . `label` from `obj_new` `o` where `o` . `workspace_id` = ? and ( `o` . `obj_type_id` in ( ... ) and ( ( ? != ? or `o` . `numeric_value_5` is ? ) and `o` ....</td>
+            </tr>
+            
+
+            <tr>
+              <td class="rank">4</td>
+              <td><div class="bar"><span style="width:8.86%"></span></div><span class="bar-label">8.9%</span></td>
+              <td class="num">4,127</td>
+              <td class="num">11,775.9ms</td>
+              <td class="num">51,253.1ms</td>
+              <td class="num">202,759</td>
+              <td><span class="tag tag-fts">FTS</span><span class="tag tag-obj">obj_new</span><span class="tag tag-eav">EAV value filter</span><span class="tag tag-other">LIKE filter</span><span class="tag tag-other">TiFlash</span></td>
+              <td class="sql-brief">select `o` . `sequential_id` , `o` . `label` from `obj_new` `o` where `o` . `workspace_id` = ? and ( `o` . `obj_type_id` in ( ... ) and ( `o` . `obj_type_id` = ? or `o` . `obj_type_id` = ? )...</td>
+            </tr>
+            
+
+            <tr>
+              <td class="rank">5</td>
+              <td><div class="bar"><span style="width:5.50%"></span></div><span class="bar-label">5.5%</span></td>
+              <td class="num">8,371</td>
+              <td class="num">3,600.7ms</td>
+              <td class="num">16,640.4ms</td>
+              <td class="num">1,453</td>
+              <td><span class="tag tag-rel">relationship lookup</span><span class="tag tag-other">IndexLookUp</span><span class="tag tag-other">TableRowIDScan</span></td>
+              <td class="sql-brief">select `obj_relationship` . `workspace_id` , `obj_relationship` . `partition_id` , `obj_relationship` . `id` , `obj_relationship` . `object_id` , `obj_relationship` . `referenced_object_id` ...</td>
+            </tr>
+            
+
+            <tr>
+              <td class="rank">6</td>
+              <td><div class="bar"><span style="width:4.19%"></span></div><span class="bar-label">4.2%</span></td>
+              <td class="num">1,289</td>
+              <td class="num">17,813.7ms</td>
+              <td class="num">60,055.5ms</td>
+              <td class="num">504,266</td>
+              <td><span class="tag tag-obj">obj_new</span><span class="tag tag-eav">EAV value filter</span><span class="tag tag-other">IndexLookUp</span><span class="tag tag-other">TableRowIDScan</span></td>
+              <td class="sql-brief">select `o` . `sequential_id` , `o` . `numeric_value_4` from `obj_new` `o` where `o` . `workspace_id` = ? and ( `o` . `obj_type_id` = ? and ( ( not `o` . `text_value_7_lower` = ? or `lower` (...</td>
+            </tr>
+            
+
+            <tr>
+              <td class="rank">7</td>
+              <td><div class="bar"><span style="width:4.14%"></span></div><span class="bar-label">4.1%</span></td>
+              <td class="num">1,214</td>
+              <td class="num">18,697.5ms</td>
+              <td class="num">60,035.7ms</td>
+              <td class="num">505,667</td>
+              <td><span class="tag tag-obj">obj_new</span><span class="tag tag-eav">EAV value filter</span><span class="tag tag-other">IndexLookUp</span><span class="tag tag-other">TableRowIDScan</span></td>
+              <td class="sql-brief">select `o` . `sequential_id` , `o` . `text_value_1` from `obj_new` `o` where `o` . `workspace_id` = ? and ( `o` . `obj_type_id` = ? and ( ( not `o` . `text_value_7_lower` = ? or `lower` ( `o...</td>
+            </tr>
+            
+
+            <tr>
+              <td class="rank">8</td>
+              <td><div class="bar"><span style="width:4.12%"></span></div><span class="bar-label">4.1%</span></td>
+              <td class="num">1,254</td>
+              <td class="num">18,030.3ms</td>
+              <td class="num">60,224.3ms</td>
+              <td class="num">493,349</td>
+              <td><span class="tag tag-obj">obj_new</span><span class="tag tag-eav">EAV value filter</span><span class="tag tag-other">IndexLookUp</span><span class="tag tag-other">TableRowIDScan</span></td>
+              <td class="sql-brief">select `o` . `sequential_id` , `o` . `text_value_7` from `obj_new` `o` where `o` . `workspace_id` = ? and ( `o` . `obj_type_id` = ? and ( ( not `o` . `text_value_7_lower` = ? or `lower` ( `o...</td>
+            </tr>
+            
+
+            <tr>
+              <td class="rank">9</td>
+              <td><div class="bar"><span style="width:3.90%"></span></div><span class="bar-label">3.9%</span></td>
+              <td class="num">1,217</td>
+              <td class="num">17,585.5ms</td>
+              <td class="num">60,034.4ms</td>
+              <td class="num">646,338</td>
+              <td><span class="tag tag-obj">obj_new</span><span class="tag tag-eav">EAV value filter</span><span class="tag tag-other">IndexLookUp</span><span class="tag tag-other">TableRowIDScan</span></td>
+              <td class="sql-brief">select `o` . `sequential_id` , `o` . `text_value_8` from `obj_new` `o` where `o` . `workspace_id` = ? and ( `o` . `obj_type_id` = ? and ( ( not `o` . `text_value_7_lower` = ? or `lower` ( `o...</td>
+            </tr>
+            
+
+            <tr>
+              <td class="rank">10</td>
+              <td><div class="bar"><span style="width:2.57%"></span></div><span class="bar-label">2.6%</span></td>
+              <td class="num">602</td>
+              <td class="num">23,452.2ms</td>
+              <td class="num">60,235.9ms</td>
+              <td class="num">1,112,295</td>
+              <td><span class="tag tag-json">JSON filter</span><span class="tag tag-obj">obj_new</span><span class="tag tag-other">IndexLookUp</span><span class="tag tag-other">TableRowIDScan</span><span class="tag tag-other">stats:partial</span></td>
+              <td class="sql-brief">select `o` . `sequential_id` , `o` . `label` from `obj_new` `o` where `o` . `workspace_id` = ? and ( `o` . `obj_type_id` = ? and ( ( `json_contains` ( `o` . `other_values_indexed` , `json_se...</td>
+            </tr>
+            
+
+            <tr>
+              <td class="rank">11</td>
+              <td><div class="bar"><span style="width:2.39%"></span></div><span class="bar-label">2.4%</span></td>
+              <td class="num">1,182</td>
+              <td class="num">11,104.5ms</td>
+              <td class="num">38,077.4ms</td>
+              <td class="num">1,227,365</td>
+              <td><span class="tag tag-obj">obj_new</span><span class="tag tag-other">IndexLookUp</span><span class="tag tag-other">TableRowIDScan</span><span class="tag tag-other">TiFlash</span></td>
+              <td class="sql-brief">select `o` . `sequential_id` , `o` . `label` from `obj_new` `o` where `o` . `workspace_id` = ? and ( `o` . `obj_type_id` = ? and ( `o` . `numeric_value_2` = ? and `o` . `obj_type_id` = ? ) )...</td>
+            </tr>
+            
+
+            <tr>
+              <td class="rank">12</td>
+              <td><div class="bar"><span style="width:2.38%"></span></div><span class="bar-label">2.4%</span></td>
+              <td class="num">560</td>
+              <td class="num">23,296.4ms</td>
+              <td class="num">60,027.2ms</td>
+              <td class="num">1,083,464</td>
+              <td><span class="tag tag-rel">relationship semi-join</span><span class="tag tag-obj">obj_new</span><span class="tag tag-eav">EAV value filter</span><span class="tag tag-other">TiFlash</span><span class="tag tag-other">IndexLookUp</span></td>
+              <td class="sql-brief">select `o` . `sequential_id` , `o` . `label` from `obj_new` `o` where `o` . `workspace_id` = ? and ( `o` . `obj_type_id` in ( ... ) and ( `o` . `text_value_24` = ? and `o` . `obj_type_id` in...</td>
+            </tr>
+            
+
+            <tr>
+              <td class="rank">13</td>
+              <td><div class="bar"><span style="width:2.25%"></span></div><span class="bar-label">2.3%</span></td>
+              <td class="num">542</td>
+              <td class="num">22,785.2ms</td>
+              <td class="num">61,042.9ms</td>
+              <td class="num">1,140,314</td>
+              <td><span class="tag tag-json">JSON filter</span><span class="tag tag-obj">obj_new</span><span class="tag tag-other">IndexLookUp</span><span class="tag tag-other">TableRowIDScan</span><span class="tag tag-other">stats:partial</span></td>
+              <td class="sql-brief">select `o` . `sequential_id` , `o` . `label` from `obj_new` `o` where `o` . `workspace_id` = ? and ( `o` . `obj_type_id` = ? and ( ( `json_contains` ( `o` . `other_values_indexed` , `json_se...</td>
+            </tr>
+            
+
+            <tr>
+              <td class="rank">14</td>
+              <td><div class="bar"><span style="width:2.19%"></span></div><span class="bar-label">2.2%</span></td>
+              <td class="num">1,891</td>
+              <td class="num">6,349.2ms</td>
+              <td class="num">24,231.6ms</td>
+              <td class="num">43,874</td>
+              <td><span class="tag tag-rel">relationship semi-join</span><span class="tag tag-obj">obj_new</span><span class="tag tag-other">TiFlash</span><span class="tag tag-other">IndexLookUp</span><span class="tag tag-other">TableRowIDScan</span></td>
+              <td class="sql-brief">select `o` . `sequential_id` , `o` . `label` from `obj_new` `o` where `o` . `workspace_id` = ? and ( `o` . `obj_type_id` = ? and ( exists ( select ? from `obj_relationship_new` `subr` inner ...</td>
+            </tr>
+            
+
+            <tr>
+              <td class="rank">15</td>
+              <td><div class="bar"><span style="width:2.14%"></span></div><span class="bar-label">2.1%</span></td>
+              <td class="num">476</td>
+              <td class="num">24,624.3ms</td>
+              <td class="num">60,076.1ms</td>
+              <td class="num">1,348,877</td>
+              <td><span class="tag tag-json">JSON filter</span><span class="tag tag-obj">obj_new</span><span class="tag tag-other">IndexLookUp</span><span class="tag tag-other">TableRowIDScan</span><span class="tag tag-other">stats:partial</span></td>
+              <td class="sql-brief">select `o` . `sequential_id` , `o` . `label` from `obj_new` `o` where `o` . `workspace_id` = ? and ( `o` . `obj_type_id` = ? and ( ( `json_contains` ( `o` . `other_values_indexed` , `json_se...</td>
+            </tr>
+            
+
+            <tr>
+              <td class="rank">16</td>
+              <td><div class="bar"><span style="width:1.80%"></span></div><span class="bar-label">1.8%</span></td>
+              <td class="num">407</td>
+              <td class="num">24,248.9ms</td>
+              <td class="num">60,071.5ms</td>
+              <td class="num">1,332,157</td>
+              <td><span class="tag tag-json">JSON filter</span><span class="tag tag-obj">obj_new</span><span class="tag tag-other">IndexLookUp</span><span class="tag tag-other">TableRowIDScan</span><span class="tag tag-other">stats:partial</span></td>
+              <td class="sql-brief">select `o` . `sequential_id` , `o` . `label` from `obj_new` `o` where `o` . `workspace_id` = ? and ( `o` . `obj_type_id` = ? and ( ( `json_contains` ( `o` . `other_values_indexed` , `json_se...</td>
+            </tr>
+            
+
+            <tr>
+              <td class="rank">17</td>
+              <td><div class="bar"><span style="width:1.49%"></span></div><span class="bar-label">1.5%</span></td>
+              <td class="num">680</td>
+              <td class="num">12,030.4ms</td>
+              <td class="num">49,528.4ms</td>
+              <td class="num">506,006</td>
+              <td><span class="tag tag-obj">obj_new</span><span class="tag tag-other">IndexLookUp</span><span class="tag tag-other">TableRowIDScan</span><span class="tag tag-other">TiFlash</span></td>
+              <td class="sql-brief">select `o` . `sequential_id` , `o` . `label` from `obj_new` `o` where `o` . `workspace_id` = ? and ( `o` . `obj_type_id` in ( ... ) and ( ( `o` . `numeric_value_1` != ? or `o` . `numeric_val...</td>
+            </tr>
+            
+
+            <tr>
+              <td class="rank">18</td>
+              <td><div class="bar"><span style="width:1.37%"></span></div><span class="bar-label">1.4%</span></td>
+              <td class="num">3,292</td>
+              <td class="num">2,273.7ms</td>
+              <td class="num">9,599.5ms</td>
+              <td class="num">316</td>
+              <td><span class="tag tag-other">IndexLookUp</span><span class="tag tag-other">TableRowIDScan</span></td>
+              <td class="sql-brief">select `otae1_0` . `id` , `otae1_0` . `additional_value` , `otae1_0` . `aql` , `otae1_0` . `created` , `otae1_0` . `default_type_id` , `otae1_0` . `deleted_at` , `otae1_0` . `description` , ...</td>
+            </tr>
+            
+
+            <tr>
+              <td class="rank">19</td>
+              <td><div class="bar"><span style="width:1.22%"></span></div><span class="bar-label">1.2%</span></td>
+              <td class="num">576</td>
+              <td class="num">11,641.0ms</td>
+              <td class="num">37,969.5ms</td>
+              <td class="num">945,203</td>
+              <td><span class="tag tag-eav">EAV value filter</span><span class="tag tag-other">IndexLookUp</span><span class="tag tag-other">TableRowIDScan</span></td>
+              <td class="sql-brief">select `o` . `workspace_id` , `o` . `partition_id` , `o` . `id` , `o` . `sequential_id` , `o` . `schema_id` , `o` . `schema_key` , `o` . `obj_type_id` , `o` . `external_id` , `o` . `label` ,...</td>
+            </tr>
+            
+
+            <tr>
+              <td class="rank">20</td>
+              <td><div class="bar"><span style="width:1.14%"></span></div><span class="bar-label">1.1%</span></td>
+              <td class="num">407</td>
+              <td class="num">15,370.2ms</td>
+              <td class="num">37,171.1ms</td>
+              <td class="num">529,405</td>
+              <td><span class="tag tag-rel">relationship semi-join</span><span class="tag tag-obj">obj_new</span><span class="tag tag-eav">EAV value filter</span><span class="tag tag-other">TiFlash</span><span class="tag tag-other">IndexLookUp</span></td>
+              <td class="sql-brief">select `o` . `sequential_id` , `o` . `label` from `obj_new` `o` where `o` . `workspace_id` = ? and ( `o` . `obj_type_id` in ( ... ) and exists ( select ? from `obj_relationship_new` `subr` i...</td>
+            </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <h2>Top Digest Details</h2>
+        
+            <details class="digest-card" open>
+              <summary>
+                <span class="digest-title">#1 12cd1340a582</span>
+                <span class="digest-meta">load 12.8% · avg 23,758.0ms · count 2,965</span>
+              </summary>
+              <div class="digest-grid">
+                <div>
+                  <h3>Why It Is Slow</h3>
+                  <ul><li>JSON predicate is evaluated after scanning by object/order index, so each execution does many row lookups before filtering.</li></ul>
+                  <h3>Next Action</h3>
+                  <p>Evaluate multi-valued/generated-column style indexes for JSON paths, ideally combined with workspace_id, obj_type_id, and the dominant sort key.</p>
+                </div>
+                <div class="stats-list">
+                  <div><span>Max latency</span><b>60,094.5ms</b></div>
+                  <div><span>Avg process keys</span><b>1,119,574</b></div>
+                  <div><span>Avg requests</span><b>1,726</b></div>
+                  <div><span>Total read</span><b>10.6 GiB</b></div>
+                  <div><span>Max cop wait</span><b>14,656.3ms</b></div>
+                  <div><span>Index</span><b>[obj_new:ix_obj_label_objtypeid_new]</b></div>
+                </div>
+              </div>
+              <h3>Normalized SQL</h3>
+              <pre class="sql">select `o` . `sequential_id` , `o` . `label` from `obj_new` `o` where `o` . `workspace_id` = ? and ( `o` . `obj_type_id` = ? and ( ( `json_contains` ( `o` . `other_values_indexed` , `json_set` ( cast ( ? as json ) , ? , `json_array` ( ? ) ) ) or `json_contains` ( `o` . `other_values_indexed` , `json_set` ( cast ( ? as json ) , ? , `json_array` ( ? ) ) ) or `json_contains` ( `o` . `other_values_indexed` , `json_set` ( cast ( ? as json ) , ? , `json_array` ( ? ) ) ) or `json_contains` ( `o` . `other_values_indexed` , `json_set` ( cast ( ? as json ) , ? , `json_array` ( ? ) ) ) ) and `o` . `obj_type_id` = ? or ( `json_contains` ( `o` . `other_v…</pre>
+              <h3>Plan Excerpt</h3>
+              <pre class="plan">| id | task | estRows | operator info | actRows | execution info | memory | disk | Limit_14 | root | 1000 | offset:?, count:? | 408 | time:1.1s, open:10.8µs, close:7.52µs, loops:2 | N/A | N/A | └─Projection_115 | root | 1000 | jsm_assets2.obj_new.workspace_id, jsm_assets2.obj_new.sequential_id, jsm_assets2.obj_new.label, jsm_assets2.obj_new.obj_type_id, jsm_assets2.obj_new.other_values_indexed | 408 | time:1.1s, open:9.09µs, close:7.09µs, loops:2, Concurrency:OFF | 193.0 KB | N/A | └─IndexLookUp_114 | root | 1000 | | 408 | time:1.1s, open:6.26µs, close:6.12µs, loops:2, index_task: {total_time: 555.7ms, fetch_handle: 448ms, build: 107.5ms, wait: 179.1µs}, table_task: {total_time: 3.87s, num: 30, concurrency: 5}, next: {wait_index: 13.1ms, wait_table_lookup_build: 178ms, wait_table_lookup_resp: 908.8ms} | 70.2 MB | N/A | ├─Selection_112(Build) | cop[tikv] | 5805.74 | eq(jsm_assets2.obj_ne…</pre>
+            </details>
+            
+
+            <details class="digest-card" open>
+              <summary>
+                <span class="digest-title">#2 11d0b1c66e83</span>
+                <span class="digest-meta">load 10.7% · avg 46,289.6ms · count 1,262</span>
+              </summary>
+              <div class="digest-grid">
+                <div>
+                  <h3>Why It Is Slow</h3>
+                  <ul><li>Nested relationship semi-join has high fanout; plans show expensive index/table lookup work on obj_relationship_new.</li><li>Filter and ORDER BY columns are not covered together, causing ordered range scans plus TableRowIDScan probes.</li></ul>
+                  <h3>Next Action</h3>
+                  <p>Check covering indexes for join direction plus relationship attribute/type filters, and consider rewriting to start from the most selective side.</p>
+                </div>
+                <div class="stats-list">
+                  <div><span>Max latency</span><b>61,133.3ms</b></div>
+                  <div><span>Avg process keys</span><b>4,836,801</b></div>
+                  <div><span>Avg requests</span><b>2,669</b></div>
+                  <div><span>Total read</span><b>25.2 GiB</b></div>
+                  <div><span>Max cop wait</span><b>14,710.6ms</b></div>
+                  <div><span>Index</span><b>No index listed in slow log</b></div>
+                </div>
+              </div>
+              <h3>Normalized SQL</h3>
+              <pre class="sql">select `o` . `sequential_id` , `o` . `label` from `obj_new` `o` where `o` . `workspace_id` = ? and ( `o` . `obj_type_id` in ( ... ) and ( `o` . `text_value_24` = ? and `o` . `obj_type_id` in ( ... ) ) and exists ( select ? from `obj_relationship_new` `subr` inner join `obj_new` `subo1` on `subr` . `referenced_object_id` = `subo1` . `id` and `subo1` . `obj_type_id` in ( ... ) where `o` . `id` = `subr` . `object_id` and `subo1` . `workspace_id` = ? and exists ( select ? from `obj_relationship_new` `subr1` inner join `obj_new` `subo2` on `subr1` . `object_id` = `subo2` . `id` and `subo2` . `obj_type_id` in ( ... ) where `subo1` . `id` = `subr1`…</pre>
+              <h3>Plan Excerpt</h3>
+              <pre class="plan">| id | task | estRows | operator info | actRows | execution info | memory | disk | TopN_30 | root | 1000 | jsm_assets2.obj_new.label, offset:?, count:? | 1000 | time:320.5ms, open:13.1ms, close:8.11µs, loops:2 | 172.8 KB | 0 Bytes | └─TableReader_401 | root | 1000 | MppVersion: 3, data:ExchangeSender_400 | 33000 | time:316.6ms, open:13.1ms, close:7.16µs, loops:34, cop_task: {num: 66, max: 0s, min: 0s, avg: 0s, p95: 0s, copr_cache_hit_ratio: 0.00}, fetch_resp_duration: 302.8ms | 1.11 MB | N/A | └─ExchangeSender_400 | cop[tiflash] | 1000 | ExchangeType: PassThrough | 33000 | tiflash_task:{proc max:302.1ms, min:298.8ms, avg: 300.1ms, p80:300.9ms, p95:301.6ms, iters:33, tasks:33, threads:528}, tiflash_network: {inner_zone_send_bytes: 590954, inter_zone_send_bytes: 1182802} | N/A | N/A | └─TopN_399 | cop[tiflash] | 1000 | jsm_assets2.obj_new.label, offset:?, count:? | 33000 | tiflash_task:{p…</pre>
+            </details>
+            
+
+            <details class="digest-card" open>
+              <summary>
+                <span class="digest-title">#3 77df89383afb</span>
+                <span class="digest-meta">load 10.0% · avg 9,360.8ms · count 5,882</span>
+              </summary>
+              <div class="digest-grid">
+                <div>
+                  <h3>Why It Is Slow</h3>
+                  <ul><li>Filter and ORDER BY columns are not covered together, causing ordered range scans plus TableRowIDScan probes.</li></ul>
+                  <h3>Next Action</h3>
+                  <p>Create or validate compound indexes matching the common filter + ORDER BY combinations; avoid relying on label/order index followed by residual filtering.</p>
+                </div>
+                <div class="stats-list">
+                  <div><span>Max latency</span><b>52,871.3ms</b></div>
+                  <div><span>Avg process keys</span><b>444,952</b></div>
+                  <div><span>Avg requests</span><b>482</b></div>
+                  <div><span>Total read</span><b>3.0 GiB</b></div>
+                  <div><span>Max cop wait</span><b>14,439.1ms</b></div>
+                  <div><span>Index</span><b>[obj_new:ix_obj_label_objtypeid_new]</b></div>
+                </div>
+              </div>
+              <h3>Normalized SQL</h3>
+              <pre class="sql">select `o` . `sequential_id` , `o` . `label` from `obj_new` `o` where `o` . `workspace_id` = ? and ( `o` . `obj_type_id` in ( ... ) and ( ( ? != ? or `o` . `numeric_value_5` is ? ) and `o` . `numeric_value_5` is not ? and `o` . `obj_type_id` = ? or ( ? != ? or `o` . `numeric_value_5` is ? ) and `o` . `numeric_value_5` is not ? and `o` . `obj_type_id` = ? or ( ? != ? or `o` . `numeric_value_5` is ? ) and `o` . `numeric_value_5` is not ? and `o` . `obj_type_id` = ? or ( ? != ? or `o` . `numeric_value_5` is ? ) and `o` . `numeric_value_5` is not ? and `o` . `obj_type_id` = ? or ( ? != ? or `o` . `numeric_value_5` is ? ) and `o` . `numeric_value…</pre>
+              <h3>Plan Excerpt</h3>
+              <pre class="plan">| id | task | estRows | operator info | actRows | execution info | memory | disk | Limit_14 | root | 1000 | offset:?, count:? | 1000 | time:717.8ms, open:15.6µs, close:11.4ms, loops:2 | N/A | N/A | └─Projection_115 | root | 1000 | jsm_assets2.obj_new.workspace_id, jsm_assets2.obj_new.sequential_id, jsm_assets2.obj_new.label, jsm_assets2.obj_new.obj_type_id, jsm_assets2.obj_new.numeric_value_5 | 1000 | time:717.7ms, open:13.9µs, close:11.4ms, loops:1, Concurrency:OFF | 178.7 KB | N/A | └─IndexLookUp_114 | root | 1000 | | 1000 | time:717.7ms, open:7.39µs, close:11.4ms, loops:1, index_task: {total_time: 694.7ms, fetch_handle: 532.9ms, build: 161.5ms, wait: 250.4µs}, table_task: {total_time: 2.55s, num: 5, concurrency: 5}, next: {wait_index: 13.1ms, wait_table_lookup_build: 51.6ms, wait_table_lookup_resp: 640.9ms} | 183.6 MB | N/A | ├─Selection_112(Build) | cop[tikv] | 7549.67 | in(jsm_asse…</pre>
+            </details>
+            
+
+            <details class="digest-card" open>
+              <summary>
+                <span class="digest-title">#4 45a8dc3a1ec1</span>
+                <span class="digest-meta">load 8.9% · avg 11,775.9ms · count 4,127</span>
+              </summary>
+              <div class="digest-grid">
+                <div>
+                  <h3>Why It Is Slow</h3>
+                  <ul><li>FTS index is used, but it returns a large candidate set; TiKV table lookup and residual filters dominate the tail latency.</li><li>Filter and ORDER BY columns are not covered together, causing ordered range scans plus TableRowIDScan probes.</li></ul>
+                  <h3>Next Action</h3>
+                  <p>Reduce post-FTS candidate volume by pushing selective filters closer to retrieval, or by adding a complementary filter/sort path.</p>
+                </div>
+                <div class="stats-list">
+                  <div><span>Max latency</span><b>51,253.1ms</b></div>
+                  <div><span>Avg process keys</span><b>202,759</b></div>
+                  <div><span>Avg requests</span><b>104</b></div>
+                  <div><span>Total read</span><b>13.9 GiB</b></div>
+                  <div><span>Max cop wait</span><b>14,484.3ms</b></div>
+                  <div><span>Index</span><b>[obj_new:idx_fts_text_value_22]</b></div>
+                </div>
+              </div>
+              <h3>Normalized SQL</h3>
+              <pre class="sql">select `o` . `sequential_id` , `o` . `label` from `obj_new` `o` where `o` . `workspace_id` = ? and ( `o` . `obj_type_id` in ( ... ) and ( `o` . `obj_type_id` = ? or `o` . `obj_type_id` = ? ) and ( `o` . `text_value_23` = ? and `o` . `obj_type_id` in ( ... ) and ( match ( `o` . `text_value_22` ) against ( ? in boolean mode ) and `o` . `text_value_22` like ? and `o` . `text_value_22` != ? and `o` . `obj_type_id` in ( ... ) ) and ( `o` . `text_value_9` = ? and `o` . `obj_type_id` in ( ... ) ) and ( `o` . `numeric_value_3` = ? and `o` . `obj_type_id` in ( ... ) or `o` . `numeric_value_1` = ? and `o` . `obj_type_id` in ( ... ) ) ) ) order by `o` …</pre>
+              <h3>Plan Excerpt</h3>
+              <pre class="plan">| id | task | estRows | operator info | actRows | execution info | memory | disk | TopN_10 | root | 1.00 | jsm_assets2.obj_new.label, offset:?, count:? | 8 | time:14.4s, open:49.5µs, close:7.65µs, loops:2 | 7.21 KB | 0 Bytes | └─Projection_22 | root | 1.00 | jsm_assets2.obj_new.workspace_id, jsm_assets2.obj_new.sequential_id, jsm_assets2.obj_new.label, jsm_assets2.obj_new.obj_type_id, jsm_assets2.obj_new.text_value_9, jsm_assets2.obj_new.text_value_22, jsm_assets2.obj_new.text_value_23, jsm_assets2.obj_new.numeric_value_1, jsm_assets2.obj_new.numeric_value_3 | 8 | time:14.4s, open:8.76µs, close:6.8µs, loops:3, Concurrency:OFF | 7.77 KB | N/A | └─IndexLookUp_21 | root | 1.00 | | 8 | time:14.4s, open:4.82µs, close:5.58µs, loops:3, index_task: {total_time: 2.36s, fetch_handle: 2.36s, build: 57.2µs, wait: 162.7µs}, table_task: {total_time: 9.62s, num: 28, concurrency: 5}, next: {wait_index:…</pre>
+            </details>
+            
+
+            <details class="digest-card" >
+              <summary>
+                <span class="digest-title">#5 5458cc92e3a6</span>
+                <span class="digest-meta">load 5.5% · avg 3,600.7ms · count 8,371</span>
+              </summary>
+              <div class="digest-grid">
+                <div>
+                  <h3>Why It Is Slow</h3>
+                  <ul><li>Per-query key count is not huge, but cop wait is high; this looks amplified by TiKV IO/scheduling pressure.</li></ul>
+                  <h3>Next Action</h3>
+                  <p>Use a covering relationship index where possible, and investigate TiKV hot-node IO because wait time exceeds processing time.</p>
+                </div>
+                <div class="stats-list">
+                  <div><span>Max latency</span><b>16,640.4ms</b></div>
+                  <div><span>Avg process keys</span><b>1,453</b></div>
+                  <div><span>Avg requests</span><b>51</b></div>
+                  <div><span>Total read</span><b>0.6 GiB</b></div>
+                  <div><span>Max cop wait</span><b>14,419.6ms</b></div>
+                  <div><span>Index</span><b>[obj_relationship_new:ix_obj_rel_object_id_without_partition]</b></div>
+                </div>
+              </div>
+              <h3>Normalized SQL</h3>
+              <pre class="sql">select `obj_relationship` . `workspace_id` , `obj_relationship` . `partition_id` , `obj_relationship` . `id` , `obj_relationship` . `object_id` , `obj_relationship` . `referenced_object_id` , `obj_relationship` . `object_type_attribute_id` , `obj_relationship` . `object_type_id` , `obj_relationship` . `referenced_object_type_id` from `obj_relationship_new` `obj_relationship` where `obj_relationship` . `object_id` in ( ... );</pre>
+              <h3>Plan Excerpt</h3>
+              <pre class="plan">| id | task | estRows | operator info | actRows | execution info | memory | disk | Projection_4 | root | 312.69 | jsm_assets2.obj_relationship_new.workspace_id, jsm_assets2.obj_relationship_new.partition_id, jsm_assets2.obj_relationship_new.id, jsm_assets2.obj_relationship_new.object_id, jsm_assets2.obj_relationship_new.referenced_object_id, jsm_assets2.obj_relationship_new.object_type_attribute_id, jsm_assets2.obj_relationship_new.object_type_id, jsm_assets2.obj_relationship_new.referenced_object_type_id | 494 | time:1.93s, open:14µs, close:10.3µs, loops:2, Concurrency:OFF | 115.4 KB | N/A | └─IndexLookUp_11 | root | 312.69 | | 494 | time:1.93s, open:10.2µs, close:8.65µs, loops:2, index_task: {total_time: 1.91s, fetch_handle: 1.91s, build: 1.03µs, wait: 6.69µs}, table_task: {total_time: 16.2ms, num: 1, concurrency: 5}, next: {wait_index: 1.91s, wait_table_lookup_build: 209.5µs, wait_ta…</pre>
+            </details>
+            
+
+            <details class="digest-card" >
+              <summary>
+                <span class="digest-title">#6 3339ee87afb2</span>
+                <span class="digest-meta">load 4.2% · avg 17,813.7ms · count 1,289</span>
+              </summary>
+              <div class="digest-grid">
+                <div>
+                  <h3>Why It Is Slow</h3>
+                  <ul><li>Filter and ORDER BY columns are not covered together, causing ordered range scans plus TableRowIDScan probes.</li></ul>
+                  <h3>Next Action</h3>
+                  <p>Create or validate compound indexes matching the common filter + ORDER BY combinations; avoid relying on label/order index followed by residual filtering.</p>
+                </div>
+                <div class="stats-list">
+                  <div><span>Max latency</span><b>60,055.5ms</b></div>
+                  <div><span>Avg process keys</span><b>504,266</b></div>
+                  <div><span>Avg requests</span><b>874</b></div>
+                  <div><span>Total read</span><b>4.8 GiB</b></div>
+                  <div><span>Max cop wait</span><b>13,191.1ms</b></div>
+                  <div><span>Index</span><b>[obj_new:ix_obj_composite_ot_lower_label], [obj_new:ix_obj_composite_ot_lower_text_value_7]</b></div>
+                </div>
+              </div>
+              <h3>Normalized SQL</h3>
+              <pre class="sql">select `o` . `sequential_id` , `o` . `numeric_value_4` from `obj_new` `o` where `o` . `workspace_id` = ? and ( `o` . `obj_type_id` = ? and ( ( not `o` . `text_value_7_lower` = ? or `lower` ( `o` . `text_value_7` ) = ? ) and `o` . `text_value_7` is not ? and `o` . `obj_type_id` = ? ) and ( `o` . `text_value_16` = ? and `o` . `obj_type_id` = ? ) ) order by `o` . `numeric_value_4` asc limit ? offset ?;</pre>
+              <h3>Plan Excerpt</h3>
+              <pre class="plan">| id | task | estRows | operator info | actRows | execution info | memory | disk | TopN_10 | root | 30.53 | jsm_assets2.obj_new.numeric_value_4, offset:?, count:? | 1000 | time:5.62s, open:34.2µs, close:13.1µs, loops:2 | 270.8 KB | 0 Bytes | └─Selection_53 | root | 6.16 | or(ne(jsm_assets2.obj_new.text_value_7_lower, ?), eq(lower(jsm_assets2.obj_new.text_value_7), ?)) | 2509 | time:5.62s, open:12.2µs, close:12µs, loops:4 | 185.7 KB | N/A | └─Projection_52 | root | 7.70 | jsm_assets2.obj_new.workspace_id, jsm_assets2.obj_new.sequential_id, jsm_assets2.obj_new.obj_type_id, jsm_assets2.obj_new.text_value_7, jsm_assets2.obj_new.text_value_16, jsm_assets2.obj_new.numeric_value_4, jsm_assets2.obj_new.text_value_7_lower | 2617 | time:5.62s, open:9.07µs, close:11.4µs, loops:5, Concurrency:OFF | 486.0 KB | N/A | └─IndexLookUp_51 | root | 7.70 | | 2617 | time:5.62s, open:5.75µs, close:8.69µs, loo…</pre>
+            </details>
+            
+
+            <details class="digest-card" >
+              <summary>
+                <span class="digest-title">#7 24e46998b01f</span>
+                <span class="digest-meta">load 4.1% · avg 18,697.5ms · count 1,214</span>
+              </summary>
+              <div class="digest-grid">
+                <div>
+                  <h3>Why It Is Slow</h3>
+                  <ul><li>Filter and ORDER BY columns are not covered together, causing ordered range scans plus TableRowIDScan probes.</li></ul>
+                  <h3>Next Action</h3>
+                  <p>Create or validate compound indexes matching the common filter + ORDER BY combinations; avoid relying on label/order index followed by residual filtering.</p>
+                </div>
+                <div class="stats-list">
+                  <div><span>Max latency</span><b>60,035.7ms</b></div>
+                  <div><span>Avg process keys</span><b>505,667</b></div>
+                  <div><span>Avg requests</span><b>886</b></div>
+                  <div><span>Total read</span><b>5.6 GiB</b></div>
+                  <div><span>Max cop wait</span><b>14,583.0ms</b></div>
+                  <div><span>Index</span><b>[obj_new:ix_obj_composite_ot_lower_label], [obj_new:ix_obj_composite_ot_lower_text_value_7]</b></div>
+                </div>
+              </div>
+              <h3>Normalized SQL</h3>
+              <pre class="sql">select `o` . `sequential_id` , `o` . `text_value_1` from `obj_new` `o` where `o` . `workspace_id` = ? and ( `o` . `obj_type_id` = ? and ( ( not `o` . `text_value_7_lower` = ? or `lower` ( `o` . `text_value_7` ) = ? ) and `o` . `text_value_7` is not ? and `o` . `obj_type_id` = ? ) and ( `o` . `text_value_8` = ? and `o` . `obj_type_id` = ? ) ) order by `o` . `text_value_1` asc limit ? offset ?;</pre>
+              <h3>Plan Excerpt</h3>
+              <pre class="plan">| id | task | estRows | operator info | actRows | execution info | memory | disk | TopN_10 | root | 1000 | jsm_assets2.obj_new.text_value_1, offset:?, count:? | 1000 | time:2.14s, open:28.3µs, close:30.5µs, loops:2 | 506.9 KB | 0 Bytes | └─Selection_53 | root | 2068.76 | or(ne(jsm_assets2.obj_new.text_value_7_lower, ?), eq(lower(jsm_assets2.obj_new.text_value_7), ?)) | 24871 | time:2.13s, open:9.33µs, close:29.4µs, loops:26 | 185.4 KB | N/A | └─Projection_52 | root | 2585.95 | jsm_assets2.obj_new.workspace_id, jsm_assets2.obj_new.sequential_id, jsm_assets2.obj_new.obj_type_id, jsm_assets2.obj_new.text_value_1, jsm_assets2.obj_new.text_value_7, jsm_assets2.obj_new.text_value_8, jsm_assets2.obj_new.text_value_7_lower | 25961 | time:2.13s, open:6.06µs, close:28.5µs, loops:28, Concurrency:5 | 1.90 MB | N/A | └─IndexLookUp_51 | root | 2585.95 | | 25961 | time:2.13s, open:5.25µs, close:7.58µs…</pre>
+            </details>
+            
+
+            <details class="digest-card" >
+              <summary>
+                <span class="digest-title">#8 16936afc4ac9</span>
+                <span class="digest-meta">load 4.1% · avg 18,030.3ms · count 1,254</span>
+              </summary>
+              <div class="digest-grid">
+                <div>
+                  <h3>Why It Is Slow</h3>
+                  <ul><li>Filter and ORDER BY columns are not covered together, causing ordered range scans plus TableRowIDScan probes.</li></ul>
+                  <h3>Next Action</h3>
+                  <p>Create or validate compound indexes matching the common filter + ORDER BY combinations; avoid relying on label/order index followed by residual filtering.</p>
+                </div>
+                <div class="stats-list">
+                  <div><span>Max latency</span><b>60,224.3ms</b></div>
+                  <div><span>Avg process keys</span><b>493,349</b></div>
+                  <div><span>Avg requests</span><b>869</b></div>
+                  <div><span>Total read</span><b>7.3 GiB</b></div>
+                  <div><span>Max cop wait</span><b>14,542.6ms</b></div>
+                  <div><span>Index</span><b>[obj_new:ix_obj_composite_ot_lower_label], [obj_new:ix_obj_composite_ot_lower_text_value_7]</b></div>
+                </div>
+              </div>
+              <h3>Normalized SQL</h3>
+              <pre class="sql">select `o` . `sequential_id` , `o` . `text_value_7` from `obj_new` `o` where `o` . `workspace_id` = ? and ( `o` . `obj_type_id` = ? and ( ( not `o` . `text_value_7_lower` = ? or `lower` ( `o` . `text_value_7` ) = ? ) and `o` . `text_value_7` is not ? and `o` . `obj_type_id` = ? ) and ( `o` . `text_value_8` = ? and `o` . `obj_type_id` = ? ) ) order by `o` . `text_value_7` asc limit ? offset ?;</pre>
+              <h3>Plan Excerpt</h3>
+              <pre class="plan">| id | task | estRows | operator info | actRows | execution info | memory | disk | TopN_10 | root | 1000 | jsm_assets2.obj_new.text_value_7, offset:?, count:? | 1000 | time:1.55s, open:29.6µs, close:12.2µs, loops:2 | 172.0 KB | 0 Bytes | └─Selection_57 | root | 750.49 | or(ne(jsm_assets2.obj_new.text_value_7_lower, ?), eq(lower(jsm_assets2.obj_new.text_value_7), ?)) | 16384 | time:1.55s, open:9.13µs, close:11.2µs, loops:17 | 154.4 KB | N/A | └─Projection_56 | root | 938.12 | jsm_assets2.obj_new.workspace_id, jsm_assets2.obj_new.sequential_id, jsm_assets2.obj_new.obj_type_id, jsm_assets2.obj_new.text_value_7, jsm_assets2.obj_new.text_value_8, jsm_assets2.obj_new.text_value_7_lower | 17122 | time:1.55s, open:5.95µs, close:10.7µs, loops:19, Concurrency:OFF | 890.2 KB | N/A | └─IndexLookUp_55 | root | 938.12 | | 17122 | time:1.55s, open:3.97µs, close:8.39µs, loops:19, index_task: {total_tim…</pre>
+            </details>
+            
+
+            <details class="digest-card" >
+              <summary>
+                <span class="digest-title">#9 62950bc7fd59</span>
+                <span class="digest-meta">load 3.9% · avg 17,585.5ms · count 1,217</span>
+              </summary>
+              <div class="digest-grid">
+                <div>
+                  <h3>Why It Is Slow</h3>
+                  <ul><li>Filter and ORDER BY columns are not covered together, causing ordered range scans plus TableRowIDScan probes.</li></ul>
+                  <h3>Next Action</h3>
+                  <p>Create or validate compound indexes matching the common filter + ORDER BY combinations; avoid relying on label/order index followed by residual filtering.</p>
+                </div>
+                <div class="stats-list">
+                  <div><span>Max latency</span><b>60,034.4ms</b></div>
+                  <div><span>Avg process keys</span><b>646,338</b></div>
+                  <div><span>Avg requests</span><b>789</b></div>
+                  <div><span>Total read</span><b>7.7 GiB</b></div>
+                  <div><span>Max cop wait</span><b>14,564.4ms</b></div>
+                  <div><span>Index</span><b>[obj_new:ix_obj_composite_ot_lower_label], [obj_new:ix_obj_composite_ot_lower_text_value_7]</b></div>
+                </div>
+              </div>
+              <h3>Normalized SQL</h3>
+              <pre class="sql">select `o` . `sequential_id` , `o` . `text_value_8` from `obj_new` `o` where `o` . `workspace_id` = ? and ( `o` . `obj_type_id` = ? and ( ( not `o` . `text_value_7_lower` = ? or `lower` ( `o` . `text_value_7` ) = ? ) and `o` . `text_value_7` is not ? and `o` . `obj_type_id` = ? ) and ( `o` . `text_value_8` = ? and `o` . `obj_type_id` = ? ) ) order by `o` . `text_value_8` asc limit ? offset ?;</pre>
+              <h3>Plan Excerpt</h3>
+              <pre class="plan">| id | task | estRows | operator info | actRows | execution info | memory | disk | TopN_10 | root | 487.03 | jsm_assets2.obj_new.text_value_8, offset:?, count:? | 1000 | time:2.17s, open:30.3µs, close:10.2µs, loops:2 | 165.2 KB | 0 Bytes | └─Selection_60 | root | 128.25 | or(ne(jsm_assets2.obj_new.text_value_7_lower, ?), eq(lower(jsm_assets2.obj_new.text_value_7), ?)) | 8184 | time:2.17s, open:11.4µs, close:9.26µs, loops:9 | 157.2 KB | N/A | └─Projection_59 | root | 160.32 | jsm_assets2.obj_new.workspace_id, jsm_assets2.obj_new.sequential_id, jsm_assets2.obj_new.obj_type_id, jsm_assets2.obj_new.text_value_7, jsm_assets2.obj_new.text_value_8, jsm_assets2.obj_new.text_value_7_lower | 8565 | time:2.16s, open:8.35µs, close:8.75µs, loops:11, Concurrency:OFF | 896.4 KB | N/A | └─IndexLookUp_58 | root | 160.32 | | 8565 | time:2.16s, open:5.69µs, close:7.09µs, loops:11, index_task: {total_time:…</pre>
+            </details>
+            
+
+            <details class="digest-card" >
+              <summary>
+                <span class="digest-title">#10 589a396a0b74</span>
+                <span class="digest-meta">load 2.6% · avg 23,452.2ms · count 602</span>
+              </summary>
+              <div class="digest-grid">
+                <div>
+                  <h3>Why It Is Slow</h3>
+                  <ul><li>JSON predicate is evaluated after scanning by object/order index, so each execution does many row lookups before filtering.</li></ul>
+                  <h3>Next Action</h3>
+                  <p>Evaluate multi-valued/generated-column style indexes for JSON paths, ideally combined with workspace_id, obj_type_id, and the dominant sort key.</p>
+                </div>
+                <div class="stats-list">
+                  <div><span>Max latency</span><b>60,235.9ms</b></div>
+                  <div><span>Avg process keys</span><b>1,112,295</b></div>
+                  <div><span>Avg requests</span><b>1,590</b></div>
+                  <div><span>Total read</span><b>2.5 GiB</b></div>
+                  <div><span>Max cop wait</span><b>14,516.9ms</b></div>
+                  <div><span>Index</span><b>[obj_new:ix_obj_label_objtypeid_new]</b></div>
+                </div>
+              </div>
+              <h3>Normalized SQL</h3>
+              <pre class="sql">select `o` . `sequential_id` , `o` . `label` from `obj_new` `o` where `o` . `workspace_id` = ? and ( `o` . `obj_type_id` = ? and ( ( `json_contains` ( `o` . `other_values_indexed` , `json_set` ( cast ( ? as json ) , ? , `json_array` ( ? ) ) ) or `json_contains` ( `o` . `other_values_indexed` , `json_set` ( cast ( ? as json ) , ? , `json_array` ( ? ) ) ) or `json_contains` ( `o` . `other_values_indexed` , `json_set` ( cast ( ? as json ) , ? , `json_array` ( ? ) ) ) or `json_contains` ( `o` . `other_values_indexed` , `json_set` ( cast ( ? as json ) , ? , `json_array` ( ? ) ) ) ) and `o` . `obj_type_id` = ? ) ) order by `o` . `label` asc limit …</pre>
+              <h3>Plan Excerpt</h3>
+              <pre class="plan">| id | task | estRows | operator info | actRows | execution info | memory | disk | Limit_14 | root | 1000 | offset:?, count:? | 0 | time:15.8s, open:25.2µs, close:16.8µs, loops:1 | N/A | N/A | └─Projection_115 | root | 1000 | jsm_assets2.obj_new.workspace_id, jsm_assets2.obj_new.sequential_id, jsm_assets2.obj_new.label, jsm_assets2.obj_new.obj_type_id, jsm_assets2.obj_new.other_values_indexed | 0 | time:15.8s, open:23.8µs, close:16.1µs, loops:1, Concurrency:OFF | 3.48 KB | N/A | └─IndexLookUp_114 | root | 1000 | | 0 | time:15.8s, open:19.8µs, close:14.5µs, loops:1, index_task: {total_time: 2.57s, fetch_handle: 2.46s, build: 112.8ms, wait: 147.7µs}, table_task: {total_time: 1m8.4s, num: 30, concurrency: 5}, next: {wait_index: 105ms, wait_table_lookup_build: 195.9ms, wait_table_lookup_resp: 15.5s} | 92.9 MB | N/A | ├─Selection_112(Build) | cop[tikv] | 7045.87 | eq(jsm_assets2.obj_new.obj_…</pre>
+            </details>
+            
+
+            <details class="digest-card" >
+              <summary>
+                <span class="digest-title">#11 5e68546e7f02</span>
+                <span class="digest-meta">load 2.4% · avg 11,104.5ms · count 1,182</span>
+              </summary>
+              <div class="digest-grid">
+                <div>
+                  <h3>Why It Is Slow</h3>
+                  <ul><li>Filter and ORDER BY columns are not covered together, causing ordered range scans plus TableRowIDScan probes.</li></ul>
+                  <h3>Next Action</h3>
+                  <p>Create or validate compound indexes matching the common filter + ORDER BY combinations; avoid relying on label/order index followed by residual filtering.</p>
+                </div>
+                <div class="stats-list">
+                  <div><span>Max latency</span><b>38,077.4ms</b></div>
+                  <div><span>Avg process keys</span><b>1,227,365</b></div>
+                  <div><span>Avg requests</span><b>791</b></div>
+                  <div><span>Total read</span><b>1.3 GiB</b></div>
+                  <div><span>Max cop wait</span><b>14,279.5ms</b></div>
+                  <div><span>Index</span><b>[obj_new:ix_obj_label_objtypeid_new]</b></div>
+                </div>
+              </div>
+              <h3>Normalized SQL</h3>
+              <pre class="sql">select `o` . `sequential_id` , `o` . `label` from `obj_new` `o` where `o` . `workspace_id` = ? and ( `o` . `obj_type_id` = ? and ( `o` . `numeric_value_2` = ? and `o` . `obj_type_id` = ? ) ) order by `o` . `label` asc limit ? offset ?;</pre>
+              <h3>Plan Excerpt</h3>
+              <pre class="plan">| id | task | estRows | operator info | actRows | execution info | memory | disk | Limit_14 | root | 1000 | offset:?, count:? | 1000 | time:476.8ms, open:13.9µs, close:139.2ms, loops:2 | N/A | N/A | └─Projection_117 | root | 1000 | jsm_assets2.obj_new.workspace_id, jsm_assets2.obj_new.sequential_id, jsm_assets2.obj_new.label, jsm_assets2.obj_new.obj_type_id, jsm_assets2.obj_new.numeric_value_2 | 1000 | time:476.8ms, open:12.4µs, close:139.2ms, loops:1, Concurrency:OFF | 179.5 KB | N/A | └─IndexLookUp_116 | root | 1000 | | 1000 | time:476.8ms, open:7.25µs, close:139.2ms, loops:1, index_task: {total_time: 279.2ms, fetch_handle: 267.9ms, build: 11.3ms, wait: 17.5µs}, table_task: {total_time: 142.3ms, num: 3, concurrency: 5}, next: {wait_index: 98.2ms, wait_table_lookup_build: 178.5ms, wait_table_lookup_resp: 60.5ms} | 65.9 MB | N/A | ├─Selection_114(Build) | cop[tikv] | 3691.23 | eq(jsm_as…</pre>
+            </details>
+            
+
+            <details class="digest-card" >
+              <summary>
+                <span class="digest-title">#12 7a54159736c1</span>
+                <span class="digest-meta">load 2.4% · avg 23,296.4ms · count 560</span>
+              </summary>
+              <div class="digest-grid">
+                <div>
+                  <h3>Why It Is Slow</h3>
+                  <ul><li>Nested relationship semi-join has high fanout; plans show expensive index/table lookup work on obj_relationship_new.</li><li>Filter and ORDER BY columns are not covered together, causing ordered range scans plus TableRowIDScan probes.</li></ul>
+                  <h3>Next Action</h3>
+                  <p>Check covering indexes for join direction plus relationship attribute/type filters, and consider rewriting to start from the most selective side.</p>
+                </div>
+                <div class="stats-list">
+                  <div><span>Max latency</span><b>60,027.2ms</b></div>
+                  <div><span>Avg process keys</span><b>1,083,464</b></div>
+                  <div><span>Avg requests</span><b>1,837</b></div>
+                  <div><span>Total read</span><b>54.7 GiB</b></div>
+                  <div><span>Max cop wait</span><b>14,660.2ms</b></div>
+                  <div><span>Index</span><b>No index listed in slow log</b></div>
+                </div>
+              </div>
+              <h3>Normalized SQL</h3>
+              <pre class="sql">select `o` . `sequential_id` , `o` . `label` from `obj_new` `o` where `o` . `workspace_id` = ? and ( `o` . `obj_type_id` in ( ... ) and ( `o` . `text_value_24` = ? and `o` . `obj_type_id` in ( ... ) ) and exists ( select ? from `obj_relationship_new` `subr` inner join `obj_new` `subo1` on `subr` . `object_id` = `subo1` . `id` and `subo1` . `obj_type_id` in ( ... ) where `o` . `id` = `subr` . `referenced_object_id` and `subo1` . `workspace_id` = ? and ( `subo1` . `text_value_8` = ? and `subo1` . `obj_type_id` in ( ... ) ) ) ) order by `o` . `label` asc limit ? offset ?;</pre>
+              <h3>Plan Excerpt</h3>
+              <pre class="plan">| id | task | estRows | operator info | actRows | execution info | memory | disk | TopN_20 | root | 1000 | jsm_assets2.obj_new.label, offset:?, count:? | 1000 | time:11.3s, open:5.1ms, close:22.7µs, loops:2 | 106.3 KB | 0 Bytes | └─HashJoin_37 | root | 2400.51 | semi join, left side:TableReader_93, equal:[eq(jsm_assets2.obj_new.id, jsm_assets2.obj_relationship_new.referenced_object_id)] | 13957 | time:11.3s, open:5.08ms, close:21.3µs, loops:16, build_hash_table:{concurrency:5, time:12.2ms, fetch:10.6ms, max_partition:1.51ms, total_partition:6.59ms, max_build:107.7µs, total_build:432.2µs}, probe:{concurrency:5, time:11.3s, fetch_and_wait:11.3s, max_worker_time:11.3s, total_worker_time:56.6s, max_probe:7.93ms, total_probe:33.9ms, probe_collision:11492} | 4.12 MB | 0 Bytes | ├─TableReader_93(Build) | root | 3000.64 | MppVersion: 3, data:ExchangeSender_92 | 42981 | time:13.4ms, open:2.54ms,…</pre>
+            </details>
+            
+
+        <section class="footer">
+          Source: INFORMATION_SCHEMA_CLUSTER_SLOW_QUERY.csv.zip (customer export; raw zip is not committed because it is 184MB). Raw CSV zip is intentionally not committed to git because it is larger than GitHub's normal single-file limit.
+        </section>
+      </main>
+    </body>
+    </html>
+    
