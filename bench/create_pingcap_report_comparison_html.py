@@ -399,8 +399,9 @@ td.diff-cell { white-space: normal; min-width: 360px; max-width: 560px; overflow
 .query-detail[open] summary { border-bottom: 1px solid #eadfcd; border-radius: 12px 12px 0 0; background: #f7efe1; }
 .query-detail section, .detail-grid { padding: 0 14px 14px; }
 .detail-grid { display: grid; grid-template-columns: minmax(360px, 1fr) minmax(360px, 1fr); gap: 16px; }
-.split { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-pre { margin: 0; padding: 12px; max-height: 520px; overflow: auto; background: #10242a; color: #ecf6f2; border-radius: 10px; font: 12px/1.45 "SFMono-Regular", Consolas, monospace; white-space: pre; }
+.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+.split > div { min-width: 0; }
+pre { box-sizing: border-box; max-width: 100%; margin: 0; padding: 12px; max-height: 520px; overflow: auto; background: #10242a; color: #ecf6f2; border-radius: 10px; font: 12px/1.45 "SFMono-Regular", Consolas, monospace; white-space: pre; }
 pre.sql { white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; }
 .plans pre { max-height: 680px; }
 @media (max-width: 980px) { .split, .detail-grid { grid-template-columns: 1fr; } main, header { padding-left: 16px; padding-right: 16px; } }
