@@ -430,13 +430,13 @@ def main_difference(item: dict[str, Any]) -> str:
 
     curated = {
         8: "仅 FTS 索引名不同，索引列相同：text_value_22；整体 plan shape 一致。",
-        14: "客户文档走 text_value_7_lower 复合索引 + IndexLookUp；当前走 TableRangeScan/TableReader，未走该索引。",
-        15: "客户文档走 text_value_7_lower 复合索引 + IndexLookUp；当前走 TableRangeScan/TableReader，未走该索引。",
-        16: "客户文档走 text_value_7_lower 复合索引 + IndexLookUp；当前走 TableRangeScan/TableReader，未走该索引。",
-        19: "客户文档走 text_value_7_lower 复合索引 + IndexLookUp；当前走 TableRangeScan/TableReader，未走该索引。",
-        21: "relationship 侧索引和读取方式不同：客户文档用 object_id 单列索引 + IndexLookUp；当前用 object_id/workspace_id/object_type_attribute_id/referenced_object_id 复合索引 + IndexReader，且 task 标记为 mpp[tiflash]。",
-        24: "join 下推形态差异较大：客户文档是 root HashJoin/IndexHashJoin + TiKV/TiFlash 混合读取；当前主要是 mpp[tiflash]，没有检测到文档里的 relationship/object 索引路径。",
-        25: "索引列不同：客户文档用 text_value_7_lower 复合索引；当前用 text_value_7/numeric_value_1/sequential_id 复合索引。整体算子拓扑接近，但 access path 不一致。",
+        14: "客户文档走 text_value_7_lower 复合索引 + IndexLookUp；该索引在 jsm_assets4 已存在，但当前 optimizer 仍选择 TableRangeScan/TableReader。",
+        15: "客户文档走 text_value_7_lower 复合索引 + IndexLookUp；该索引在 jsm_assets4 已存在，但当前 optimizer 仍选择 TableRangeScan/TableReader。",
+        16: "客户文档走 text_value_7_lower 复合索引 + IndexLookUp；该索引在 jsm_assets4 已存在，但当前 optimizer 仍选择 TableRangeScan/TableReader。",
+        19: "客户文档走 text_value_7_lower 复合索引 + IndexLookUp；该索引在 jsm_assets4 已存在，但当前 optimizer 仍选择 TableRangeScan/TableReader。",
+        21: "relationship 侧读取方式不同：客户文档用 object_id 单列索引 + IndexLookUp；相关索引在 jsm_assets4 已存在，但当前 optimizer 选择 object_id/workspace_id/object_type_attribute_id/referenced_object_id 复合索引 + IndexReader，且 task 标记为 mpp[tiflash]。",
+        24: "join 下推形态差异较大：客户文档是 root HashJoin/IndexHashJoin + TiKV/TiFlash 混合读取；相关 label/relationship 索引在 jsm_assets4 已存在，但当前主要生成 mpp[tiflash] 全表/范围扫描计划。",
+        25: "两个索引都存在，但 optimizer 选择 text_value_7/numeric_value_1/sequential_id 复合索引；客户文档走 text_value_7_lower 复合索引。整体算子拓扑接近，但 access path 不一致。",
     }
     if qid in curated:
         return curated[qid]
@@ -464,6 +464,12 @@ def render_markdown(result: dict[str, Any], out: Path) -> None:
         f"Summary: {', '.join(summary_parts)}.",
         "",
         "结论口径：`一致` 表示稳定 plan shape 和 access path 都一致；`兼容` 表示只差 Projection/Selection wrapper 或索引名但索引列一致；`不一致` 表示 join/task/index path 有实质差异；`未检查` 表示当前没有可用 sampled SQL。",
+        "",
+        "## Index Alignment Check",
+        "",
+        "- `jsm_assets4.obj_new` 已存在 source plan 里关键的 `ix_obj_composite_ot_lower_text_value_7(workspace_id, obj_type_id, text_value_7_lower)`、`ix_obj_label_objtypeid_new(workspace_id, label, obj_type_id, sequential_id)` 和相关 text/lower indexes。",
+        "- `jsm_assets4.obj_relationship_new` 已存在 source plan 里关键的 `ix_obj_rel_object_id_without_partition(object_id)`、`ix_obj_rel_referenced_object_id_without_partition(referenced_object_id)` 以及当前环境额外的 relationship composite indexes。",
+        "- 本轮没有发现 runnable query 的 plan 差异是由缺失索引导致的，因此没有执行新增索引 DDL。剩余差异主要来自 optimizer access path 选择、MPP vs cop task 形态，以及 Q8 的 FTS 索引名不同但索引列相同。",
         "",
         "## Query-Level Comparison",
         "",

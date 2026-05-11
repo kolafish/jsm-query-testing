@@ -9,7 +9,14 @@ Notes:
 - Each runnable query uses up to 10 sampled parameter sets. Rows are fetched to the client; latency is client-observed SQL execution plus fetch time.
 - Wide object queries are represented as `SELECT o.*` / `SELECT obj.*`; predicate, ordering, and limit shape are preserved.
 - Queries whose referenced tables are absent from `jsm_assets4` are marked skipped.
-- Grafana: [http://a2e41aa49d08647d1b55ecd7b146bbf6-38f9eda417a300aa.elb.us-east-2.amazonaws.com:3000](http://a2e41aa49d08647d1b55ecd7b146bbf6-38f9eda417a300aa.elb.us-east-2.amazonaws.com:3000)
+- Grafana: [http://a2e41aa49d08647d1b55ecd7b146bbf6-2611d84fa96ba26a.elb.us-east-2.amazonaws.com:3000](http://a2e41aa49d08647d1b55ecd7b146bbf6-2611d84fa96ba26a.elb.us-east-2.amazonaws.com:3000)
+
+## Index / Plan Refresh
+
+- Refresh time: `2026-05-11`.
+- Cluster was started and reached Ready with `3 TiDB / 3 TiKV / 6 TiFlash` running. The TidbCluster spec requests `3` TiFlash, but the existing failover status keeps 3 replacement TiFlash pods, so 6 TiFlash nodes are currently needed for a fully Ready cluster.
+- Index alignment was checked on `jsm_assets4.obj_new` and `jsm_assets4.obj_relationship_new`. The source-plan BTree indexes used by runnable queries are already present, including `ix_obj_composite_ot_lower_text_value_7`, `ix_obj_label_objtypeid_new`, `ix_obj_rel_object_id_without_partition`, and `ix_obj_rel_referenced_object_id_without_partition`.
+- No new index DDL was executed in this refresh. Existing benchmark numbers below remain the latest full run; plan comparison was refreshed separately in `pingcap_report_plan_comparison.md`.
 
 ## Summary
 
@@ -63,7 +70,7 @@ CPU and memory values below are pulled from the Grafana Prometheus datasource fo
 #### Concurrency 66
 
 - Window: `2026-05-08T14:59:27.975863+00:00` to `2026-05-08T15:09:30.730154+00:00`
-- Grafana time range: [http://a2e41aa49d08647d1b55ecd7b146bbf6-38f9eda417a300aa.elb.us-east-2.amazonaws.com:3000?from=1778252367975&to=1778252970730](http://a2e41aa49d08647d1b55ecd7b146bbf6-38f9eda417a300aa.elb.us-east-2.amazonaws.com:3000?from=1778252367975&to=1778252970730)
+- Grafana time range: [http://a2e41aa49d08647d1b55ecd7b146bbf6-2611d84fa96ba26a.elb.us-east-2.amazonaws.com:3000?from=1778252367975&to=1778252970730](http://a2e41aa49d08647d1b55ecd7b146bbf6-2611d84fa96ba26a.elb.us-east-2.amazonaws.com:3000?from=1778252367975&to=1778252970730)
 
 | Component | Replicas | CPU avg cores | CPU max cores | CPU max % capacity | Mem avg GiB | Mem max GiB | Note |
 |---|---:|---:|---:|---:|---:|---:|---|
@@ -116,7 +123,7 @@ Grafana panel screenshots:
 #### Concurrency 132
 
 - Window: `2026-05-08T14:27:07.866017+00:00` to `2026-05-08T14:37:11.607752+00:00`
-- Grafana time range: [http://a2e41aa49d08647d1b55ecd7b146bbf6-38f9eda417a300aa.elb.us-east-2.amazonaws.com:3000?from=1778250427866&to=1778251031607](http://a2e41aa49d08647d1b55ecd7b146bbf6-38f9eda417a300aa.elb.us-east-2.amazonaws.com:3000?from=1778250427866&to=1778251031607)
+- Grafana time range: [http://a2e41aa49d08647d1b55ecd7b146bbf6-2611d84fa96ba26a.elb.us-east-2.amazonaws.com:3000?from=1778250427866&to=1778251031607](http://a2e41aa49d08647d1b55ecd7b146bbf6-2611d84fa96ba26a.elb.us-east-2.amazonaws.com:3000?from=1778250427866&to=1778251031607)
 
 | Component | Replicas | CPU avg cores | CPU max cores | CPU max % capacity | Mem avg GiB | Mem max GiB | Note |
 |---|---:|---:|---:|---:|---:|---:|---|
@@ -830,4 +837,3 @@ SELECT o.* FROM obj_new o WHERE o.workspace_id='00eaf117-fdd6-4176-9926-45310e6b
 ```
 
 </details>
-

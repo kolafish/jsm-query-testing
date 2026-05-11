@@ -31,7 +31,7 @@ OUT_MD = Path("pingcap_report_jsm_assets4_query_sample_comparison.md")
 OUT_JSON = Path("bench/results/pingcap_report_jsm_assets4_query_sample_comparison.json")
 DB = "jsm_assets4"
 DEFAULT_GRAFANA_URL = (
-    "http://a2e41aa49d08647d1b55ecd7b146bbf6-38f9eda417a300aa."
+    "http://a2e41aa49d08647d1b55ecd7b146bbf6-2611d84fa96ba26a."
     "elb.us-east-2.amazonaws.com:3000"
 )
 
