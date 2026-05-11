@@ -239,24 +239,16 @@ def render(sampled: dict[str, Any], plan: dict[str, Any]) -> str:
         )
         open_detail = plan_status in {"mismatch", "error"} or speed_class in {"fast", "slow"}
 
-        run_66 = next((run.get("by_query", {}).get(qid) for run in concurrency_runs if run.get("concurrency") == 66), None)
-        run_132 = next((run.get("by_query", {}).get(qid) for run in concurrency_runs if run.get("concurrency") == 132), None)
-
         rows_html.append(
             "<tr>"
             f"<td><a href=\"#q{qid}\">Q{qid}</a></td>"
-            f"<td>{esc(source.get('pattern') or source.get('group') or '-')}</td>"
             f"<td>{fmt_ms(source_avg)}</td>"
-            "<td><span title=\"客户报告没有 query-level p95 字段\">n/a</span></td>"
             f"<td>{fmt_ms(source_max)}</td>"
             f"<td>{fmt_num(source_rows)}</td>"
             f"<td>{fmt_ms(current_avg)}</td>"
-            f"<td>{fmt_ms(current_p95)}</td>"
             f"<td>{fmt_ms(current_max)}</td>"
             f"<td>{fmt_num(current_rows)}</td>"
             f"<td><span class=\"speed {speed_class}\">{esc(speed_text)}</span></td>"
-            f"<td>{fmt_ms(parse_ms(run_66.get('p95_ms') if run_66 else None))}</td>"
-            f"<td>{fmt_ms(parse_ms(run_132.get('p95_ms') if run_132 else None))}</td>"
             f"<td><span class=\"badge {status_class(plan_status)}\">{esc(status_label(plan_status))}</span></td>"
             f"<td>{esc(compact(diff, 180))}</td>"
             "</tr>"
@@ -370,17 +362,16 @@ pre { margin: 0; padding: 12px; max-height: 520px; overflow: auto; background: #
 <p>Generated at {esc(generated_at)}. Source report: <code>{esc(source_report)}</code>.</p>
 </header>
 <main>
-<p class="note">这个页面把客户报告里的 25 条 query 与当前 `jsm_assets4` 测试结果放在一起。客户报告只提供 query-level avg/max 和 avg rows，没有 query-level p95；因此客户侧 p95 显示为 n/a，当前侧 p95 来自本轮样本延迟，并发 66/132 的 p95 单独列出。</p>
+<p class="note">这个页面把客户报告里的 25 条 query 与当前 `jsm_assets4` 测试结果放在一起。主表保留 avg、max、rows、谁快谁慢和 plan 是否一致；当前样本与并发压测的 p95 放在逐条详情里。</p>
 <div class="cards">{render_metric_cards(sampled, plan)}</div>
 <h2>总览表</h2>
 <div class="table-wrap">
 <table>
 <thead><tr>
-<th>Query</th><th>Pattern</th>
-<th>客户 Avg</th><th>客户 P95</th><th>客户 Max</th><th>客户 Avg rows</th>
-<th>当前 Avg</th><th>当前 P95</th><th>当前 Max</th><th>当前 Avg rows</th>
-<th>快慢</th><th>并发66 P95</th><th>并发132 P95</th>
-<th>Plan</th><th>主要差异</th>
+<th>Query</th>
+<th>客户 Avg</th><th>客户 Max</th><th>客户 Avg rows</th>
+<th>当前 Avg</th><th>当前 Max</th><th>当前 Avg rows</th>
+<th>谁快谁慢</th><th>Plan 是否一致</th><th>主要差异</th>
 </tr></thead>
 <tbody>{''.join(rows_html)}</tbody>
 </table>
