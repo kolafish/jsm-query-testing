@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-11T03:09:28.487886+00:00",
+  "generated_at": "2026-05-11T03:25:07.902635+00:00",
   "source_report": "reports/pingcap-query-performance-2026-05-06/full_report_for_pingcap.md",
   "current_plan_file": "/Users/jin/Desktop/jsm-query-testing/bench/results/pingcap_report_current_plans.json",
   "summary": {

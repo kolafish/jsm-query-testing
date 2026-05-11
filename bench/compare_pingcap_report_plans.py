@@ -373,7 +373,85 @@ def build_comparison(source_report: Path, source: dict[str, Any], current: dict[
     }
 
 
+def md_cell(value: Any, limit: int | None = None) -> str:
+    text = compact(str(value), limit) if limit else str(value)
+    return text.replace("|", "\\|").replace("\n", " ").strip()
+
+
+def status_label(status: str) -> str:
+    labels = {
+        "match": "一致",
+        "compatible": "兼容",
+        "mismatch": "不一致",
+        "error": "错误",
+        "pending": "未检查",
+    }
+    return labels.get(status, status)
+
+
+def plan_one_liner(signature: dict[str, Any] | None) -> str:
+    if not signature:
+        return "n/a"
+
+    task_set = ", ".join(signature.get("task_set", [])) or "n/a"
+    topology = signature.get("topology", "")
+    operators = [op for op in signature.get("operators", []) if op not in {"Projection", "Selection"}]
+    if operators:
+        topology = " -> ".join(operators)
+
+    indexes = ", ".join(signature.get("indexes", []))
+    if indexes:
+        access = indexes
+    else:
+        scan_ops = sorted(
+            {
+                item.get("operator", "")
+                for item in signature.get("access_paths", [])
+                if item.get("operator", "").endswith("Scan")
+            }
+        )
+        tables = ", ".join(signature.get("tables", []))
+        access = f"{'/'.join(scan_ops)} on {tables}" if scan_ops else "no index"
+
+    return compact(f"{task_set}; {topology}; {access}", 260)
+
+
+def main_difference(item: dict[str, Any]) -> str:
+    qid = item["query_id"]
+    comparison = item["comparison"]
+    status = comparison["status"]
+
+    if status == "match":
+        return "Plan shape、task set、join/index access path 都一致。"
+    if status == "pending":
+        return "当前没有 sampled SQL，所以没有抓到 current EXPLAIN；需要补样本后再比。"
+    if status == "error":
+        return "; ".join(comparison.get("reasons", [])) or "current EXPLAIN failed"
+
+    curated = {
+        8: "仅 FTS 索引名不同，索引列相同：text_value_22；整体 plan shape 一致。",
+        14: "客户文档走 text_value_7_lower 复合索引 + IndexLookUp；当前走 TableRangeScan/TableReader，未走该索引。",
+        15: "客户文档走 text_value_7_lower 复合索引 + IndexLookUp；当前走 TableRangeScan/TableReader，未走该索引。",
+        16: "客户文档走 text_value_7_lower 复合索引 + IndexLookUp；当前走 TableRangeScan/TableReader，未走该索引。",
+        19: "客户文档走 text_value_7_lower 复合索引 + IndexLookUp；当前走 TableRangeScan/TableReader，未走该索引。",
+        21: "relationship 侧索引和读取方式不同：客户文档用 object_id 单列索引 + IndexLookUp；当前用 object_id/workspace_id/object_type_attribute_id/referenced_object_id 复合索引 + IndexReader，且 task 标记为 mpp[tiflash]。",
+        24: "join 下推形态差异较大：客户文档是 root HashJoin/IndexHashJoin + TiKV/TiFlash 混合读取；当前主要是 mpp[tiflash]，没有检测到文档里的 relationship/object 索引路径。",
+        25: "索引列不同：客户文档用 text_value_7_lower 复合索引；当前用 text_value_7/numeric_value_1/sequential_id 复合索引。整体算子拓扑接近，但 access path 不一致。",
+    }
+    if qid in curated:
+        return curated[qid]
+
+    reasons = comparison.get("major_reasons") or comparison.get("minor_reasons") or comparison.get("reasons") or []
+    if status == "compatible" and reasons == ["operator topology differs only by Projection wrapper"]:
+        return "只差 Projection/Selection wrapper，核心读取路径一致。"
+    return "; ".join(reasons) if reasons else "存在可兼容的 plan shape 差异。"
+
+
 def render_markdown(result: dict[str, Any], out: Path) -> None:
+    summary_parts = [
+        f"{status_label(status)} {result['summary'].get(status, 0)}"
+        for status in ["match", "compatible", "mismatch", "error", "pending"]
+    ]
     lines = [
         "# PingCAP Report Plan Comparison",
         "",
@@ -381,35 +459,39 @@ def render_markdown(result: dict[str, Any], out: Path) -> None:
         "",
         f"Source report: `{result['source_report']}`",
         "",
-        "Comparison checks the stable plan shape: operator topology, storage task set, join operators, scanned tables, and index access paths. Runtime row counts and latency are intentionally ignored.",
+        "Comparison checks stable plan shape: operator topology, storage task set, join operators, scanned tables, and index access paths. Runtime row counts and latency are intentionally ignored.",
         "",
-        "## Summary",
+        f"Summary: {', '.join(summary_parts)}.",
         "",
-        "| Status | Count |",
-        "|---|---:|",
-    ]
-    for status in ["match", "compatible", "mismatch", "error", "pending"]:
-        lines.append(f"| {status} | {result['summary'].get(status, 0)} |")
-
-    lines += [
+        "结论口径：`一致` 表示稳定 plan shape 和 access path 都一致；`兼容` 表示只差 Projection/Selection wrapper 或索引名但索引列一致；`不一致` 表示 join/task/index path 有实质差异；`未检查` 表示当前没有可用 sampled SQL。",
         "",
-        "## Query Plan Shape",
+        "## Query-Level Comparison",
         "",
-        "| Query | Source pattern | Source task set | Source top operators | Source indexes | Current status | Difference |",
-        "|---:|---|---|---|---|---|---|",
+        "| Query | Pattern | 结论 | 主要差异 | 客户文档 plan | 当前集群 plan |",
+        "|---:|---|---|---|---|---|",
     ]
     for item in result["items"]:
         source = item["source"]
-        sig = source["signature"]
-        comparison = item["comparison"]
-        reasons = "; ".join(comparison["reasons"]) if comparison["reasons"] else ""
+        current = item.get("representative_current")
+        current_signature = current.get("signature") if current and current.get("status") == "ok" else None
+        current_plan = plan_one_liner(current_signature)
+        if current and current.get("status") != "ok":
+            current_plan = compact(current.get("error", "current EXPLAIN failed"), 260)
         lines.append(
-            f"| {item['query_id']} | {source.get('pattern') or source.get('group') or ''} | "
-            f"{', '.join(sig['task_set'])} | {compact(sig['topology'])} | "
-            f"{compact(', '.join(sig['indexes']) or 'n/a')} | {comparison['status']} | {compact(reasons or 'n/a', 220)} |"
+            f"| {item['query_id']} | "
+            f"{md_cell(source.get('pattern') or source.get('group') or '', 90)} | "
+            f"{status_label(item['comparison']['status'])} | "
+            f"{md_cell(main_difference(item), 220)} | "
+            f"{md_cell(plan_one_liner(source['signature']), 260)} | "
+            f"{md_cell(current_plan, 260)} |"
         )
 
-    lines += ["", "## Details", ""]
+    lines += [
+        "",
+        "<details>",
+        "<summary>Raw plan shape signatures</summary>",
+        "",
+    ]
     for item in result["items"]:
         qid = item["query_id"]
         source = item["source"]
@@ -417,7 +499,7 @@ def render_markdown(result: dict[str, Any], out: Path) -> None:
         lines += [
             f"### Query {qid}",
             "",
-            f"- Source status: `{item['comparison']['status']}`",
+            f"- Status: `{item['comparison']['status']}`",
             f"- Source topology: `{compact(source['signature']['topology'], 500)}`",
             f"- Source task topology: `{compact(source['signature']['task_topology'], 500)}`",
             f"- Source indexes: `{', '.join(source['signature']['indexes']) or 'n/a'}`",
@@ -436,6 +518,7 @@ def render_markdown(result: dict[str, Any], out: Path) -> None:
             lines.append("- Current plan: not captured yet.")
         lines.append("")
 
+    lines += ["</details>", ""]
     out.write_text("\n".join(lines) + "\n")
 
 
