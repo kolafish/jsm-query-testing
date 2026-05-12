@@ -1,123 +1,141 @@
 # JSM Query Latency Tracking
 
-## 当前 AWS 测试环境
+## AWS Test Cluster Quick Access
 
-新 AWS/EKS TiDB + TiCI 测试集群已创建并完成数据恢复，当前可用于 `jsm_assets2` / `jsm_assets3` 查询验证和压测。
+This repo uses the shared AWS/EKS test cluster below for `jsm_assets2`, `jsm_assets3`, and `jsm_assets4` validation and benchmarks.
 
-### 登录入口
-
-```bash
-ssh -i /Users/jin/Downloads/michael-eks-us-east-2.pem ec2-user@ec2-3-14-170-197.us-east-2.compute.amazonaws.com
-
-export AWS_PROFILE=atlassian-jsm-tici
-export AWS_REGION=us-east-2
-export KUBECONFIG=/home/ec2-user/.kube/atlassian-jsm-tici
-```
-
-### 启动集群
-
-下面命令只启动新集群的 EC2 nodegroup，不会重新建表或恢复数据。当前规模使用 `4` 台 16 vCPU / 64 GiB default 节点承载 `3` 个 TiDB pod 和监控/通用组件；TiKV 使用 `3` 台 16 vCPU / 64 GiB 节点；TiFlash 由于当前 failover status 仍保留 3 个 replacement pod，实际需要 `6` 台 TiFlash 节点才能让集群 Ready。
-
-```bash
-eksctl scale nodegroup --cluster Atlassian-jsm-tici --name node16c64 --nodes 4 --nodes-min 0 --nodes-max 20 --region us-east-2
-eksctl scale nodegroup --cluster Atlassian-jsm-tici --name node-tikv-16c64 --nodes 3 --nodes-min 0 --nodes-max 20 --region us-east-2
-eksctl scale nodegroup --cluster Atlassian-jsm-tici --name node-tiflash --nodes 6 --nodes-min 0 --nodes-max 40 --region us-east-2
-
-kubectl -n tidb-cluster get pods
-```
-
-### 停止集群
-
-下面命令是停止 compute，不是彻底销毁集群。EKS control plane、EBS/PVC、S3 数据和 Kubernetes 对象会保留；停止后数据库不可访问，重新执行上面的启动命令后 pod 会重新调度。
-
-```bash
-eksctl scale nodegroup --cluster Atlassian-jsm-tici --name node-tiflash --nodes 0 --nodes-min 0 --nodes-max 20 --region us-east-2
-eksctl scale nodegroup --cluster Atlassian-jsm-tici --name node-tikv-16c64 --nodes 0 --nodes-min 0 --nodes-max 20 --region us-east-2
-eksctl scale nodegroup --cluster Atlassian-jsm-tici --name node16c64 --nodes 0 --nodes-min 0 --nodes-max 20 --region us-east-2
-```
-
-### 访问 TiDB
-
-从 EKS 内部访问：
-
-```bash
-mysql -h tici-demo-s3-tidb -P4000 -uroot -Djsm_assets3
-```
-
-从 console host 访问可以先做 port-forward：
-
-```bash
-kubectl -n tidb-cluster port-forward svc/tici-demo-s3-tidb 4000:4000
-mysql -h 127.0.0.1 -P4000 -uroot -Djsm_assets3
-```
-
-### Grafana
-
-Grafana LoadBalancer:
-
-[http://a2e41aa49d08647d1b55ecd7b146bbf6-2611d84fa96ba26a.elb.us-east-2.amazonaws.com:3000](http://a2e41aa49d08647d1b55ecd7b146bbf6-2611d84fa96ba26a.elb.us-east-2.amazonaws.com:3000)
-
-### 集群信息
-
-| 项目 | 当前值 |
+| Item | Value |
 |---|---|
 | AWS account | `178851224597` |
 | Region | `us-east-2` |
 | EKS cluster | `Atlassian-jsm-tici` |
 | Namespace | `tidb-cluster` |
 | TidbCluster | `tici-demo-s3` |
-| S3 bucket | `s3://atlassian-jsm-tici-178851224597-us-east-2` |
-| 数据库 | `jsm_assets2`, `jsm_assets3`, `jsm_assets4` |
+| Console host | `ec2-user@ec2-3-14-170-197.us-east-2.compute.amazonaws.com` |
+| Grafana | [http://a2e41aa49d08647d1b55ecd7b146bbf6-2611d84fa96ba26a.elb.us-east-2.amazonaws.com:3000](http://a2e41aa49d08647d1b55ecd7b146bbf6-2611d84fa96ba26a.elb.us-east-2.amazonaws.com:3000) |
 
-当前组件规模：
+### Login
 
-| Component | Replicas | Status |
-|---|---:|---|
-| PD | 1 | Running |
-| TiDB | 3 | Running |
-| TiKV | 3 | Running |
-| TiFlash | 6 | Running |
-| TiCDC | 1 | Running |
-| TiCI meta | 1 | Running |
-| TiCI worker | 1 | Running |
+Use the shared pem file provided out of band. The pem file is not stored in this repo.
 
-节点规格：
+```bash
+ssh -i /path/to/atlassian-jsm-tici-shared-key.pem ec2-user@ec2-3-14-170-197.us-east-2.compute.amazonaws.com
 
-| Node group | Instance type | 当前数量 | 用途 |
-|---|---|---:|---|
-| `node16c64` | `m8i.4xlarge` | 4 | TiDB / PD / TiCI / TiCDC / monitor / benchmark client |
-| `node-tikv-16c64` | `m8i.4xlarge` | 3 | TiKV |
-| `node-tiflash` | `m8i.4xlarge` | 6 | TiFlash |
-| `node16c32` | `c8i.4xlarge` | 0 | legacy default nodegroup, retained for rollback |
-| `node-tikv` | `c8i.4xlarge` | 0 | legacy TiKV nodegroup, retained for rollback |
+export AWS_PROFILE=atlassian-jsm-tici
+export AWS_REGION=us-east-2
+export KUBECONFIG=/home/ec2-user/.kube/atlassian-jsm-tici
 
-TiDB service 连接分布验证：
+# Run this if kubectl says the SSO token expired.
+aws sso login --profile atlassian-jsm-tici
+```
 
-| Method | Result |
+### Start The Cluster
+
+This starts compute only. Existing EBS/PVC data, S3 backups, and Kubernetes objects are reused.
+
+```bash
+aws eks update-nodegroup-config --cluster-name Atlassian-jsm-tici --nodegroup-name node16c64 --scaling-config minSize=1,maxSize=4,desiredSize=4
+aws eks update-nodegroup-config --cluster-name Atlassian-jsm-tici --nodegroup-name node-tikv-16c64 --scaling-config minSize=0,maxSize=20,desiredSize=3
+aws eks update-nodegroup-config --cluster-name Atlassian-jsm-tici --nodegroup-name node-tiflash --scaling-config minSize=0,maxSize=6,desiredSize=6
+
+kubectl patch tc -n tidb-cluster tici-demo-s3 --type merge -p '{"spec":{"tidb":{"replicas":3},"tiflash":{"replicas":6},"ticdc":{"replicas":1},"tici":{"meta":{"replicas":1},"worker":{"replicas":1}}}}'
+kubectl -n tidb-cluster scale sts tici-demo-s3-tici-meta --replicas=1
+kubectl -n tidb-cluster get pods -w
+```
+
+Expected test scale for the 220-worker weighted-cop benchmark: `3 TiDB / 3 TiKV / 6 TiFlash`, plus `1 PD`, `1 TiCDC`, `1 TiCI meta`, and `1 TiCI worker`. All node groups use `m8i.4xlarge` (`16 vCPU / 64 GiB`).
+
+If TiFlash or TiCI worker reports `election: no leader`, first confirm `tici-demo-s3-tici-meta` is `1/1 Running`, then restart the TiFlash pods:
+
+```bash
+kubectl -n tidb-cluster get sts tici-demo-s3-tici-meta tici-demo-s3-tici-worker tici-demo-s3-tiflash
+kubectl -n tidb-cluster delete pod -l app.kubernetes.io/component=tiflash --force --grace-period=0
+```
+
+### Access TiDB
+
+Preferred access from the console host is through `kubectl port-forward`:
+
+```bash
+kubectl -n tidb-cluster port-forward svc/tici-demo-s3-tidb 4000:4000
+mysql -h 127.0.0.1 -P4000 -uroot -Djsm_assets4
+```
+
+From a pod inside the cluster, use the service name directly:
+
+```bash
+mysql -h tici-demo-s3-tidb -P4000 -uroot -Djsm_assets4
+```
+
+Useful checks:
+
+```sql
+SHOW DATABASES;
+USE jsm_assets4;
+SHOW TABLES;
+SELECT COUNT(*) FROM obj_new;
+SELECT COUNT(*) FROM obj_relationship_new;
+```
+
+### Data Overview
+
+| Database | Main tables | Purpose |
+|---|---|---|
+| `jsm_assets2` | `obj_new`, `obj_relationship_new` | 14M-object dataset restored from the old cluster, used by original JSM query and FTS/JOIN tests. |
+| `jsm_assets3` | `obj_new`, `obj_relationship_new` | 10M-object dataset used by LIKE vs MATCH and dataset-specific tests. |
+| `jsm_assets4` | `obj_new`, `obj_relationship_new`, `obj_type`, `obj_type_attr`, `status_type`, JSON metadata tables | Dataset used for the PingCAP customer-report query reproduction and weighted TiKV cop-wait stress tests. |
+
+Approximate key table sizes:
+
+| Table | Rows |
+|---|---:|
+| `jsm_assets2.obj_new` | 14,000,000 |
+| `jsm_assets2.obj_relationship_new` | 139,991,715 |
+| `jsm_assets3.obj_new` | 10,000,000 |
+| `jsm_assets3.obj_relationship_new` | 100,005,360 |
+| `jsm_assets4.obj_new` | 14,000,000 |
+| `jsm_assets4.obj_relationship_new` | 139,988,146 |
+| `jsm_assets4.obj_type` | 50 |
+| `jsm_assets4.obj_type_attr` | 1,750 |
+
+Detailed rebuild records, image versions, BR commands, and FULLTEXT rebuild steps are in [`jsm_assets_aws_rebuild_manifest.md`](jsm_assets_aws_rebuild_manifest.md).
+
+### Stop The Cluster
+
+To stop database compute but keep Grafana reachable, scale TiDB/TiFlash/TiCDC/TiCI to zero and keep one default node for `basic-monitor`:
+
+```bash
+kubectl patch tc -n tidb-cluster tici-demo-s3 --type merge -p '{"spec":{"tidb":{"replicas":0},"tiflash":{"replicas":0},"ticdc":{"replicas":0},"tici":{"meta":{"replicas":0},"worker":{"replicas":0}}}}'
+aws eks update-nodegroup-config --cluster-name Atlassian-jsm-tici --nodegroup-name node-tiflash --scaling-config minSize=0,maxSize=6,desiredSize=0
+aws eks update-nodegroup-config --cluster-name Atlassian-jsm-tici --nodegroup-name node-tikv-16c64 --scaling-config minSize=0,maxSize=20,desiredSize=0
+aws eks update-nodegroup-config --cluster-name Atlassian-jsm-tici --nodegroup-name node16c64 --scaling-config minSize=1,maxSize=4,desiredSize=1
+```
+
+To fully stop all worker EC2 instances, also set `node16c64` to `desiredSize=0`; Grafana will be unavailable until it is started again.
+
+### Current Benchmark
+
+The TiKV cop-wait reproduction workload is `bench/run_pingcap_report_query_samples.py` against `jsm_assets4`, with `220` workers and weighted slow-query classes. Recent fixed-duration results are summarized in [`pingcap_report_weighted_cop_c220_c330_10min_20260511_16c64.md`](pingcap_report_weighted_cop_c220_c330_10min_20260511_16c64.md).
+
+Current continuous run:
+
+| Item | Value |
 |---|---|
-| 当前规模 | `3` 个 TiDB pod 通过 `tici-demo-s3-tidb:4000` ClusterIP 访问 |
-| 最近一次完整分布验证 | `6` TiDB 规模下 600 次新连接基本均匀；当前 `3` TiDB 规模未重新跑完整分布压测 |
+| Runner pod | `tidb-cluster/jsm-bench-runner` |
+| Started at | `2026-05-12T05:38:46Z` |
+| PID in pod | `55` |
+| Concurrency | `220` workers |
+| Duration setting | `604800s`; stop it manually when the test is done |
 
-数据恢复和索引状态：
+Useful benchmark commands:
 
-| 项目 | 结果 |
-|---|---|
-| BR restore | 已完成，`2026-04-27 08:41:55 UTC` 到 `08:58:58 UTC`，耗时 `17m02s` |
-| Restore source | `s3://atlassian-jsm-tici-178851224597-us-east-2/br-backups/jsm-assets2-assets3-20260427T042546Z` |
-| TiFlash replica | 四张表均 `available=1`, `progress=1` |
-| FULLTEXT indexes | 两个 `obj_new` 表均已重建 `idx_fts_1/4/5/7/20/22/label`，parser 为 `NGRAM`；`jsm_assets3.obj_new` 在 TiFlash 扩到 6 台后再次 drop/recreate |
-| FTS smoke check | `text_value_7 = Fagor` 的 `MATCH` 和 `LIKE` 命中数一致 |
+```bash
+# Check the runner process and startup log.
+kubectl -n tidb-cluster exec jsm-bench-runner -- bash -lc 'PID=$(cat /tmp/c220-continuous.pid); kill -0 $PID && echo running; tail -20 /tmp/c220-continuous.log'
 
-当前表规模：
-
-| Table | Rows | data_length | index_length |
-|---|---:|---:|---:|
-| `jsm_assets2.obj_new` | 14,000,000 | 62.53 GiB | 638.72 GiB |
-| `jsm_assets2.obj_relationship_new` | 139,991,715 | 20.47 GiB | 45.37 GiB |
-| `jsm_assets3.obj_new` | 10,000,000 | 44.59 GiB | 489.27 GiB |
-| `jsm_assets3.obj_relationship_new` | 100,005,360 | 14.62 GiB | 32.41 GiB |
-
-详细重建记录、镜像版本、BR 命令和 FULLTEXT 重建步骤见 [`jsm_assets_aws_rebuild_manifest.md`](jsm_assets_aws_rebuild_manifest.md)。
+# Stop the continuous run without stopping the cluster.
+kubectl -n tidb-cluster exec jsm-bench-runner -- bash -lc 'kill $(cat /tmp/c220-continuous.pid)'
+```
 
 这个仓库记录 dataset 1 的单条查询延迟测试、QPS 压测模式和当前压测代码。
 
