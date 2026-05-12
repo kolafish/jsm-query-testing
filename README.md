@@ -16,11 +16,12 @@ This repo uses the shared AWS/EKS test cluster below for `jsm_assets2`, `jsm_ass
 
 ### Login
 
-Use the shared pem file provided out of band. The pem file is not stored in this repo.
+Use the console-host pem file provided out of band. The pem file is not stored in this repo. The current console host accepts the key named `michael-eks-us-east-2.pem`; put it anywhere on your local machine and use that local path in the `ssh -i` command.
 
 ```bash
-ssh -i /path/to/atlassian-jsm-tici-shared-key.pem ec2-user@ec2-3-14-170-197.us-east-2.compute.amazonaws.com
+ssh -i /path/to/michael-eks-us-east-2.pem ec2-user@ec2-3-14-170-197.us-east-2.compute.amazonaws.com
 
+# Run the following commands after you have logged in to the console host.
 export AWS_PROFILE=atlassian-jsm-tici
 export AWS_REGION=us-east-2
 export KUBECONFIG=/home/ec2-user/.kube/atlassian-jsm-tici
