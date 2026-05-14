@@ -12,7 +12,7 @@ This repo uses the shared AWS/EKS test cluster below for `jsm_assets2`, `jsm_ass
 | Namespace | `tidb-cluster` |
 | TidbCluster | `tici-demo-s3` |
 | Console host | `ec2-user@ec2-3-14-170-197.us-east-2.compute.amazonaws.com` |
-| Grafana | [http://a2e41aa49d08647d1b55ecd7b146bbf6-2611d84fa96ba26a.elb.us-east-2.amazonaws.com:3000](http://a2e41aa49d08647d1b55ecd7b146bbf6-2611d84fa96ba26a.elb.us-east-2.amazonaws.com:3000) |
+| Grafana | [http://a2e41aa49d08647d1b55ecd7b146bbf6-d8ae733fc9919258.elb.us-east-2.amazonaws.com:3000](http://a2e41aa49d08647d1b55ecd7b146bbf6-d8ae733fc9919258.elb.us-east-2.amazonaws.com:3000) |
 
 ### Login
 
@@ -30,21 +30,35 @@ export KUBECONFIG=/home/ec2-user/.kube/atlassian-jsm-tici
 aws sso login --profile atlassian-jsm-tici
 ```
 
+The AWS SSO user must have access to account `178851224597` with role `DBaaS-DevUser-Role`; otherwise `kubectl` fails with `GetRoleCredentials` / `ForbiddenException`.
+
 ### Start The Cluster
 
 This starts compute only. Existing EBS/PVC data, S3 backups, and Kubernetes objects are reused.
 
 ```bash
-aws eks update-nodegroup-config --cluster-name Atlassian-jsm-tici --nodegroup-name node16c64 --scaling-config minSize=1,maxSize=4,desiredSize=4
+aws eks update-nodegroup-config --cluster-name Atlassian-jsm-tici --nodegroup-name node16c64 --scaling-config minSize=0,maxSize=6,desiredSize=6
 aws eks update-nodegroup-config --cluster-name Atlassian-jsm-tici --nodegroup-name node-tikv-16c64 --scaling-config minSize=0,maxSize=20,desiredSize=3
 aws eks update-nodegroup-config --cluster-name Atlassian-jsm-tici --nodegroup-name node-tiflash --scaling-config minSize=0,maxSize=6,desiredSize=6
 
-kubectl patch tc -n tidb-cluster tici-demo-s3 --type merge -p '{"spec":{"tidb":{"replicas":3},"tiflash":{"replicas":6},"ticdc":{"replicas":1},"tici":{"meta":{"replicas":1},"worker":{"replicas":1}}}}'
+kubectl patch tc -n tidb-cluster tici-demo-s3 --type merge -p '{"spec":{"pd":{"replicas":1},"tidb":{"replicas":3},"tikv":{"replicas":3},"tiflash":{"replicas":6},"ticdc":{"replicas":1},"tici":{"meta":{"replicas":1},"worker":{"replicas":1}}}}'
+kubectl -n tidb-cluster patch svc basic-grafana --type merge -p '{"spec":{"type":"LoadBalancer"}}'
+kubectl -n tidb-cluster scale sts tici-demo-s3-pd --replicas=1
+kubectl -n tidb-cluster scale sts tici-demo-s3-tidb --replicas=3
+kubectl -n tidb-cluster scale sts tici-demo-s3-tikv --replicas=3
+kubectl -n tidb-cluster scale sts tici-demo-s3-tiflash --replicas=6
 kubectl -n tidb-cluster scale sts tici-demo-s3-tici-meta --replicas=1
+kubectl -n tidb-cluster scale sts tici-demo-s3-tici-worker --replicas=1
 kubectl -n tidb-cluster get pods -w
 ```
 
-Expected test scale for the 220-worker weighted-cop benchmark: `3 TiDB / 3 TiKV / 6 TiFlash`, plus `1 PD`, `1 TiCDC`, `1 TiCI meta`, and `1 TiCI worker`. All node groups use `m8i.4xlarge` (`16 vCPU / 64 GiB`).
+Expected shared test scale: `3 TiDB / 3 TiKV / 6 TiFlash`, plus `1 PD`, `1 TiCDC`, `1 TiCI meta`, `1 TiCI worker`, and `1 basic-monitor`. The default node group is set to `6` nodes because the retained Grafana/Prometheus PVC is AZ-bound and needs spare default-node capacity. All node groups use `m8i.4xlarge` (`16 vCPU / 64 GiB`).
+
+The Grafana LoadBalancer hostname can change after stop/start. Check the current URL with:
+
+```bash
+kubectl -n tidb-cluster get svc basic-grafana
+```
 
 If TiFlash or TiCI worker reports `election: no leader`, first confirm `tici-demo-s3-tici-meta` is `1/1 Running`, then restart the TiFlash pods:
 
@@ -103,30 +117,25 @@ Detailed rebuild records, image versions, BR commands, and FULLTEXT rebuild step
 
 ### Stop The Cluster
 
-To stop database compute but keep Grafana reachable, scale TiDB/TiFlash/TiCDC/TiCI to zero and keep one default node for `basic-monitor`:
+To fully stop worker EC2 instances and release the Grafana LoadBalancer while retaining data volumes:
 
 ```bash
-kubectl patch tc -n tidb-cluster tici-demo-s3 --type merge -p '{"spec":{"tidb":{"replicas":0},"tiflash":{"replicas":0},"ticdc":{"replicas":0},"tici":{"meta":{"replicas":0},"worker":{"replicas":0}}}}'
+kubectl -n tidb-cluster patch svc basic-grafana --type merge -p '{"spec":{"type":"ClusterIP"}}'
+kubectl patch tc -n tidb-cluster tici-demo-s3 --type merge -p '{"spec":{"pd":{"replicas":0},"tidb":{"replicas":0},"tikv":{"replicas":0},"tiflash":{"replicas":0},"ticdc":{"replicas":0},"tici":{"meta":{"replicas":0},"worker":{"replicas":0}}}}'
+kubectl -n tidb-cluster scale sts tici-demo-s3-pd tici-demo-s3-tidb tici-demo-s3-tikv tici-demo-s3-tiflash tici-demo-s3-ticdc tici-demo-s3-tici-meta tici-demo-s3-tici-worker --replicas=0
+
 aws eks update-nodegroup-config --cluster-name Atlassian-jsm-tici --nodegroup-name node-tiflash --scaling-config minSize=0,maxSize=6,desiredSize=0
 aws eks update-nodegroup-config --cluster-name Atlassian-jsm-tici --nodegroup-name node-tikv-16c64 --scaling-config minSize=0,maxSize=20,desiredSize=0
-aws eks update-nodegroup-config --cluster-name Atlassian-jsm-tici --nodegroup-name node16c64 --scaling-config minSize=1,maxSize=4,desiredSize=1
+aws eks update-nodegroup-config --cluster-name Atlassian-jsm-tici --nodegroup-name node16c64 --scaling-config minSize=0,maxSize=6,desiredSize=0
 ```
 
-To fully stop all worker EC2 instances, also set `node16c64` to `desiredSize=0`; Grafana will be unavailable until it is started again.
+Grafana is unavailable while all worker nodes are stopped. EBS/PVC data volumes, S3 data, and the EKS control plane are retained.
 
 ### Current Benchmark
 
 The TiKV cop-wait reproduction workload is `bench/run_pingcap_report_query_samples.py` against `jsm_assets4`, with `220` workers and weighted slow-query classes. Recent fixed-duration results are summarized in [`pingcap_report_weighted_cop_c220_c330_10min_20260511_16c64.md`](pingcap_report_weighted_cop_c220_c330_10min_20260511_16c64.md).
 
-Current continuous run:
-
-| Item | Value |
-|---|---|
-| Runner pod | `tidb-cluster/jsm-bench-runner` |
-| Started at | `2026-05-12T05:38:46Z` |
-| PID in pod | `55` |
-| Concurrency | `220` workers |
-| Duration setting | `604800s`; stop it manually when the test is done |
+There is no continuous benchmark running by default. Start one explicitly when needed.
 
 Useful benchmark commands:
 
