@@ -151,6 +151,42 @@ Final component images:
 
 Note: `information_schema.statistics.index_type` reports these FTS indexes as `BTREE`, but `SHOW INDEX ... WHERE Index_type='FULLTEXT'` reports them correctly as `FULLTEXT`. The validation count above uses `SHOW INDEX`.
 
+## Post-Upgrade Workload Validation
+
+Executed after the image upgrade, TiCI metadata reset, changefeed recreation, and all `138` FTS indexes finished rebuilding. Full result JSON: `bench/results/upgrade_rehearsal_workload_validation_20260520.json`.
+
+| Workload | Database | Queries | Errors | Row-count mismatches | Zero-row queries | p50 latency | p95 latency | Max latency |
+|---|---|---:|---:|---:|---:|---:|---:|---:|
+| Workload smoke corpus | `jsm_assets3` | 49 | 0 | 0 | 10 | 222.13 ms | 769.46 ms | 9848.02 ms |
+| LIKE-to-MATCH rewrite corpus | `jsm_assets3` | 10 | 0 | 0 | 3 | 502.55 ms | 12051.03 ms | 13688.78 ms |
+| FTS+JOIN MATCH corpus | `jsm_assets2` | 10 | 0 | 0 | 1 | 1311.65 ms | 10061.48 ms | 10332.92 ms |
+| FTS indexed-column sample | `jsm_assets4` | 10 | 0 | n/a | n/a | n/a | n/a | n/a |
+
+`jsm_assets4` FTS sample details:
+
+| Column | Sample term | MATCH count | MATCH latency | Notes |
+|---|---|---:|---:|---|
+| `label` | `Bosch-10603` | 44 | 221.74 ms | Returned rows. |
+| `text_value_1` | `Bosch-39517` | 28 | 223.48 ms | Returned rows. |
+| `text_value_4` | `britni.nader@quitzon.test` | 4 | 221.97 ms | Returned rows. |
+| `text_value_5` | `www.morgan-prohaska.net` | 4 | 219.85 ms | Returned rows. |
+| `text_value_7` | `Bosch` | 599,993 | 243.73 ms | Returned rows. |
+| `text_value_20` | `2` | 0 | 221.70 ms | Query executed without error; sampled values are single-token encoded values and do not match current boolean MATCH tokenization. |
+| `text_value_22` | `Analysed` | 2,331,753 | 363.40 ms | Returned rows. |
+| `text_value_10` | `Fagor` | 598,750 | 239.02 ms | Returned rows. |
+| `text_value_50` | n/a | n/a | n/a | No non-empty, non-sentinel sample value found. |
+| `text_value_99` | n/a | n/a | n/a | No non-empty, non-sentinel sample value found. |
+
+Slowest queries in this validation:
+
+| Workload | Query | Latency | Rows |
+|---|---|---:|---:|
+| LIKE-to-MATCH rewrite corpus | `1_basic_filters_|_query_2` | 13688.78 ms | 28 |
+| FTS+JOIN MATCH corpus | `fts_join_q1_tv7_fagor_w8` | 10332.92 ms | 1000 |
+| LIKE-to-MATCH rewrite corpus | `2_full_text_search_|_query_3` | 10049.34 ms | 3 |
+| Workload smoke corpus | `fts_match_q2` | 9848.02 ms | 1 |
+| FTS+JOIN MATCH corpus | `fts_join_q6_tv4_morissette_w3b4c` | 9729.73 ms | 1000 |
+
 ## Evidence Files
 
 Key evidence files are under `upgrade_rehearsal_20260520/`:
@@ -170,6 +206,7 @@ Key evidence files are under `upgrade_rehearsal_20260520/`:
 - `post_upgrade_show_index_fulltext.tsv`
 - `post_upgrade_final_mysql_summary.log`
 - `post_upgrade_fts_smoke_retry.log`
+- `bench/results/upgrade_rehearsal_workload_validation_20260520.json`
 
 ## Customer-Facing Recommendation
 
