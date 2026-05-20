@@ -73,6 +73,12 @@ run_cmd() {
   fi
 }
 
+run_cmd_now() {
+  log "command:"
+  print_cmd "$@"
+  "$@"
+}
+
 need_cmd() {
   command -v "$1" >/dev/null 2>&1 || die "required command not found: $1"
 }
@@ -135,6 +141,7 @@ load_env() {
   MYSQL_BIN="${MYSQL_BIN:-mysql}"
   AWS_BIN="${AWS_BIN:-aws}"
   PYTHON_BIN="${PYTHON_BIN:-python3}"
+  MYSQL_MODE="${MYSQL_MODE:-local}"
 
   NAMESPACE="${NAMESPACE:-}"
   CLUSTER="${CLUSTER:-}"
@@ -143,6 +150,9 @@ load_env() {
   TIDB_USER="${TIDB_USER:-root}"
   TIDB_PASSWORD="${TIDB_PASSWORD:-}"
   MYSQL_EXTRA_ARGS="${MYSQL_EXTRA_ARGS:-}"
+  MYSQL_CLIENT_POD="${MYSQL_CLIENT_POD:-$CLUSTER-mysql-client}"
+  MYSQL_CLIENT_IMAGE="${MYSQL_CLIENT_IMAGE:-mysql:8.0}"
+  MYSQL_CLIENT_CREATE="${MYSQL_CLIENT_CREATE:-false}"
 
   S3_BUCKET="${S3_BUCKET:-}"
   S3_PREFIX="${S3_PREFIX:-}"
@@ -156,6 +166,8 @@ load_env() {
 
   TICI_META_REPLICAS="${TICI_META_REPLICAS:-1}"
   TICI_WORKER_REPLICAS="${TICI_WORKER_REPLICAS:-1}"
+  TIDB_OPERATOR_NAMESPACE="${TIDB_OPERATOR_NAMESPACE:-tidb-admin}"
+  TIDB_OPERATOR_DEPLOYMENT="${TIDB_OPERATOR_DEPLOYMENT:-tidb-controller-manager}"
   DATABASES="${DATABASES:-}"
   SMOKE_SQL_FILE="${SMOKE_SQL_FILE:-}"
 
@@ -164,6 +176,10 @@ load_env() {
   [[ -n "$S3_BUCKET" ]] || die "S3_BUCKET is required"
   [[ -n "$S3_PREFIX" ]] || die "S3_PREFIX is required"
   [[ -n "$AWS_REGION" ]] || die "AWS_REGION is required"
+  case "$MYSQL_MODE" in
+    local|pod) ;;
+    *) die "unsupported MYSQL_MODE: $MYSQL_MODE" ;;
+  esac
 }
 
 init_workdir() {
@@ -198,15 +214,34 @@ should_run_stage() {
 }
 
 mysql_base_args() {
-  local args=(
-    "$MYSQL_BIN"
-    -h "$TIDB_HOST"
-    -P "$TIDB_PORT"
-    -u "$TIDB_USER"
-    --batch
-    --raw
-    --skip-column-names
-  )
+  local args=()
+  if [[ "$MYSQL_MODE" == "pod" ]]; then
+    args=(
+      "$KUBECTL_BIN"
+      -n "$NAMESPACE"
+      exec
+      -i
+      "$MYSQL_CLIENT_POD"
+      --
+      "$MYSQL_BIN"
+      -h "$TIDB_HOST"
+      -P "$TIDB_PORT"
+      -u "$TIDB_USER"
+      --batch
+      --raw
+      --skip-column-names
+    )
+  else
+    args=(
+      "$MYSQL_BIN"
+      -h "$TIDB_HOST"
+      -P "$TIDB_PORT"
+      -u "$TIDB_USER"
+      --batch
+      --raw
+      --skip-column-names
+    )
+  fi
   if [[ -n "$TIDB_PASSWORD" ]]; then
     args+=("--password=$TIDB_PASSWORD")
   fi
@@ -216,6 +251,32 @@ mysql_base_args() {
     args+=("${extra[@]}")
   fi
   printf '%s\0' "${args[@]}"
+}
+
+ensure_mysql_client() {
+  [[ "$MYSQL_MODE" == "pod" ]] || return 0
+  log "mysql mode: pod ($MYSQL_CLIENT_POD)"
+  if ! "$KUBECTL_BIN" -n "$NAMESPACE" get pod "$MYSQL_CLIENT_POD" >/dev/null 2>&1; then
+    if [[ "$MYSQL_CLIENT_CREATE" != "true" ]]; then
+      die "MYSQL_MODE=pod requires existing pod $NAMESPACE/$MYSQL_CLIENT_POD, or set MYSQL_CLIENT_CREATE=true"
+    fi
+    if [[ "$MODE" == "execute" || "$MODE" == "validate-only" ]]; then
+      run_cmd_now "$KUBECTL_BIN" -n "$NAMESPACE" run "$MYSQL_CLIENT_POD" \
+        --image="$MYSQL_CLIENT_IMAGE" \
+        --restart=Never \
+        --command -- sleep 86400
+    else
+      run_cmd "$KUBECTL_BIN" -n "$NAMESPACE" run "$MYSQL_CLIENT_POD" \
+        --image="$MYSQL_CLIENT_IMAGE" \
+        --restart=Never \
+        --command -- sleep 86400
+    fi
+  fi
+  if [[ "$MODE" == "execute" || "$MODE" == "validate-only" ]]; then
+    run_cmd_now "$KUBECTL_BIN" -n "$NAMESPACE" wait \
+      --for=condition=Ready "pod/$MYSQL_CLIENT_POD" \
+      --timeout=180s
+  fi
 }
 
 mysql_sql() {
@@ -306,7 +367,9 @@ sink_uri() {
 precheck() {
   log "Preparation: precheck and evidence capture"
   need_cmd "$KUBECTL_BIN"
-  need_cmd "$MYSQL_BIN"
+  if [[ "$MYSQL_MODE" == "local" ]]; then
+    need_cmd "$MYSQL_BIN"
+  fi
   need_cmd "$AWS_BIN"
   need_cmd "$PYTHON_BIN"
 
@@ -329,6 +392,7 @@ precheck() {
 generate_fts_ddl() {
   log "Preparation: generate FTS drop/create SQL"
   export MYSQL_BIN TIDB_HOST TIDB_PORT TIDB_USER TIDB_PASSWORD MYSQL_EXTRA_ARGS DATABASES
+  export MYSQL_MODE KUBECTL_BIN NAMESPACE MYSQL_CLIENT_POD
   export FTS_DROP_SQL FTS_CREATE_SQL
   "$PYTHON_BIN" - <<'PY'
 import os
@@ -337,6 +401,10 @@ import subprocess
 import sys
 
 mysql_bin = os.environ["MYSQL_BIN"]
+mysql_mode = os.environ.get("MYSQL_MODE", "local")
+kubectl_bin = os.environ.get("KUBECTL_BIN", "kubectl")
+namespace = os.environ.get("NAMESPACE", "")
+mysql_client_pod = os.environ.get("MYSQL_CLIENT_POD", "")
 host = os.environ["TIDB_HOST"]
 port = os.environ["TIDB_PORT"]
 user = os.environ["TIDB_USER"]
@@ -350,16 +418,34 @@ def qident(value):
     return "`" + value.replace("`", "``") + "`"
 
 def mysql(sql):
-    cmd = [
-        mysql_bin,
-        "-h", host,
-        "-P", str(port),
-        "-u", user,
-        "--batch",
-        "--raw",
-        "--skip-column-names",
-        "-e", sql,
-    ]
+    if mysql_mode == "pod":
+        cmd = [
+            kubectl_bin,
+            "-n", namespace,
+            "exec",
+            "-i",
+            mysql_client_pod,
+            "--",
+            mysql_bin,
+            "-h", host,
+            "-P", str(port),
+            "-u", user,
+            "--batch",
+            "--raw",
+            "--skip-column-names",
+            "-e", sql,
+        ]
+    else:
+        cmd = [
+            mysql_bin,
+            "-h", host,
+            "-P", str(port),
+            "-u", user,
+            "--batch",
+            "--raw",
+            "--skip-column-names",
+            "-e", sql,
+        ]
     if password:
         cmd.append("--password=" + password)
     if extra:
@@ -487,10 +573,37 @@ wait_sts_replicas() {
   done
 }
 
+wait_deploy_ready() {
+  local namespace="$1"
+  local deploy="$2"
+  local desired="$3"
+  local timeout="${4:-300}"
+  [[ "$MODE" == "execute" ]] || return 0
+  local start now spec ready
+  start="$(date +%s)"
+  while true; do
+    spec="$("$KUBECTL_BIN" -n "$namespace" get deploy "$deploy" -o jsonpath='{.spec.replicas}' 2>/dev/null || true)"
+    ready="$("$KUBECTL_BIN" -n "$namespace" get deploy "$deploy" -o jsonpath='{.status.readyReplicas}' 2>/dev/null || true)"
+    spec="${spec:-0}"
+    ready="${ready:-0}"
+    log "$namespace/$deploy replicas=$spec ready=$ready target=$desired"
+    if [[ "$spec" == "$desired" && "$ready" == "$desired" ]]; then
+      return 0
+    fi
+    now="$(date +%s)"
+    (( now - start < timeout )) || die "timeout waiting for deployment $namespace/$deploy replicas=$desired"
+    sleep 10
+  done
+}
+
 stop_tici() {
   key_step "2/7" "Stop TiCI service."
   run_cmd "$KUBECTL_BIN" -n "$NAMESPACE" patch tidbcluster "$CLUSTER" --type merge \
-    -p '{"spec":{"tici":{"changefeed":{"enable":false},"meta":{"replicas":0},"worker":{"replicas":0}}}}'
+    -p '{"spec":{"tici":{"changefeed":{"enable":false}}}}'
+  run_cmd "$KUBECTL_BIN" -n "$TIDB_OPERATOR_NAMESPACE" scale deployment "$TIDB_OPERATOR_DEPLOYMENT" --replicas=0
+  wait_deploy_ready "$TIDB_OPERATOR_NAMESPACE" "$TIDB_OPERATOR_DEPLOYMENT" 0 300
+  run_cmd "$KUBECTL_BIN" -n "$NAMESPACE" scale statefulset "$CLUSTER-tici-meta" --replicas=0
+  run_cmd "$KUBECTL_BIN" -n "$NAMESPACE" scale statefulset "$CLUSTER-tici-worker" --replicas=0
   wait_sts_replicas "$CLUSTER-tici-meta" 0 600
   wait_sts_replicas "$CLUSTER-tici-worker" 0 600
 }
@@ -528,7 +641,7 @@ reset_changefeed() {
   fi
 
   if [[ "$changefeed_exists" == "1" ]]; then
-    run_cdc_cmd changefeed remove "--server=$CDC_SERVER" "--changefeed-id=$CHANGEFEED_ID" --force
+    run_cdc_cmd changefeed remove "--server=$CDC_SERVER" "--changefeed-id=$CHANGEFEED_ID"
   else
     log "skip changefeed remove because the changefeed was not found"
   fi
@@ -581,8 +694,12 @@ print(json.dumps({
 }))
 PY
   run_cmd "$KUBECTL_BIN" -n "$NAMESPACE" patch tidbcluster "$CLUSTER" --type merge --patch-file "$patch_file"
+  run_cmd "$KUBECTL_BIN" -n "$NAMESPACE" scale statefulset "$CLUSTER-tici-meta" "--replicas=$TICI_META_REPLICAS"
+  run_cmd "$KUBECTL_BIN" -n "$NAMESPACE" scale statefulset "$CLUSTER-tici-worker" "--replicas=$TICI_WORKER_REPLICAS"
   wait_sts_replicas "$CLUSTER-tici-meta" "$TICI_META_REPLICAS" 900
   wait_sts_replicas "$CLUSTER-tici-worker" "$TICI_WORKER_REPLICAS" 900
+  run_cmd "$KUBECTL_BIN" -n "$TIDB_OPERATOR_NAMESPACE" scale deployment "$TIDB_OPERATOR_DEPLOYMENT" --replicas=1
+  wait_deploy_ready "$TIDB_OPERATOR_NAMESPACE" "$TIDB_OPERATOR_DEPLOYMENT" 1 300
 }
 
 recreate_fts() {
@@ -614,72 +731,22 @@ wait_import() {
 }
 
 validate_fulltext_count() {
-  export MYSQL_BIN TIDB_HOST TIDB_PORT TIDB_USER TIDB_PASSWORD MYSQL_EXTRA_ARGS DATABASES WORKDIR
-  "$PYTHON_BIN" - <<'PY'
-import os
-import shlex
-import subprocess
+  local expected_file="$WORKDIR/pre_fulltext_indexes.tsv"
+  local expected=""
+  if [[ -s "$expected_file" ]]; then
+    expected="$(awk -F '\t' '{print $1 "\t" $2 "\t" $3}' "$expected_file" | sort -u | wc -l | tr -d ' ')"
+    echo "expected_fulltext_index_count=$expected"
+  else
+    echo "expected_fulltext_index_count=unknown"
+  fi
 
-mysql_bin = os.environ["MYSQL_BIN"]
-host = os.environ["TIDB_HOST"]
-port = os.environ["TIDB_PORT"]
-user = os.environ["TIDB_USER"]
-password = os.environ.get("TIDB_PASSWORD", "")
-extra = os.environ.get("MYSQL_EXTRA_ARGS", "")
-databases = [x.strip() for x in os.environ.get("DATABASES", "").split(",") if x.strip()]
+  local tici_count
+  tici_count="$(mysql_sql "SELECT COUNT(*) FROM tici.tici_index_meta;" 2>/dev/null || true)"
+  echo "tici_index_meta_count=${tici_count:-unavailable}"
 
-def qident(value):
-    return "`" + value.replace("`", "``") + "`"
-
-def mysql(sql):
-    cmd = [
-        mysql_bin, "-h", host, "-P", str(port), "-u", user,
-        "--batch", "--raw", "--skip-column-names", "-e", sql,
-    ]
-    if password:
-        cmd.append("--password=" + password)
-    if extra:
-        cmd[1:1] = shlex.split(extra)
-    return subprocess.check_output(cmd, text=True)
-
-if databases:
-    db_list = ",".join("'" + db.replace("'", "''") + "'" for db in databases)
-    table_sql = f"SELECT table_schema, table_name FROM information_schema.tables WHERE table_type='BASE TABLE' AND table_schema IN ({db_list}) ORDER BY table_schema, table_name"
-else:
-    table_sql = """
-      SELECT table_schema, table_name
-      FROM information_schema.tables
-      WHERE table_type='BASE TABLE'
-        AND table_schema NOT IN (
-          'INFORMATION_SCHEMA','PERFORMANCE_SCHEMA','METRICS_SCHEMA',
-          'INSPECTION_SCHEMA','mysql','sys','tici'
-        )
-      ORDER BY table_schema, table_name
-    """
-
-count = 0
-lines = []
-for row in mysql(table_sql).splitlines():
-    if not row.strip():
-        continue
-    db, table = row.split("\t")[:2]
-    try:
-        show_index = mysql(f"SHOW INDEX FROM {qident(db)}.{qident(table)}")
-    except subprocess.CalledProcessError:
-        continue
-    names = set()
-    for line in show_index.splitlines():
-        parts = line.split("\t")
-        if len(parts) > 10 and parts[10].upper() == "FULLTEXT":
-            names.add(parts[2])
-    if names:
-        count += len(names)
-        lines.append(f"{db}\t{table}\t{len(names)}")
-
-print(f"fulltext_index_count={count}")
-for line in lines:
-    print(line)
-PY
+  if [[ -n "$expected" && -n "$tici_count" && "$expected" != "$tici_count" ]]; then
+    die "FULLTEXT validation mismatch: expected $expected, tici.tici_index_meta has $tici_count"
+  fi
 }
 
 validate() {
@@ -752,6 +819,7 @@ main() {
   load_env
   init_workdir
   validate_stage_name
+  ensure_mysql_client
 
   log "mode=$MODE workdir=$WORKDIR resume_from=$RESUME_FROM"
 

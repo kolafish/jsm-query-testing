@@ -32,10 +32,17 @@ Create `customer.env`:
 NAMESPACE=tidb-cluster
 CLUSTER=tici-demo-s3
 
-TIDB_HOST=127.0.0.1
+TIDB_HOST=tici-demo-s3-tidb
 TIDB_PORT=4000
 TIDB_USER=root
 TIDB_PASSWORD=
+
+# For long DDL, prefer running mysql inside the Kubernetes cluster.
+# Use `local` if you already have a stable local TiDB connection.
+MYSQL_MODE=pod
+MYSQL_CLIENT_POD=tici-compat-mysql-client
+MYSQL_CLIENT_IMAGE=mysql:8.0
+MYSQL_CLIENT_CREATE=true
 
 S3_BUCKET=your-tici-bucket
 S3_PREFIX=tici_default_prefix
@@ -46,11 +53,15 @@ CHANGEFEED_ID=tici-replication-task
 CDC_MODE=pod
 CDC_SERVER=http://127.0.0.1:8301
 
+# TiDB Operator deployment. Defaults shown here match standard TiDB Operator installs.
+TIDB_OPERATOR_NAMESPACE=tidb-admin
+TIDB_OPERATOR_DEPLOYMENT=tidb-controller-manager
+
 # Optional: comma-separated database list. Empty means all non-system schemas.
 DATABASES=
 ```
 
-If `TIDB_HOST=127.0.0.1`, start TiDB port-forward separately:
+If `MYSQL_MODE=local` and `TIDB_HOST=127.0.0.1`, start TiDB port-forward separately:
 
 ```bash
 kubectl -n tidb-cluster port-forward svc/tici-demo-s3-tidb 4000:4000
@@ -84,6 +95,9 @@ Validate only:
 - This script is destructive: it drops FTS indexes, drops the `tici` database,
   removes the old changefeed, and deletes the configured TiCI S3 prefix.
 - The script prints each compatibility action as `Step N/7` in the execution log.
+- To stop TiCI, the script temporarily scales the TiDB Operator deployment to
+  `0`, scales TiCI meta/worker StatefulSets to `0`, then scales the operator
+  back after TiCI is started again.
 - `--confirm-delete-s3-prefix` must exactly match `S3_PREFIX`; otherwise S3
   deletion is refused.
 - The new changefeed is created with an embedded config equivalent to:
