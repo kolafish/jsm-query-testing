@@ -1,0 +1,277 @@
+=== [1/138] 2026-05-20T02:12:45Z START ALTER TABLE `jsm_assets2`.`obj_new` ADD FULLTEXT INDEX `idx_fts_1` (`text_value_1`) WITH PARSER NGRAM;
+=== [1/138] 2026-05-20T02:13:52Z END rc=0 elapsed=67s
+=== [2/138] 2026-05-20T02:13:52Z START ALTER TABLE `jsm_assets2`.`obj_new` ADD FULLTEXT INDEX `idx_fts_20` (`text_value_20`) WITH PARSER NGRAM;
+=== [2/138] 2026-05-20T02:14:38Z END rc=0 elapsed=46s
+=== [3/138] 2026-05-20T02:14:38Z START ALTER TABLE `jsm_assets2`.`obj_new` ADD FULLTEXT INDEX `idx_fts_22` (`text_value_22`) WITH PARSER NGRAM;
+=== [3/138] 2026-05-20T02:15:19Z END rc=0 elapsed=41s
+=== [4/138] 2026-05-20T02:15:19Z START ALTER TABLE `jsm_assets2`.`obj_new` ADD FULLTEXT INDEX `idx_fts_4` (`text_value_4`) WITH PARSER NGRAM;
+=== [4/138] 2026-05-20T02:16:05Z END rc=0 elapsed=46s
+=== [5/138] 2026-05-20T02:16:05Z START ALTER TABLE `jsm_assets2`.`obj_new` ADD FULLTEXT INDEX `idx_fts_5` (`text_value_5`) WITH PARSER NGRAM;
+=== [5/138] 2026-05-20T02:16:57Z END rc=0 elapsed=52s
+=== [6/138] 2026-05-20T02:16:57Z START ALTER TABLE `jsm_assets2`.`obj_new` ADD FULLTEXT INDEX `idx_fts_7` (`text_value_7`) WITH PARSER NGRAM;
+=== [6/138] 2026-05-20T02:17:41Z END rc=0 elapsed=44s
+=== [7/138] 2026-05-20T02:17:41Z START ALTER TABLE `jsm_assets2`.`obj_new` ADD FULLTEXT INDEX `idx_fts_label` (`label`) WITH PARSER NGRAM;
+=== [7/138] 2026-05-20T02:18:24Z END rc=0 elapsed=43s
+=== [8/138] 2026-05-20T02:18:24Z START ALTER TABLE `jsm_assets3`.`obj_new` ADD FULLTEXT INDEX `idx_fts_1` (`text_value_1`) WITH PARSER NGRAM;
+=== [8/138] 2026-05-20T02:19:21Z END rc=0 elapsed=57s
+=== [9/138] 2026-05-20T02:19:21Z START ALTER TABLE `jsm_assets3`.`obj_new` ADD FULLTEXT INDEX `idx_fts_20` (`text_value_20`) WITH PARSER NGRAM;
+=== [9/138] 2026-05-20T02:19:56Z END rc=0 elapsed=35s
+=== [10/138] 2026-05-20T02:19:56Z START ALTER TABLE `jsm_assets3`.`obj_new` ADD FULLTEXT INDEX `idx_fts_22` (`text_value_22`) WITH PARSER NGRAM;
+=== [10/138] 2026-05-20T02:20:30Z END rc=0 elapsed=34s
+=== [11/138] 2026-05-20T02:20:30Z START ALTER TABLE `jsm_assets3`.`obj_new` ADD FULLTEXT INDEX `idx_fts_4` (`text_value_4`) WITH PARSER NGRAM;
+=== [11/138] 2026-05-20T02:21:03Z END rc=0 elapsed=33s
+=== [12/138] 2026-05-20T02:21:03Z START ALTER TABLE `jsm_assets3`.`obj_new` ADD FULLTEXT INDEX `idx_fts_5` (`text_value_5`) WITH PARSER NGRAM;
+=== [12/138] 2026-05-20T02:21:40Z END rc=0 elapsed=37s
+=== [13/138] 2026-05-20T02:21:40Z START ALTER TABLE `jsm_assets3`.`obj_new` ADD FULLTEXT INDEX `idx_fts_7` (`text_value_7`) WITH PARSER NGRAM;
+=== [13/138] 2026-05-20T02:22:14Z END rc=0 elapsed=34s
+=== [14/138] 2026-05-20T02:22:14Z START ALTER TABLE `jsm_assets3`.`obj_new` ADD FULLTEXT INDEX `idx_fts_label` (`label`) WITH PARSER NGRAM;
+=== [14/138] 2026-05-20T02:22:52Z END rc=0 elapsed=38s
+=== [15/138] 2026-05-20T02:22:52Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_1` (`text_value_1`) WITH PARSER NGRAM;
+=== [15/138] 2026-05-20T02:24:06Z END rc=0 elapsed=74s
+=== [16/138] 2026-05-20T02:24:06Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_20` (`text_value_20`) WITH PARSER NGRAM;
+=== [16/138] 2026-05-20T02:24:43Z END rc=0 elapsed=37s
+=== [17/138] 2026-05-20T02:24:43Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_22` (`text_value_22`) WITH PARSER NGRAM;
+=== [17/138] 2026-05-20T02:25:26Z END rc=0 elapsed=43s
+=== [18/138] 2026-05-20T02:25:26Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_4` (`text_value_4`) WITH PARSER NGRAM;
+=== [18/138] 2026-05-20T02:26:16Z END rc=0 elapsed=50s
+=== [19/138] 2026-05-20T02:26:16Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_5` (`text_value_5`) WITH PARSER NGRAM;
+=== [19/138] 2026-05-20T02:27:01Z END rc=0 elapsed=45s
+=== [20/138] 2026-05-20T02:27:01Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_7` (`text_value_7`) WITH PARSER NGRAM;
+=== [20/138] 2026-05-20T02:27:47Z END rc=0 elapsed=46s
+=== [21/138] 2026-05-20T02:27:47Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_external_id` (`external_id`) WITH PARSER NGRAM;
+=== [21/138] 2026-05-20T02:28:36Z END rc=0 elapsed=49s
+=== [22/138] 2026-05-20T02:28:36Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_label` (`label`) WITH PARSER NGRAM;
+=== [22/138] 2026-05-20T02:29:19Z END rc=0 elapsed=43s
+=== [23/138] 2026-05-20T02:29:19Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_10` (`text_value_10`) WITH PARSER NGRAM;
+=== [23/138] 2026-05-20T02:29:58Z END rc=0 elapsed=39s
+=== [24/138] 2026-05-20T02:29:58Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_100` (`text_value_100`) WITH PARSER NGRAM;
+=== [24/138] 2026-05-20T02:30:41Z END rc=0 elapsed=43s
+=== [25/138] 2026-05-20T02:30:41Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_101` (`text_value_101`) WITH PARSER NGRAM;
+=== [25/138] 2026-05-20T02:31:21Z END rc=0 elapsed=40s
+=== [26/138] 2026-05-20T02:31:21Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_102` (`text_value_102`) WITH PARSER NGRAM;
+=== [26/138] 2026-05-20T02:31:59Z END rc=0 elapsed=38s
+=== [27/138] 2026-05-20T02:31:59Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_103` (`text_value_103`) WITH PARSER NGRAM;
+=== [27/138] 2026-05-20T02:32:41Z END rc=0 elapsed=42s
+=== [28/138] 2026-05-20T02:32:41Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_104` (`text_value_104`) WITH PARSER NGRAM;
+=== [28/138] 2026-05-20T02:33:28Z END rc=0 elapsed=47s
+=== [29/138] 2026-05-20T02:33:28Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_105` (`text_value_105`) WITH PARSER NGRAM;
+=== [29/138] 2026-05-20T02:34:12Z END rc=0 elapsed=44s
+=== [30/138] 2026-05-20T02:34:12Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_106` (`text_value_106`) WITH PARSER NGRAM;
+=== [30/138] 2026-05-20T02:34:50Z END rc=0 elapsed=38s
+=== [31/138] 2026-05-20T02:34:50Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_107` (`text_value_107`) WITH PARSER NGRAM;
+=== [31/138] 2026-05-20T02:35:35Z END rc=0 elapsed=45s
+=== [32/138] 2026-05-20T02:35:35Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_108` (`text_value_108`) WITH PARSER NGRAM;
+=== [32/138] 2026-05-20T02:36:15Z END rc=0 elapsed=40s
+=== [33/138] 2026-05-20T02:36:15Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_109` (`text_value_109`) WITH PARSER NGRAM;
+=== [33/138] 2026-05-20T02:36:56Z END rc=0 elapsed=41s
+=== [34/138] 2026-05-20T02:36:56Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_11` (`text_value_11`) WITH PARSER NGRAM;
+=== [34/138] 2026-05-20T02:37:39Z END rc=0 elapsed=43s
+=== [35/138] 2026-05-20T02:37:39Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_110` (`text_value_110`) WITH PARSER NGRAM;
+=== [35/138] 2026-05-20T02:38:22Z END rc=0 elapsed=43s
+=== [36/138] 2026-05-20T02:38:22Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_111` (`text_value_111`) WITH PARSER NGRAM;
+=== [36/138] 2026-05-20T02:39:02Z END rc=0 elapsed=40s
+=== [37/138] 2026-05-20T02:39:02Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_112` (`text_value_112`) WITH PARSER NGRAM;
+=== [37/138] 2026-05-20T02:39:42Z END rc=0 elapsed=40s
+=== [38/138] 2026-05-20T02:39:42Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_113` (`text_value_113`) WITH PARSER NGRAM;
+=== [38/138] 2026-05-20T02:40:23Z END rc=0 elapsed=41s
+=== [39/138] 2026-05-20T02:40:23Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_114` (`text_value_114`) WITH PARSER NGRAM;
+=== [39/138] 2026-05-20T02:41:04Z END rc=0 elapsed=41s
+=== [40/138] 2026-05-20T02:41:04Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_115` (`text_value_115`) WITH PARSER NGRAM;
+=== [40/138] 2026-05-20T02:41:43Z END rc=0 elapsed=39s
+=== [41/138] 2026-05-20T02:41:43Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_116` (`text_value_116`) WITH PARSER NGRAM;
+=== [41/138] 2026-05-20T02:42:25Z END rc=0 elapsed=42s
+=== [42/138] 2026-05-20T02:42:25Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_117` (`text_value_117`) WITH PARSER NGRAM;
+=== [42/138] 2026-05-20T02:43:05Z END rc=0 elapsed=40s
+=== [43/138] 2026-05-20T02:43:05Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_118` (`text_value_118`) WITH PARSER NGRAM;
+=== [43/138] 2026-05-20T02:43:50Z END rc=0 elapsed=45s
+=== [44/138] 2026-05-20T02:43:50Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_119` (`text_value_119`) WITH PARSER NGRAM;
+=== [44/138] 2026-05-20T02:44:27Z END rc=0 elapsed=37s
+=== [45/138] 2026-05-20T02:44:27Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_12` (`text_value_12`) WITH PARSER NGRAM;
+=== [45/138] 2026-05-20T02:45:12Z END rc=0 elapsed=45s
+=== [46/138] 2026-05-20T02:45:12Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_120` (`text_value_120`) WITH PARSER NGRAM;
+=== [46/138] 2026-05-20T02:45:56Z END rc=0 elapsed=44s
+=== [47/138] 2026-05-20T02:45:56Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_121` (`text_value_121`) WITH PARSER NGRAM;
+=== [47/138] 2026-05-20T02:46:37Z END rc=0 elapsed=41s
+=== [48/138] 2026-05-20T02:46:37Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_122` (`text_value_122`) WITH PARSER NGRAM;
+=== [48/138] 2026-05-20T02:47:18Z END rc=0 elapsed=41s
+=== [49/138] 2026-05-20T02:47:18Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_13` (`text_value_13`) WITH PARSER NGRAM;
+=== [49/138] 2026-05-20T02:47:59Z END rc=0 elapsed=41s
+=== [50/138] 2026-05-20T02:47:59Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_14` (`text_value_14`) WITH PARSER NGRAM;
+=== [50/138] 2026-05-20T02:48:40Z END rc=0 elapsed=41s
+=== [51/138] 2026-05-20T02:48:40Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_15` (`text_value_15`) WITH PARSER NGRAM;
+=== [51/138] 2026-05-20T02:49:20Z END rc=0 elapsed=40s
+=== [52/138] 2026-05-20T02:49:20Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_16` (`text_value_16`) WITH PARSER NGRAM;
+=== [52/138] 2026-05-20T02:50:00Z END rc=0 elapsed=40s
+=== [53/138] 2026-05-20T02:50:00Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_17` (`text_value_17`) WITH PARSER NGRAM;
+=== [53/138] 2026-05-20T02:50:42Z END rc=0 elapsed=42s
+=== [54/138] 2026-05-20T02:50:42Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_18` (`text_value_18`) WITH PARSER NGRAM;
+=== [54/138] 2026-05-20T02:51:22Z END rc=0 elapsed=40s
+=== [55/138] 2026-05-20T02:51:22Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_19` (`text_value_19`) WITH PARSER NGRAM;
+=== [55/138] 2026-05-20T02:52:03Z END rc=0 elapsed=41s
+=== [56/138] 2026-05-20T02:52:03Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_2` (`text_value_2`) WITH PARSER NGRAM;
+=== [56/138] 2026-05-20T02:52:43Z END rc=0 elapsed=40s
+=== [57/138] 2026-05-20T02:52:43Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_21` (`text_value_21`) WITH PARSER NGRAM;
+=== [57/138] 2026-05-20T02:53:28Z END rc=0 elapsed=45s
+=== [58/138] 2026-05-20T02:53:28Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_23` (`text_value_23`) WITH PARSER NGRAM;
+=== [58/138] 2026-05-20T02:54:13Z END rc=0 elapsed=45s
+=== [59/138] 2026-05-20T02:54:13Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_24` (`text_value_24`) WITH PARSER NGRAM;
+=== [59/138] 2026-05-20T02:54:56Z END rc=0 elapsed=43s
+=== [60/138] 2026-05-20T02:54:56Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_25` (`text_value_25`) WITH PARSER NGRAM;
+=== [60/138] 2026-05-20T02:55:44Z END rc=0 elapsed=48s
+=== [61/138] 2026-05-20T02:55:44Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_26` (`text_value_26`) WITH PARSER NGRAM;
+=== [61/138] 2026-05-20T02:56:25Z END rc=0 elapsed=41s
+=== [62/138] 2026-05-20T02:56:25Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_27` (`text_value_27`) WITH PARSER NGRAM;
+=== [62/138] 2026-05-20T02:57:05Z END rc=0 elapsed=40s
+=== [63/138] 2026-05-20T02:57:05Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_28` (`text_value_28`) WITH PARSER NGRAM;
+=== [63/138] 2026-05-20T02:57:45Z END rc=0 elapsed=40s
+=== [64/138] 2026-05-20T02:57:45Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_29` (`text_value_29`) WITH PARSER NGRAM;
+=== [64/138] 2026-05-20T02:58:27Z END rc=0 elapsed=42s
+=== [65/138] 2026-05-20T02:58:27Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_3` (`text_value_3`) WITH PARSER NGRAM;
+=== [65/138] 2026-05-20T02:59:08Z END rc=0 elapsed=41s
+=== [66/138] 2026-05-20T02:59:08Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_30` (`text_value_30`) WITH PARSER NGRAM;
+=== [66/138] 2026-05-20T02:59:47Z END rc=0 elapsed=39s
+=== [67/138] 2026-05-20T02:59:47Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_31` (`text_value_31`) WITH PARSER NGRAM;
+=== [67/138] 2026-05-20T03:00:28Z END rc=0 elapsed=41s
+=== [68/138] 2026-05-20T03:00:28Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_32` (`text_value_32`) WITH PARSER NGRAM;
+=== [68/138] 2026-05-20T03:01:09Z END rc=0 elapsed=41s
+=== [69/138] 2026-05-20T03:01:09Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_33` (`text_value_33`) WITH PARSER NGRAM;
+=== [69/138] 2026-05-20T03:01:48Z END rc=0 elapsed=39s
+=== [70/138] 2026-05-20T03:01:48Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_34` (`text_value_34`) WITH PARSER NGRAM;
+=== [70/138] 2026-05-20T03:02:30Z END rc=0 elapsed=42s
+=== [71/138] 2026-05-20T03:02:30Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_35` (`text_value_35`) WITH PARSER NGRAM;
+=== [71/138] 2026-05-20T03:03:10Z END rc=0 elapsed=40s
+=== [72/138] 2026-05-20T03:03:10Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_36` (`text_value_36`) WITH PARSER NGRAM;
+=== [72/138] 2026-05-20T03:03:50Z END rc=0 elapsed=40s
+=== [73/138] 2026-05-20T03:03:50Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_37` (`text_value_37`) WITH PARSER NGRAM;
+=== [73/138] 2026-05-20T03:04:29Z END rc=0 elapsed=39s
+=== [74/138] 2026-05-20T03:04:29Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_38` (`text_value_38`) WITH PARSER NGRAM;
+=== [74/138] 2026-05-20T03:05:12Z END rc=0 elapsed=43s
+=== [75/138] 2026-05-20T03:05:12Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_39` (`text_value_39`) WITH PARSER NGRAM;
+=== [75/138] 2026-05-20T03:05:50Z END rc=0 elapsed=38s
+=== [76/138] 2026-05-20T03:05:50Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_40` (`text_value_40`) WITH PARSER NGRAM;
+=== [76/138] 2026-05-20T03:06:32Z END rc=0 elapsed=42s
+=== [77/138] 2026-05-20T03:06:32Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_41` (`text_value_41`) WITH PARSER NGRAM;
+=== [77/138] 2026-05-20T03:07:18Z END rc=0 elapsed=46s
+=== [78/138] 2026-05-20T03:07:18Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_42` (`text_value_42`) WITH PARSER NGRAM;
+=== [78/138] 2026-05-20T03:08:04Z END rc=0 elapsed=46s
+=== [79/138] 2026-05-20T03:08:04Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_43` (`text_value_43`) WITH PARSER NGRAM;
+=== [79/138] 2026-05-20T03:08:44Z END rc=0 elapsed=40s
+=== [80/138] 2026-05-20T03:08:44Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_44` (`text_value_44`) WITH PARSER NGRAM;
+=== [80/138] 2026-05-20T03:09:25Z END rc=0 elapsed=41s
+=== [81/138] 2026-05-20T03:09:25Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_45` (`text_value_45`) WITH PARSER NGRAM;
+=== [81/138] 2026-05-20T03:10:03Z END rc=0 elapsed=38s
+=== [82/138] 2026-05-20T03:10:03Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_46` (`text_value_46`) WITH PARSER NGRAM;
+=== [82/138] 2026-05-20T03:10:46Z END rc=0 elapsed=43s
+=== [83/138] 2026-05-20T03:10:46Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_47` (`text_value_47`) WITH PARSER NGRAM;
+=== [83/138] 2026-05-20T03:11:26Z END rc=0 elapsed=40s
+=== [84/138] 2026-05-20T03:11:26Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_48` (`text_value_48`) WITH PARSER NGRAM;
+=== [84/138] 2026-05-20T03:12:07Z END rc=0 elapsed=41s
+=== [85/138] 2026-05-20T03:12:07Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_49` (`text_value_49`) WITH PARSER NGRAM;
+=== [85/138] 2026-05-20T03:12:48Z END rc=0 elapsed=41s
+=== [86/138] 2026-05-20T03:12:48Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_50` (`text_value_50`) WITH PARSER NGRAM;
+=== [86/138] 2026-05-20T03:13:32Z END rc=0 elapsed=44s
+=== [87/138] 2026-05-20T03:13:32Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_51` (`text_value_51`) WITH PARSER NGRAM;
+=== [87/138] 2026-05-20T03:14:12Z END rc=0 elapsed=40s
+=== [88/138] 2026-05-20T03:14:12Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_52` (`text_value_52`) WITH PARSER NGRAM;
+=== [88/138] 2026-05-20T03:14:59Z END rc=0 elapsed=47s
+=== [89/138] 2026-05-20T03:14:59Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_53` (`text_value_53`) WITH PARSER NGRAM;
+=== [89/138] 2026-05-20T03:15:39Z END rc=0 elapsed=40s
+=== [90/138] 2026-05-20T03:15:39Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_54` (`text_value_54`) WITH PARSER NGRAM;
+=== [90/138] 2026-05-20T03:16:20Z END rc=0 elapsed=41s
+=== [91/138] 2026-05-20T03:16:20Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_55` (`text_value_55`) WITH PARSER NGRAM;
+=== [91/138] 2026-05-20T03:17:00Z END rc=0 elapsed=40s
+=== [92/138] 2026-05-20T03:17:00Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_56` (`text_value_56`) WITH PARSER NGRAM;
+=== [92/138] 2026-05-20T03:17:41Z END rc=0 elapsed=41s
+=== [93/138] 2026-05-20T03:17:41Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_57` (`text_value_57`) WITH PARSER NGRAM;
+=== [93/138] 2026-05-20T03:18:21Z END rc=0 elapsed=40s
+=== [94/138] 2026-05-20T03:18:21Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_58` (`text_value_58`) WITH PARSER NGRAM;
+=== [94/138] 2026-05-20T03:19:02Z END rc=0 elapsed=41s
+=== [95/138] 2026-05-20T03:19:02Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_59` (`text_value_59`) WITH PARSER NGRAM;
+=== [95/138] 2026-05-20T03:19:42Z END rc=0 elapsed=40s
+=== [96/138] 2026-05-20T03:19:42Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_6` (`text_value_6`) WITH PARSER NGRAM;
+=== [96/138] 2026-05-20T03:20:25Z END rc=0 elapsed=43s
+=== [97/138] 2026-05-20T03:20:25Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_60` (`text_value_60`) WITH PARSER NGRAM;
+=== [97/138] 2026-05-20T03:21:04Z END rc=0 elapsed=39s
+=== [98/138] 2026-05-20T03:21:04Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_61` (`text_value_61`) WITH PARSER NGRAM;
+=== [98/138] 2026-05-20T03:21:44Z END rc=0 elapsed=40s
+=== [99/138] 2026-05-20T03:21:44Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_62` (`text_value_62`) WITH PARSER NGRAM;
+=== [99/138] 2026-05-20T03:22:24Z END rc=0 elapsed=40s
+=== [100/138] 2026-05-20T03:22:24Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_63` (`text_value_63`) WITH PARSER NGRAM;
+=== [100/138] 2026-05-20T03:23:05Z END rc=0 elapsed=41s
+=== [101/138] 2026-05-20T03:23:05Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_64` (`text_value_64`) WITH PARSER NGRAM;
+=== [101/138] 2026-05-20T03:23:45Z END rc=0 elapsed=40s
+=== [102/138] 2026-05-20T03:23:45Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_65` (`text_value_65`) WITH PARSER NGRAM;
+=== [102/138] 2026-05-20T03:24:28Z END rc=0 elapsed=43s
+=== [103/138] 2026-05-20T03:24:28Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_66` (`text_value_66`) WITH PARSER NGRAM;
+=== [103/138] 2026-05-20T03:25:11Z END rc=0 elapsed=43s
+=== [104/138] 2026-05-20T03:25:11Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_67` (`text_value_67`) WITH PARSER NGRAM;
+=== [104/138] 2026-05-20T03:25:58Z END rc=0 elapsed=47s
+=== [105/138] 2026-05-20T03:25:58Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_68` (`text_value_68`) WITH PARSER NGRAM;
+=== [105/138] 2026-05-20T03:26:38Z END rc=0 elapsed=40s
+=== [106/138] 2026-05-20T03:26:38Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_69` (`text_value_69`) WITH PARSER NGRAM;
+=== [106/138] 2026-05-20T03:27:20Z END rc=0 elapsed=42s
+=== [107/138] 2026-05-20T03:27:20Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_70` (`text_value_70`) WITH PARSER NGRAM;
+=== [107/138] 2026-05-20T03:28:00Z END rc=0 elapsed=40s
+=== [108/138] 2026-05-20T03:28:00Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_71` (`text_value_71`) WITH PARSER NGRAM;
+=== [108/138] 2026-05-20T03:28:42Z END rc=0 elapsed=42s
+=== [109/138] 2026-05-20T03:28:42Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_72` (`text_value_72`) WITH PARSER NGRAM;
+=== [109/138] 2026-05-20T03:29:22Z END rc=0 elapsed=40s
+=== [110/138] 2026-05-20T03:29:22Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_73` (`text_value_73`) WITH PARSER NGRAM;
+=== [110/138] 2026-05-20T03:30:03Z END rc=0 elapsed=41s
+=== [111/138] 2026-05-20T03:30:03Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_74` (`text_value_74`) WITH PARSER NGRAM;
+=== [111/138] 2026-05-20T03:30:42Z END rc=0 elapsed=39s
+=== [112/138] 2026-05-20T03:30:42Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_75` (`text_value_75`) WITH PARSER NGRAM;
+=== [112/138] 2026-05-20T03:31:24Z END rc=0 elapsed=42s
+=== [113/138] 2026-05-20T03:31:24Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_76` (`text_value_76`) WITH PARSER NGRAM;
+=== [113/138] 2026-05-20T03:32:03Z END rc=0 elapsed=39s
+=== [114/138] 2026-05-20T03:32:03Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_77` (`text_value_77`) WITH PARSER NGRAM;
+=== [114/138] 2026-05-20T03:32:44Z END rc=0 elapsed=41s
+=== [115/138] 2026-05-20T03:32:44Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_78` (`text_value_78`) WITH PARSER NGRAM;
+=== [115/138] 2026-05-20T03:33:25Z END rc=0 elapsed=41s
+=== [116/138] 2026-05-20T03:33:25Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_79` (`text_value_79`) WITH PARSER NGRAM;
+=== [116/138] 2026-05-20T03:34:05Z END rc=0 elapsed=40s
+=== [117/138] 2026-05-20T03:34:05Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_8` (`text_value_8`) WITH PARSER NGRAM;
+=== [117/138] 2026-05-20T03:34:47Z END rc=0 elapsed=42s
+=== [118/138] 2026-05-20T03:34:47Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_80` (`text_value_80`) WITH PARSER NGRAM;
+=== [118/138] 2026-05-20T03:35:30Z END rc=0 elapsed=43s
+=== [119/138] 2026-05-20T03:35:30Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_81` (`text_value_81`) WITH PARSER NGRAM;
+=== [119/138] 2026-05-20T03:36:17Z END rc=0 elapsed=47s
+=== [120/138] 2026-05-20T03:36:17Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_82` (`text_value_82`) WITH PARSER NGRAM;
+=== [120/138] 2026-05-20T03:36:59Z END rc=0 elapsed=42s
+=== [121/138] 2026-05-20T03:36:59Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_83` (`text_value_83`) WITH PARSER NGRAM;
+=== [121/138] 2026-05-20T03:37:39Z END rc=0 elapsed=40s
+=== [122/138] 2026-05-20T03:37:39Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_84` (`text_value_84`) WITH PARSER NGRAM;
+=== [122/138] 2026-05-20T03:38:20Z END rc=0 elapsed=41s
+=== [123/138] 2026-05-20T03:38:20Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_85` (`text_value_85`) WITH PARSER NGRAM;
+=== [123/138] 2026-05-20T03:38:59Z END rc=0 elapsed=39s
+=== [124/138] 2026-05-20T03:38:59Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_86` (`text_value_86`) WITH PARSER NGRAM;
+=== [124/138] 2026-05-20T03:39:44Z END rc=0 elapsed=45s
+=== [125/138] 2026-05-20T03:39:44Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_87` (`text_value_87`) WITH PARSER NGRAM;
+=== [125/138] 2026-05-20T03:40:21Z END rc=0 elapsed=37s
+=== [126/138] 2026-05-20T03:40:21Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_88` (`text_value_88`) WITH PARSER NGRAM;
+=== [126/138] 2026-05-20T03:41:04Z END rc=0 elapsed=43s
+=== [127/138] 2026-05-20T03:41:04Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_89` (`text_value_89`) WITH PARSER NGRAM;
+=== [127/138] 2026-05-20T03:41:47Z END rc=0 elapsed=43s
+=== [128/138] 2026-05-20T03:41:47Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_9` (`text_value_9`) WITH PARSER NGRAM;
+=== [128/138] 2026-05-20T03:42:25Z END rc=0 elapsed=38s
+=== [129/138] 2026-05-20T03:42:25Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_90` (`text_value_90`) WITH PARSER NGRAM;
+=== [129/138] 2026-05-20T03:43:04Z END rc=0 elapsed=39s
+=== [130/138] 2026-05-20T03:43:04Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_91` (`text_value_91`) WITH PARSER NGRAM;
+=== [130/138] 2026-05-20T03:43:45Z END rc=0 elapsed=41s
+=== [131/138] 2026-05-20T03:43:45Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_92` (`text_value_92`) WITH PARSER NGRAM;
+=== [131/138] 2026-05-20T03:44:26Z END rc=0 elapsed=41s
+=== [132/138] 2026-05-20T03:44:26Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_93` (`text_value_93`) WITH PARSER NGRAM;
+=== [132/138] 2026-05-20T03:45:06Z END rc=0 elapsed=40s
+=== [133/138] 2026-05-20T03:45:06Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_94` (`text_value_94`) WITH PARSER NGRAM;
+=== [133/138] 2026-05-20T03:45:48Z END rc=0 elapsed=42s
+=== [134/138] 2026-05-20T03:45:48Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_95` (`text_value_95`) WITH PARSER NGRAM;
+=== [134/138] 2026-05-20T03:46:31Z END rc=0 elapsed=43s
+=== [135/138] 2026-05-20T03:46:31Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_96` (`text_value_96`) WITH PARSER NGRAM;
+=== [135/138] 2026-05-20T03:47:09Z END rc=0 elapsed=38s
+=== [136/138] 2026-05-20T03:47:09Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_97` (`text_value_97`) WITH PARSER NGRAM;
+=== [136/138] 2026-05-20T03:47:49Z END rc=0 elapsed=40s
+=== [137/138] 2026-05-20T03:47:49Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_98` (`text_value_98`) WITH PARSER NGRAM;
+=== [137/138] 2026-05-20T03:48:30Z END rc=0 elapsed=41s
+=== [138/138] 2026-05-20T03:48:30Z START ALTER TABLE `jsm_assets4`.`obj_new` ADD FULLTEXT INDEX `idx_fts_text_value_99` (`text_value_99`) WITH PARSER NGRAM;
+=== [138/138] 2026-05-20T03:49:11Z END rc=0 elapsed=41s
+=== all FTS recreate statements finished at 2026-05-20T03:49:11Z ===

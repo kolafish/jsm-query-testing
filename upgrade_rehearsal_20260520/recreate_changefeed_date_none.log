@@ -1,0 +1,143 @@
+=== 2026-05-20T02:06:49Z drop probe database ===
+=== stop operator and tici ===
+deployment.apps/tidb-controller-manager scaled
+statefulset.apps/tici-demo-s3-tici-meta scaled
+statefulset.apps/tici-demo-s3-tici-worker scaled
+deployment "tidb-controller-manager" successfully rolled out
+NAME                       READY   AGE
+tici-demo-s3-tici-meta     0/0     22d
+tici-demo-s3-tici-worker   0/0     22d
+=== remove old/wrong changefeed ===
+Changefeed remove successfully.
+ID: tici-replication-task
+CheckpointTs: 466417861068324871
+SinkURI: s3://atlassian-jsm-tici-178851224597-us-east-2/tici_shared_prefix/cdc?force-path-style=false&protocol=canal-json&enable-tidb-extension=true&output-row-key=true&use-table-id-as-path=true&date-separator=none
+[]
+=== clear tici s3 prefix again ===
+
+Total Objects: 0
+   Total Size: 0
+=== 2026-05-20T02:09:27Z continue create date-none changefeed ===
+NAME                       READY   AGE
+tici-demo-s3-tici-meta     0/0     22d
+tici-demo-s3-tici-worker   0/0     22d
+Create changefeed successfully!
+ID: tici-replication-task
+Info: {"upstream_id":7633354913197931589,"id":"tici-replication-task","keyspace":"default","sink_uri":"s3://atlassian-jsm-tici-178851224597-us-east-2/tici_shared_prefix/cdc?force-path-style=false\u0026protocol=canal-json\u0026enable-tidb-extension=true\u0026output-row-key=true\u0026use-table-id-as-path=true\u0026date-separator=none","create_time":"2026-05-20T02:09:35.574306008Z","start_ts":466417870571044867,"config":{"memory_quota":1073741824,"case_sensitive":false,"ignore_ineligible_table":true,"check_gc_safe_point":true,"enable_sync_point":false,"enable_table_monitor":false,"bdr_mode":false,"sync_point_interval":600000000000,"sync_point_retention":86400000000000,"filter":{"rules":["*.*"]},"mounter":{"worker_num":16},"sink":{"protocol":"canal-json","csv":{"delimiter":",","quote":"\"","null":"\\N","include_commit_ts":false,"binary_encoding_method":"base64","output_old_value":false,"output_handle_key":false,"output_field_header":false},"encoder_concurrency":32,"terminator":"\r\n","date_separator":"none","enable_partition_separator":true,"file_index_width":20,"only_output_updated_columns":false,"delete_only_output_handle_key_columns":false,"content_compatible":false,"advance_timeout":150,"send_bootstrap_interval_in_sec":120,"send_bootstrap_in_msg_count":10000,"send_bootstrap_to_all_partition":true,"send-all-bootstrap-at-start":false,"debezium_disable_schema":false,"debezium":{"output_old_value":true},"open":{"output_old_value":true}},"consistent":{"level":"none","max_log_size":64,"flush_interval":2000,"meta_flush_interval":200,"encoding_worker_num":16,"flush_worker_num":8,"storage":"","use_file_backend":false,"compression":"","memory_usage":{"memory_quota_percentage":50}},"scheduler":{"enable_table_across_nodes":false,"region_threshold":10000,"region_count_per_span":100,"region_count_refresh_interval":300000000000,"write_key_threshold":0,"scheduling_task_count_per_node":20,"enable_splittable_check":false,"force_split":false,"balance_score_threshold":20,"min_traffic_percentage":0.8,"max_traffic_percentage":1.25},"integrity":{"integrity_check_level":"none","corruption_handle_level":"warn"},"changefeed_error_stuck_duration":1800000000000,"synced_status":{"synced_check_interval":300,"checkpoint_interval":15}},"state":"normal","creator_version":"v8.5.6-release.3","resolved_ts":466417870571044867,"checkpoint_ts":466417870571044867,"checkpoint_time":"2026-05-20 02:09:35.506","gid":{"low":6359659929966406191,"high":6172903438176996525}}
+IneligibleTablesCount: 0
+EligibleTablesCount: 61
+AllTablesCount: 61
+{
+  "upstream_id": 7633354913197931589,
+  "id": "tici-replication-task",
+  "keyspace": "default",
+  "sink_uri": "s3://atlassian-jsm-tici-178851224597-us-east-2/tici_shared_prefix/cdc?force-path-style=false\u0026protocol=canal-json\u0026enable-tidb-extension=true\u0026output-row-key=true\u0026use-table-id-as-path=true\u0026date-separator=none",
+  "config": {
+    "memory_quota": 1073741824,
+    "case_sensitive": false,
+    "ignore_ineligible_table": true,
+    "check_gc_safe_point": true,
+    "enable_sync_point": false,
+    "enable_table_monitor": false,
+    "bdr_mode": false,
+    "sync_point_interval": 600000000000,
+    "sync_point_retention": 86400000000000,
+    "filter": {
+      "rules": [
+        "*.*"
+      ]
+    },
+    "mounter": {
+      "worker_num": 16
+    },
+    "sink": {
+      "protocol": "canal-json",
+      "csv": {
+        "delimiter": ",",
+        "quote": "\"",
+        "null": "\\N",
+        "include_commit_ts": false,
+        "binary_encoding_method": "base64",
+        "output_old_value": false,
+        "output_handle_key": false,
+        "output_field_header": false
+      },
+      "encoder_concurrency": 32,
+      "terminator": "\r\n",
+      "date_separator": "none",
+      "enable_partition_separator": true,
+      "file_index_width": 20,
+      "only_output_updated_columns": false,
+      "delete_only_output_handle_key_columns": false,
+      "content_compatible": false,
+      "advance_timeout": 150,
+      "send_bootstrap_interval_in_sec": 120,
+      "send_bootstrap_in_msg_count": 10000,
+      "send_bootstrap_to_all_partition": true,
+      "send-all-bootstrap-at-start": false,
+      "debezium_disable_schema": false,
+      "debezium": {
+        "output_old_value": true
+      },
+      "open": {
+        "output_old_value": true
+      }
+    },
+    "consistent": {
+      "level": "none",
+      "max_log_size": 64,
+      "flush_interval": 2000,
+      "meta_flush_interval": 200,
+      "encoding_worker_num": 16,
+      "flush_worker_num": 8,
+      "storage": "",
+      "use_file_backend": false,
+      "compression": "",
+      "memory_usage": {
+        "memory_quota_percentage": 50
+      }
+    },
+    "scheduler": {
+      "enable_table_across_nodes": false,
+      "region_threshold": 10000,
+      "region_count_per_span": 100,
+      "region_count_refresh_interval": 300000000000,
+      "write_key_threshold": 0,
+      "scheduling_task_count_per_node": 20,
+      "enable_splittable_check": false,
+      "force_split": false,
+      "balance_score_threshold": 20,
+      "min_traffic_percentage": 0.8,
+      "max_traffic_percentage": 1.25
+    },
+    "integrity": {
+      "integrity_check_level": "none",
+      "corruption_handle_level": "warn"
+    },
+    "changefeed_error_stuck_duration": 1800000000000,
+    "synced_status": {
+      "synced_check_interval": 300,
+      "checkpoint_interval": 15
+    }
+  },
+  "create_time": "2026-05-20 02:09:35.574",
+  "start_ts": 466417870571044867,
+  "resolved_ts": 466417870571044867,
+  "target_ts": 0,
+  "checkpoint_tso": 466417870571044867,
+  "checkpoint_time": "2026-05-20 02:09:35.506",
+  "state": "normal",
+  "creator_version": "v8.5.6-release.3"
+}
+=== restart tici/operator ===
+statefulset.apps/tici-demo-s3-tici-meta scaled
+statefulset.apps/tici-demo-s3-tici-worker scaled
+deployment.apps/tidb-controller-manager scaled
+Waiting for 1 pods to be ready...
+partitioned roll out complete: 1 new pods have been updated...
+partitioned roll out complete: 1 new pods have been updated...
+deployment "tidb-controller-manager" successfully rolled out
+NAME                       READY   STATUS    RESTARTS   AGE
+tici-demo-s3-tici-meta-0   1/1     Running   0          13s
+NAME                         READY   STATUS    RESTARTS   AGE
+tici-demo-s3-tici-worker-0   1/1     Running   0          14s

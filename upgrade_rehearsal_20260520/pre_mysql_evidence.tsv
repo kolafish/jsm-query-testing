@@ -1,0 +1,229 @@
+captured_at	tidb_version
+2026-05-20 01:35:16	8.0.11-TiDB-v8.5.6-20260423-93f2dfb
+Database
+INFORMATION_SCHEMA
+METRICS_SCHEMA
+PERFORMANCE_SCHEMA
+jsm_assets2
+jsm_assets3
+jsm_assets4
+mysql
+sys
+test
+tici
+TABLE_SCHEMA	TABLE_NAME	TABLE_ROWS
+jsm_assets2	cdm_type_obj_schema	0
+jsm_assets2	cdm_type_obj_type	0
+jsm_assets2	cdm_type_obj_type_attr	0
+jsm_assets2	cdm_type_ref_type	0
+jsm_assets2	comment	0
+jsm_assets2	icon	371
+jsm_assets2	issue_custom_field_connection	0
+jsm_assets2	obj_attachment	0
+jsm_assets2	obj_history	0
+jsm_assets2	obj_new	14000000
+jsm_assets2	obj_new_json_stage_from_assets4	0
+jsm_assets2	obj_relationship	139991715
+jsm_assets2	obj_relationship_new	139991715
+jsm_assets2	obj_schema	15
+jsm_assets2	obj_schema_owner	0
+jsm_assets2	obj_schema_property	15
+jsm_assets2	obj_type	74
+jsm_assets2	obj_type_attr	2604
+jsm_assets2	object_issue_connection	0
+jsm_assets2	ota_obj_column_mapping	2959
+jsm_assets2	ref_type	7
+jsm_assets2	status_type	176
+jsm_assets3	cdm_type_obj_schema	0
+jsm_assets3	cdm_type_obj_type	0
+jsm_assets3	cdm_type_obj_type_attr	0
+jsm_assets3	cdm_type_ref_type	0
+jsm_assets3	comment	0
+jsm_assets3	icon	152
+jsm_assets3	issue_custom_field_connection	0
+jsm_assets3	obj_attachment	0
+jsm_assets3	obj_history	0
+jsm_assets3	obj_new	10000000
+jsm_assets3	obj_relationship	100005360
+jsm_assets3	obj_relationship_new	100005360
+jsm_assets3	obj_schema	2
+jsm_assets3	obj_schema_owner	0
+jsm_assets3	obj_schema_property	2
+jsm_assets3	obj_type	9
+jsm_assets3	obj_type_attr	250
+jsm_assets3	object_issue_connection	0
+jsm_assets3	ota_obj_column_mapping	236
+jsm_assets3	ref_type	2
+jsm_assets3	status_type	16
+jsm_assets4	flyway_schema_history	232
+jsm_assets4	icon	60
+jsm_assets4	obj_new	14000000
+jsm_assets4	obj_relationship_new	139988146
+jsm_assets4	obj_schema	10
+jsm_assets4	obj_schema_property	10
+jsm_assets4	obj_test	10000
+jsm_assets4	obj_type	50
+jsm_assets4	obj_type_attr	1750
+jsm_assets4	ota_obj_column_mapping	1800
+jsm_assets4	ref_type	9
+jsm_assets4	status_type	160
+jsm_assets4	tenant	10
+jsm_assets4	tenant_partition_mapping	10
+tici	tici_import_jobs	43
+tici	tici_import_jobs_task	1152
+tici	tici_index_meta	138
+tici	tici_shard_meta	190
+TABLE_SCHEMA	TABLE_NAME	REPLICA_COUNT	AVAILABLE	PROGRESS
+jsm_assets2	obj_new	1	1	1
+jsm_assets2	obj_relationship_new	1	1	1
+jsm_assets3	obj_new	1	1	1
+jsm_assets3	obj_relationship_new	1	1	1
+jsm_assets4	obj_new	1	1	1
+jsm_assets4	obj_relationship_new	1	1	1
+db	tbl	fts_indexes	max_columns
+jsm_assets2	obj_new	7	1
+jsm_assets3	obj_new	7	1
+jsm_assets4	obj_new	124	1
+db	tbl	idx	col	parser	cdc_s3_bucket	cdc_s3_prefix
+jsm_assets2	obj_new	idx_fts_1	text_value_1	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/571
+jsm_assets2	obj_new	idx_fts_20	text_value_20	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/571
+jsm_assets2	obj_new	idx_fts_22	text_value_22	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/571
+jsm_assets2	obj_new	idx_fts_4	text_value_4	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/571
+jsm_assets2	obj_new	idx_fts_5	text_value_5	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/571
+jsm_assets2	obj_new	idx_fts_7	text_value_7	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/571
+jsm_assets2	obj_new	idx_fts_label	label	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/571
+jsm_assets3	obj_new	idx_fts_1	text_value_1	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/344
+jsm_assets3	obj_new	idx_fts_20	text_value_20	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/344
+jsm_assets3	obj_new	idx_fts_22	text_value_22	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/344
+jsm_assets3	obj_new	idx_fts_4	text_value_4	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/344
+jsm_assets3	obj_new	idx_fts_5	text_value_5	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/344
+jsm_assets3	obj_new	idx_fts_7	text_value_7	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/344
+jsm_assets3	obj_new	idx_fts_label	label	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/344
+jsm_assets4	obj_new	idx_fts_1	text_value_1	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_20	text_value_20	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_22	text_value_22	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_4	text_value_4	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_5	text_value_5	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_7	text_value_7	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_external_id	external_id	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_label	label	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_10	text_value_10	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_100	text_value_100	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_101	text_value_101	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_102	text_value_102	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_103	text_value_103	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_104	text_value_104	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_105	text_value_105	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_106	text_value_106	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_107	text_value_107	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_108	text_value_108	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_109	text_value_109	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_11	text_value_11	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_110	text_value_110	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_111	text_value_111	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_112	text_value_112	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_113	text_value_113	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_114	text_value_114	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_115	text_value_115	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_116	text_value_116	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_117	text_value_117	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_118	text_value_118	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_119	text_value_119	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_12	text_value_12	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_120	text_value_120	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_121	text_value_121	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_122	text_value_122	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_13	text_value_13	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_14	text_value_14	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_15	text_value_15	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_16	text_value_16	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_17	text_value_17	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_18	text_value_18	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_19	text_value_19	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_2	text_value_2	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_21	text_value_21	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_23	text_value_23	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_24	text_value_24	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_25	text_value_25	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_26	text_value_26	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_27	text_value_27	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_28	text_value_28	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_29	text_value_29	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_3	text_value_3	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_30	text_value_30	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_31	text_value_31	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_32	text_value_32	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_33	text_value_33	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_34	text_value_34	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_35	text_value_35	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_36	text_value_36	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_37	text_value_37	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_38	text_value_38	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_39	text_value_39	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_40	text_value_40	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_41	text_value_41	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_42	text_value_42	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_43	text_value_43	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_44	text_value_44	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_45	text_value_45	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_46	text_value_46	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_47	text_value_47	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_48	text_value_48	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_49	text_value_49	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_50	text_value_50	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_51	text_value_51	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_52	text_value_52	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_53	text_value_53	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_54	text_value_54	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_55	text_value_55	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_56	text_value_56	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_57	text_value_57	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_58	text_value_58	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_59	text_value_59	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_6	text_value_6	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_60	text_value_60	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_61	text_value_61	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_62	text_value_62	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_63	text_value_63	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_64	text_value_64	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_65	text_value_65	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_66	text_value_66	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_67	text_value_67	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_68	text_value_68	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_69	text_value_69	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_70	text_value_70	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_71	text_value_71	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_72	text_value_72	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_73	text_value_73	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_74	text_value_74	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_75	text_value_75	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_76	text_value_76	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_77	text_value_77	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_78	text_value_78	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_79	text_value_79	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_8	text_value_8	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_80	text_value_80	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_81	text_value_81	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_82	text_value_82	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_83	text_value_83	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_84	text_value_84	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_85	text_value_85	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_86	text_value_86	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_87	text_value_87	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_88	text_value_88	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_89	text_value_89	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_9	text_value_9	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_90	text_value_90	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_91	text_value_91	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_92	text_value_92	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_93	text_value_93	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_94	text_value_94	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_95	text_value_95	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_96	text_value_96	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_97	text_value_97	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_98	text_value_98	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+jsm_assets4	obj_new	idx_fts_text_value_99	text_value_99	ngram	atlassian-jsm-tici-178851224597-us-east-2	tici_shared_prefix/cdc/804
+Variable_name	Value
+tidb_enable_dist_task	ON
+Variable_name	Value
+tidb_cloud_storage_uri	s3://atlassian-jsm-tici-178851224597-us-east-2/tidb-global-sort?region=us-east-2

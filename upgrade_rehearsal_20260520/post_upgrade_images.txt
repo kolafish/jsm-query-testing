@@ -1,0 +1,59 @@
+## statefulsets
+NAME                       READY   AGE
+basic-monitor              1/1     22d
+tici-demo-s3-pd            1/1     22d
+tici-demo-s3-ticdc         1/1     22d
+tici-demo-s3-tici-meta     1/1     22d
+tici-demo-s3-tici-worker   1/1     22d
+tici-demo-s3-tidb          3/3     22d
+tici-demo-s3-tiflash       6/6     7d
+tici-demo-s3-tikv          3/3     22d
+
+## pods
+NAME                                      READY   STATUS    RESTARTS   AGE     IP                NODE                                            NOMINATED NODE   READINESS GATES
+basic-monitor-0                           4/4     Running   0          5d16h   192.168.109.241   ip-192-168-98-109.us-east-2.compute.internal    <none>           <none>
+tici-demo-s3-discovery-598dc7b949-q5l26   1/1     Running   0          5d16h   192.168.152.48    ip-192-168-136-159.us-east-2.compute.internal   <none>           <none>
+tici-demo-s3-pd-0                         1/1     Running   0          39m     192.168.134.242   ip-192-168-136-159.us-east-2.compute.internal   <none>           <none>
+tici-demo-s3-ticdc-0                      1/1     Running   0          11s     192.168.184.158   ip-192-168-164-151.us-east-2.compute.internal   <none>           <none>
+tici-demo-s3-tici-meta-0                  1/1     Running   0          15m     192.168.121.168   ip-192-168-104-183.us-east-2.compute.internal   <none>           <none>
+tici-demo-s3-tici-worker-0                1/1     Running   0          15m     192.168.100.178   ip-192-168-122-11.us-east-2.compute.internal    <none>           <none>
+tici-demo-s3-tidb-0                       2/2     Running   0          58s     192.168.170.166   ip-192-168-178-191.us-east-2.compute.internal   <none>           <none>
+tici-demo-s3-tidb-1                       2/2     Running   0          102s    192.168.105.17    ip-192-168-104-183.us-east-2.compute.internal   <none>           <none>
+tici-demo-s3-tidb-2                       2/2     Running   0          2m32s   192.168.142.94    ip-192-168-150-193.us-east-2.compute.internal   <none>           <none>
+tici-demo-s3-tiflash-0                    4/4     Running   0          5m23s   192.168.189.45    ip-192-168-175-213.us-east-2.compute.internal   <none>           <none>
+tici-demo-s3-tiflash-1                    4/4     Running   0          6m52s   192.168.157.35    ip-192-168-155-84.us-east-2.compute.internal    <none>           <none>
+tici-demo-s3-tiflash-2                    4/4     Running   0          8m22s   192.168.113.1     ip-192-168-122-11.us-east-2.compute.internal    <none>           <none>
+tici-demo-s3-tiflash-3                    4/4     Running   0          9m52s   192.168.189.61    ip-192-168-178-43.us-east-2.compute.internal    <none>           <none>
+tici-demo-s3-tiflash-4                    4/4     Running   0          11m     192.168.139.97    ip-192-168-142-121.us-east-2.compute.internal   <none>           <none>
+tici-demo-s3-tiflash-5                    4/4     Running   0          12m     192.168.107.86    ip-192-168-100-108.us-east-2.compute.internal   <none>           <none>
+tici-demo-s3-tikv-0                       1/1     Running   0          3m22s   192.168.121.16    ip-192-168-107-192.us-east-2.compute.internal   <none>           <none>
+tici-demo-s3-tikv-1                       1/1     Running   0          4m52s   192.168.131.56    ip-192-168-141-86.us-east-2.compute.internal    <none>           <none>
+tici-demo-s3-tikv-2                       1/1     Running   0          15m     192.168.168.70    ip-192-168-185-222.us-east-2.compute.internal   <none>           <none>
+
+## images
+tici-demo-s3-discovery-598dc7b949-q5l26	pingcap/tidb-operator:v1.7.0-alpha.10-31-ga0cc44aea,
+tici-demo-s3-pd-0	gcr.io/pingcap-public/dbaas/pd:v8.5.6-20260423-4b9dde5,
+tici-demo-s3-ticdc-0	gcr.io/pingcap-public/dbaas/ticdc:v8.5.6-release.3,
+tici-demo-s3-tici-meta-0	us-docker.pkg.dev/pingcap-testing-account/dev/pingcap/tici/image:v0.3.0-496b5a2,
+tici-demo-s3-tici-worker-0	us-docker.pkg.dev/pingcap-testing-account/dev/pingcap/tici/image:v0.3.0-496b5a2,
+tici-demo-s3-tidb-0	alpine:3.16.0,us-docker.pkg.dev/pingcap-testing-account/hotfix/pingcap/tidb/images/tidb-server:v8.5.6-20260519-f7f5d8b-10457,
+tici-demo-s3-tidb-1	alpine:3.16.0,us-docker.pkg.dev/pingcap-testing-account/hotfix/pingcap/tidb/images/tidb-server:v8.5.6-20260519-f7f5d8b-10457,
+tici-demo-s3-tidb-2	alpine:3.16.0,us-docker.pkg.dev/pingcap-testing-account/hotfix/pingcap/tidb/images/tidb-server:v8.5.6-20260519-f7f5d8b-10457,
+tici-demo-s3-tiflash-0	us-docker.pkg.dev/pingcap-testing-account/hub/pingcap/tiflash/image:v8.5.6-20260519-317f5f6,alpine:3.16.0,alpine:3.16.0,alpine:3.16.0,
+tici-demo-s3-tiflash-1	us-docker.pkg.dev/pingcap-testing-account/hub/pingcap/tiflash/image:v8.5.6-20260519-317f5f6,alpine:3.16.0,alpine:3.16.0,alpine:3.16.0,
+tici-demo-s3-tiflash-2	us-docker.pkg.dev/pingcap-testing-account/hub/pingcap/tiflash/image:v8.5.6-20260519-317f5f6,alpine:3.16.0,alpine:3.16.0,alpine:3.16.0,
+tici-demo-s3-tiflash-3	us-docker.pkg.dev/pingcap-testing-account/hub/pingcap/tiflash/image:v8.5.6-20260519-317f5f6,alpine:3.16.0,alpine:3.16.0,alpine:3.16.0,
+tici-demo-s3-tiflash-4	us-docker.pkg.dev/pingcap-testing-account/hub/pingcap/tiflash/image:v8.5.6-20260519-317f5f6,alpine:3.16.0,alpine:3.16.0,alpine:3.16.0,
+tici-demo-s3-tiflash-5	us-docker.pkg.dev/pingcap-testing-account/hub/pingcap/tiflash/image:v8.5.6-20260519-317f5f6,alpine:3.16.0,alpine:3.16.0,alpine:3.16.0,
+tici-demo-s3-tikv-0	us-docker.pkg.dev/pingcap-testing-account/hotfix/tikv/tikv/image:v8.5.6-20260519-b7d1a0f-10459,
+tici-demo-s3-tikv-1	us-docker.pkg.dev/pingcap-testing-account/hotfix/tikv/tikv/image:v8.5.6-20260519-b7d1a0f-10459,
+tici-demo-s3-tikv-2	us-docker.pkg.dev/pingcap-testing-account/hotfix/tikv/tikv/image:v8.5.6-20260519-b7d1a0f-10459,
+
+## tidbcluster status summary
+pd=Normal tidb=Normal tikv=Normal tiflash=Normal ticdc=Normal ticiMeta=Normal ticiWorker=Normal
+
+## tidbcluster images
+tidb=us-docker.pkg.dev/pingcap-testing-account/hotfix/pingcap/tidb/images/tidb-server:v8.5.6-20260519-f7f5d8b-10457
+tikv=us-docker.pkg.dev/pingcap-testing-account/hotfix/tikv/tikv/image:v8.5.6-20260519-b7d1a0f-10459
+tiflash=us-docker.pkg.dev/pingcap-testing-account/hub/pingcap/tiflash/image:v8.5.6-20260519-317f5f6
+pd=gcr.io/pingcap-public/dbaas/pd:v8.5.6-20260423-4b9dde5

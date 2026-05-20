@@ -1,0 +1,681 @@
+apiVersion: pingcap.com/v1alpha1
+kind: TidbCluster
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"pingcap.com/v1alpha1","kind":"TidbCluster","metadata":{"annotations":{},"name":"tici-demo-s3","namespace":"tidb-cluster"},"spec":{"discovery":{},"enableDynamicConfiguration":true,"helper":{"image":"alpine:3.16.0"},"imagePullPolicy":"IfNotPresent","pd":{"baseImage":"gcr.io/pingcap-public/dbaas/pd","config":"[replication]\n  enable-placement-rules = true\n","replicas":1,"requests":{"storage":"1Gi"},"storageClassName":"gp3","version":"v8.5.6-20260423-4b9dde5"},"pvReclaimPolicy":"Retain","ticdc":{"baseImage":"gcr.io/pingcap-public/dbaas/ticdc","env":[{"name":"AWS_REGION","value":"us-east-2"},{"name":"AWS_DEFAULT_REGION","value":"us-east-2"}],"replicas":1,"serviceAccount":"tidb-backup-manager","version":"v8.5.6-release.3"},"tici":{"changefeed":{"changefeedID":"tici-replication-task","enable":true,"sinkURI":"s3://atlassian-jsm-tici-178851224597-us-east-2/tici_shared_prefix/cdc?force-path-style=false\u0026protocol=canal-json\u0026enable-tidb-extension=true\u0026output-row-key=true\u0026use-table-id-as-path=true"},"meta":{"baseImage":"gcr.io/pingcap-public/dbaas/tici","env":[{"name":"AWS_REGION","value":"us-east-2"},{"name":"AWS_DEFAULT_REGION","value":"us-east-2"}],"replicas":1,"serviceAccount":"tidb-backup-manager","version":"v0.2.0"},"s3":{"accessKey":"","bucket":"atlassian-jsm-tici-178851224597-us-east-2","endpoint":"https://s3.us-east-2.amazonaws.com","prefix":"tici_shared_prefix","region":"us-east-2","secretKey":"","usePathStyle":false},"worker":{"baseImage":"gcr.io/pingcap-public/dbaas/tici","env":[{"name":"AWS_REGION","value":"us-east-2"},{"name":"AWS_DEFAULT_REGION","value":"us-east-2"}],"replicas":1,"serviceAccount":"tidb-backup-manager","version":"v0.2.0"}},"tidb":{"affinity":{"podAntiAffinity":{"requiredDuringSchedulingIgnoredDuringExecution":[{"labelSelector":{"matchExpressions":[{"key":"app.kubernetes.io/component","operator":"In","values":["tidb"]}]},"topologyKey":"kubernetes.io/hostname"}]}},"baseImage":"gcr.io/pingcap-public/dbaas/tidb","config":"index-limit = 512\n","replicas":1,"requests":{"cpu":"15","memory":"25Gi"},"service":{"type":"ClusterIP"},"serviceAccount":"tidb-backup-manager","version":"v8.5.6-20260423-93f2dfb"},"tiflash":{"baseImage":"gcr.io/pingcap-public/dbaas/tiflash","config":{"config":"[tici.logger]\n  filename = \"/data0/logs/tici_searchlib.log\"\n  level = \"info\"\n"},"env":[{"name":"AWS_REGION","value":"us-east-2"},{"name":"AWS_DEFAULT_REGION","value":"us-east-2"}],"nodeSelector":{"component":"tiflash","role":"tiflash"},"recoverFailover":true,"replicas":3,"requests":{"cpu":"15","memory":"56Gi"},"serviceAccount":"tidb-backup-manager","storageClaims":[{"resources":{"requests":{"storage":"500Gi"}},"storageClassName":"gp3"}],"tolerations":[{"effect":"NoSchedule","key":"dedicated","operator":"Equal","value":"tiflash"}],"version":"v8.5.6-20260423-cbe33d1"},"tikv":{"affinity":{"podAntiAffinity":{"requiredDuringSchedulingIgnoredDuringExecution":[{"labelSelector":{"matchExpressions":[{"key":"app.kubernetes.io/component","operator":"In","values":["tikv"]}]},"topologyKey":"kubernetes.io/hostname"}]}},"baseImage":"gcr.io/pingcap-public/dbaas/tikv","config":{"raftdb":{"max-open-files":256},"rocksdb":{"max-open-files":256},"storage":{"reserve-space":"0MB"}},"evictLeaderTimeout":"1m","nodeSelector":{"component":"tikv","role":"tikv"},"recoverFailover":true,"replicas":3,"requests":{"cpu":"15","memory":"28Gi","storage":"500Gi"},"serviceAccount":"tidb-backup-manager","storageClassName":"gp3","tolerations":[{"effect":"NoSchedule","key":"dedicated","operator":"Equal","value":"tikv"}],"version":"v8.5.6-20260424-74347d1"},"timezone":"UTC","version":"v8.5.5"}}
+  creationTimestamp: "2026-04-27T08:34:51Z"
+  generation: 2738
+  name: tici-demo-s3
+  namespace: tidb-cluster
+  resourceVersion: "5696117"
+  uid: eba98703-71b3-4b9e-ae27-fe2537ccbea2
+spec:
+  discovery: {}
+  enableDynamicConfiguration: true
+  enablePVReclaim: false
+  helper:
+    image: alpine:3.16.0
+  imagePullPolicy: IfNotPresent
+  pd:
+    baseImage: gcr.io/pingcap-public/dbaas/pd
+    config: |
+      [replication]
+        enable-placement-rules = true
+    initWaitTime: 0
+    maxFailoverCount: 3
+    replicas: 1
+    requests:
+      storage: 1Gi
+    spareVolReplaceReplicas: 1
+    startTimeout: 30
+    storageClassName: gp3
+    version: v8.5.6-20260423-4b9dde5
+  pvReclaimPolicy: Retain
+  ticdc:
+    baseImage: gcr.io/pingcap-public/dbaas/ticdc
+    env:
+    - name: AWS_REGION
+      value: us-east-2
+    - name: AWS_DEFAULT_REGION
+      value: us-east-2
+    replicas: 1
+    serviceAccount: tidb-backup-manager
+    version: v8.5.6-release.3
+  tici:
+    changefeed:
+      changefeedID: tici-replication-task
+      enable: true
+      sinkURI: s3://atlassian-jsm-tici-178851224597-us-east-2/tici_shared_prefix/cdc?force-path-style=false&protocol=canal-json&enable-tidb-extension=true&output-row-key=true&use-table-id-as-path=true
+    meta:
+      baseImage: gcr.io/pingcap-public/dbaas/tici
+      env:
+      - name: AWS_REGION
+        value: us-east-2
+      - name: AWS_DEFAULT_REGION
+        value: us-east-2
+      replicas: 1
+      serviceAccount: tidb-backup-manager
+      version: v0.2.0
+    reader:
+      port: 8520
+    s3:
+      bucket: atlassian-jsm-tici-178851224597-us-east-2
+      endpoint: https://s3.us-east-2.amazonaws.com
+      prefix: tici_shared_prefix
+      region: us-east-2
+      usePathStyle: false
+    worker:
+      baseImage: gcr.io/pingcap-public/dbaas/tici
+      env:
+      - name: AWS_REGION
+        value: us-east-2
+      - name: AWS_DEFAULT_REGION
+        value: us-east-2
+      limits:
+        cpu: "14"
+        memory: 56Gi
+      nodeSelector:
+        eks.amazonaws.com/nodegroup: node-tiflash
+      replicas: 1
+      requests:
+        cpu: 100m
+        memory: 1Gi
+      serviceAccount: tidb-backup-manager
+      tolerations:
+      - effect: NoSchedule
+        key: dedicated
+        operator: Equal
+        value: tiflash
+      version: v0.2.0
+  tidb:
+    affinity:
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+            - key: app.kubernetes.io/component
+              operator: In
+              values:
+              - tidb
+          topologyKey: kubernetes.io/hostname
+    baseImage: gcr.io/pingcap-public/dbaas/tidb
+    config: |
+      index-limit = 512
+
+      [log]
+        [log.file]
+          max-backups = 3
+    maxFailoverCount: 3
+    replicas: 3
+    requests:
+      cpu: "15"
+      memory: 25Gi
+    scalePolicy:
+      scaleInParallelism: 1
+      scaleOutParallelism: 1
+    service:
+      type: ClusterIP
+    serviceAccount: tidb-backup-manager
+    version: v8.5.6-20260423-93f2dfb
+  tiflash:
+    baseImage: gcr.io/pingcap-public/dbaas/tiflash
+    config:
+      config: |
+        [tici]
+          [tici.logger]
+            filename = "/data0/logs/tici_searchlib.log"
+            level = "info"
+    env:
+    - name: AWS_REGION
+      value: us-east-2
+    - name: AWS_DEFAULT_REGION
+      value: us-east-2
+    maxFailoverCount: 3
+    nodeSelector:
+      component: tiflash
+      role: tiflash
+    replicas: 6
+    requests:
+      cpu: "15"
+      memory: 56Gi
+    scalePolicy:
+      scaleInParallelism: 1
+      scaleOutParallelism: 1
+    serviceAccount: tidb-backup-manager
+    storageClaims:
+    - resources:
+        requests:
+          storage: 500Gi
+      storageClassName: gp3
+    tolerations:
+    - effect: NoSchedule
+      key: dedicated
+      operator: Equal
+      value: tiflash
+    version: v8.5.6-20260423-cbe33d1
+  tikv:
+    affinity:
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+            - key: app.kubernetes.io/component
+              operator: In
+              values:
+              - tikv
+          topologyKey: kubernetes.io/hostname
+    baseImage: gcr.io/pingcap-public/dbaas/tikv
+    config: |
+      [raftdb]
+        max-open-files = 256
+
+      [rocksdb]
+        max-open-files = 256
+
+      [storage]
+        reserve-space = "0MB"
+    evictLeaderTimeout: 1m
+    maxFailoverCount: 3
+    nodeSelector:
+      component: tikv
+      role: tikv
+    recoverFailover: true
+    replicas: 3
+    requests:
+      cpu: "15"
+      memory: 24Gi
+      storage: 500Gi
+    scalePolicy:
+      scaleInParallelism: 1
+      scaleOutParallelism: 1
+    serviceAccount: tidb-backup-manager
+    spareVolReplaceReplicas: 1
+    storageClassName: gp3
+    tolerations:
+    - effect: NoSchedule
+      key: dedicated
+      operator: Equal
+      value: tikv
+    version: v8.5.6-20260424-74347d1
+  timezone: UTC
+  tlsCluster: {}
+  version: v8.5.5
+status:
+  clusterID: "7633354913197931589"
+  conditions:
+  - lastTransitionTime: "2026-05-20T01:25:21Z"
+    lastUpdateTime: "2026-05-20T01:25:21Z"
+    message: TiDB cluster is fully up and running
+    reason: Ready
+    status: "True"
+    type: Ready
+  pd:
+    image: gcr.io/pingcap-public/dbaas/pd:v8.5.6-20260423-4b9dde5
+    leader:
+      clientURL: http://tici-demo-s3-pd-0.tici-demo-s3-pd-peer.tidb-cluster.svc:2379
+      health: true
+      id: "8594491407349300178"
+      lastTransitionTime: "2026-04-27T08:35:50Z"
+      name: tici-demo-s3-pd-0
+    members:
+      tici-demo-s3-pd-0:
+        clientURL: http://tici-demo-s3-pd-0.tici-demo-s3-pd-peer.tidb-cluster.svc:2379
+        health: true
+        id: "8594491407349300178"
+        lastTransitionTime: "2026-04-27T08:35:50Z"
+        name: tici-demo-s3-pd-0
+    phase: Normal
+    statefulSet:
+      availableReplicas: 1
+      collisionCount: 0
+      currentReplicas: 1
+      currentRevision: tici-demo-s3-pd-7cdb95ccc4
+      observedGeneration: 9
+      readyReplicas: 1
+      replicas: 1
+      updateRevision: tici-demo-s3-pd-7cdb95ccc4
+      updatedReplicas: 1
+    synced: true
+    volumes:
+      pd:
+        boundCount: 1
+        currentCapacity: 1Gi
+        currentCount: 1
+        currentStorageClass: gp3
+        modifiedCapacity: 1Gi
+        modifiedCount: 1
+        modifiedStorageClass: gp3
+        name: pd
+        resizedCapacity: 1Gi
+        resizedCount: 1
+  pump: {}
+  ticdc:
+    captures:
+      tici-demo-s3-ticdc-0:
+        id: 5e49b516-838c-45ef-a0c7-25fecb5ae961
+        isOwner: true
+        podName: tici-demo-s3-ticdc-0
+        ready: true
+        version: v8.5.6-release.3
+    phase: Normal
+    statefulSet:
+      availableReplicas: 1
+      collisionCount: 0
+      currentReplicas: 1
+      currentRevision: tici-demo-s3-ticdc-5854c8c9c9
+      observedGeneration: 6
+      readyReplicas: 1
+      replicas: 1
+      updateRevision: tici-demo-s3-ticdc-5854c8c9c9
+      updatedReplicas: 1
+    synced: true
+  tici: {}
+  ticiMeta:
+    phase: Normal
+    statefulSet:
+      availableReplicas: 1
+      collisionCount: 0
+      currentReplicas: 1
+      currentRevision: tici-demo-s3-tici-meta-64b6756d7c
+      observedGeneration: 9
+      readyReplicas: 1
+      replicas: 1
+      updateRevision: tici-demo-s3-tici-meta-64b6756d7c
+      updatedReplicas: 1
+    synced: true
+  ticiWorker:
+    phase: Normal
+    statefulSet:
+      availableReplicas: 1
+      collisionCount: 0
+      currentReplicas: 1
+      currentRevision: tici-demo-s3-tici-worker-6fc4767d9f
+      observedGeneration: 12
+      readyReplicas: 1
+      replicas: 1
+      updateRevision: tici-demo-s3-tici-worker-6fc4767d9f
+      updatedReplicas: 1
+    synced: true
+  tidb:
+    image: gcr.io/pingcap-public/dbaas/tidb:v8.5.6-20260423-93f2dfb
+    members:
+      tici-demo-s3-tidb-0:
+        health: true
+        lastTransitionTime: "2026-05-20T01:25:08Z"
+        name: tici-demo-s3-tidb-0
+        node: ip-192-168-178-191.us-east-2.compute.internal
+      tici-demo-s3-tidb-1:
+        health: true
+        lastTransitionTime: "2026-05-20T01:25:08Z"
+        name: tici-demo-s3-tidb-1
+        node: ip-192-168-164-151.us-east-2.compute.internal
+      tici-demo-s3-tidb-2:
+        health: true
+        lastTransitionTime: "2026-05-20T01:25:08Z"
+        name: tici-demo-s3-tidb-2
+        node: ip-192-168-150-193.us-east-2.compute.internal
+    phase: Normal
+    statefulSet:
+      availableReplicas: 3
+      collisionCount: 0
+      currentReplicas: 3
+      currentRevision: tici-demo-s3-tidb-7fcc48c5d8
+      observedGeneration: 44
+      readyReplicas: 3
+      replicas: 3
+      updateRevision: tici-demo-s3-tidb-7fcc48c5d8
+      updatedReplicas: 3
+  tiflash:
+    failoverUID: 33a73e04-56e7-4ae7-bf2a-709151cfc3b6
+    image: gcr.io/pingcap-public/dbaas/tiflash:v8.5.6-20260423-cbe33d1
+    phase: Normal
+    statefulSet:
+      availableReplicas: 6
+      collisionCount: 0
+      currentReplicas: 6
+      currentRevision: tici-demo-s3-tiflash-6454fdf45f
+      observedGeneration: 5
+      readyReplicas: 6
+      replicas: 6
+      updateRevision: tici-demo-s3-tiflash-6454fdf45f
+      updatedReplicas: 6
+    stores:
+      "296":
+        id: "296"
+        ip: tici-demo-s3-tiflash-2.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-05-20T01:25:20Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-2
+        state: Up
+      "297":
+        id: "297"
+        ip: tici-demo-s3-tiflash-0.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-05-20T01:25:18Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-0
+        state: Up
+      "298":
+        id: "298"
+        ip: tici-demo-s3-tiflash-1.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-05-20T01:25:20Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-1
+        state: Up
+      "281900":
+        id: "281900"
+        ip: tici-demo-s3-tiflash-3.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-05-20T01:25:18Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-3
+        state: Up
+      "281901":
+        id: "281901"
+        ip: tici-demo-s3-tiflash-4.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-05-20T01:25:18Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-4
+        state: Up
+      "282080":
+        id: "282080"
+        ip: tici-demo-s3-tiflash-5.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-05-20T01:25:18Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-5
+        state: Up
+    synced: true
+    tombstoneStores:
+      "238001":
+        id: "238001"
+        ip: tici-demo-s3-tiflash-5.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-04-28T01:50:39Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-5
+        state: Tombstone
+      "238002":
+        id: "238002"
+        ip: tici-demo-s3-tiflash-4.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-04-28T01:50:57Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-4
+        state: Tombstone
+      "238003":
+        id: "238003"
+        ip: tici-demo-s3-tiflash-3.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-04-28T01:51:09Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-3
+        state: Tombstone
+      "252222":
+        id: "252222"
+        ip: tici-demo-s3-tiflash-5.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-04-29T10:52:40Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-5
+        state: Tombstone
+      "252223":
+        id: "252223"
+        ip: tici-demo-s3-tiflash-3.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-04-29T10:57:40Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-3
+        state: Tombstone
+      "252224":
+        id: "252224"
+        ip: tici-demo-s3-tiflash-4.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-04-29T10:54:41Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-4
+        state: Tombstone
+      "255169":
+        id: "255169"
+        ip: tici-demo-s3-tiflash-11.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-04-29T10:46:11Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-11
+        state: Tombstone
+      "255170":
+        id: "255170"
+        ip: tici-demo-s3-tiflash-6.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-04-29T10:51:10Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-6
+        state: Tombstone
+      "255172":
+        id: "255172"
+        ip: tici-demo-s3-tiflash-7.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-04-29T10:50:03Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-7
+        state: Tombstone
+      "255173":
+        id: "255173"
+        ip: tici-demo-s3-tiflash-8.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-04-29T10:49:10Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-8
+        state: Tombstone
+      "255174":
+        id: "255174"
+        ip: tici-demo-s3-tiflash-15.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-04-29T10:43:11Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-15
+        state: Tombstone
+      "255175":
+        id: "255175"
+        ip: tici-demo-s3-tiflash-10.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-04-29T10:47:11Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-10
+        state: Tombstone
+      "255177":
+        id: "255177"
+        ip: tici-demo-s3-tiflash-9.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-04-29T10:48:11Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-9
+        state: Tombstone
+      "255180":
+        id: "255180"
+        ip: tici-demo-s3-tiflash-12.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-04-29T10:45:10Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-12
+        state: Tombstone
+      "255181":
+        id: "255181"
+        ip: tici-demo-s3-tiflash-14.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-04-29T10:44:11Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-14
+        state: Tombstone
+      "255182":
+        id: "255182"
+        ip: tici-demo-s3-tiflash-20.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-04-29T10:40:40Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-20
+        state: Tombstone
+      "255183":
+        id: "255183"
+        ip: tici-demo-s3-tiflash-17.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-04-29T10:42:10Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-17
+        state: Tombstone
+      "255184":
+        id: "255184"
+        ip: tici-demo-s3-tiflash-23.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-04-29T10:39:10Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-23
+        state: Tombstone
+      "255185":
+        id: "255185"
+        ip: tici-demo-s3-tiflash-16.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-04-29T10:42:40Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-16
+        state: Tombstone
+      "255191":
+        id: "255191"
+        ip: tici-demo-s3-tiflash-22.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-04-29T10:39:40Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-22
+        state: Tombstone
+      "255192":
+        id: "255192"
+        ip: tici-demo-s3-tiflash-18.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-04-29T10:41:40Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-18
+        state: Tombstone
+      "255197":
+        id: "255197"
+        ip: tici-demo-s3-tiflash-13.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-04-29T10:44:40Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-13
+        state: Tombstone
+      "255205":
+        id: "255205"
+        ip: tici-demo-s3-tiflash-21.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-04-29T10:40:10Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-21
+        state: Tombstone
+      "255214":
+        id: "255214"
+        ip: tici-demo-s3-tiflash-19.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-04-29T10:41:10Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-19
+        state: Tombstone
+      "255264":
+        id: "255264"
+        ip: tici-demo-s3-tiflash-25.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-04-29T10:38:11Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-25
+        state: Tombstone
+      "255268":
+        id: "255268"
+        ip: tici-demo-s3-tiflash-29.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-04-29T10:36:10Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-29
+        state: Tombstone
+      "255269":
+        id: "255269"
+        ip: tici-demo-s3-tiflash-24.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-04-29T10:38:40Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-24
+        state: Tombstone
+      "255270":
+        id: "255270"
+        ip: tici-demo-s3-tiflash-28.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-04-29T10:36:41Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-28
+        state: Tombstone
+      "255274":
+        id: "255274"
+        ip: tici-demo-s3-tiflash-27.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-04-29T10:37:10Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-27
+        state: Tombstone
+      "255276":
+        id: "255276"
+        ip: tici-demo-s3-tiflash-26.tici-demo-s3-tiflash-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-04-29T10:37:40Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tiflash-26
+        state: Tombstone
+    volumes:
+      data0:
+        boundCount: 6
+        currentCapacity: 500Gi
+        currentCount: 6
+        currentStorageClass: gp3
+        modifiedCapacity: 500Gi
+        modifiedCount: 6
+        modifiedStorageClass: gp3
+        name: data0
+        resizedCapacity: 500Gi
+        resizedCount: 6
+  tikv:
+    bootStrapped: true
+    image: gcr.io/pingcap-public/dbaas/tikv:v8.5.6-20260424-74347d1
+    phase: Normal
+    statefulSet:
+      availableReplicas: 3
+      collisionCount: 0
+      currentReplicas: 3
+      currentRevision: tici-demo-s3-tikv-6df666d5c7
+      observedGeneration: 16
+      readyReplicas: 3
+      replicas: 3
+      updateRevision: tici-demo-s3-tikv-6df666d5c7
+      updatedReplicas: 3
+    stores:
+      "1":
+        id: "1"
+        ip: tici-demo-s3-tikv-2.tici-demo-s3-tikv-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-05-20T01:25:05Z"
+        leaderCount: 3241
+        podName: tici-demo-s3-tikv-2
+        state: Up
+      "138":
+        id: "138"
+        ip: tici-demo-s3-tikv-1.tici-demo-s3-tikv-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-05-20T01:25:05Z"
+        leaderCount: 3233
+        podName: tici-demo-s3-tikv-1
+        state: Up
+      "222":
+        id: "222"
+        ip: tici-demo-s3-tikv-0.tici-demo-s3-tikv-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-05-20T01:25:05Z"
+        leaderCount: 3234
+        podName: tici-demo-s3-tikv-0
+        state: Up
+    synced: true
+    tombstoneStores:
+      "249694":
+        id: "249694"
+        ip: tici-demo-s3-tikv-3.tici-demo-s3-tikv-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-05-08T05:00:45Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tikv-3
+        state: Tombstone
+      "255167":
+        id: "255167"
+        ip: tici-demo-s3-tikv-4.tici-demo-s3-tikv-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-04-29T12:16:41Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tikv-4
+        state: Tombstone
+      "255171":
+        id: "255171"
+        ip: tici-demo-s3-tikv-5.tici-demo-s3-tikv-peer.tidb-cluster.svc
+        lastTransitionTime: "2026-04-29T11:16:40Z"
+        leaderCount: 0
+        podName: tici-demo-s3-tikv-5
+        state: Tombstone
+    volumes:
+      tikv:
+        boundCount: 3
+        currentCapacity: 500Gi
+        currentCount: 3
+        currentStorageClass: gp3
+        modifiedCapacity: 500Gi
+        modifiedCount: 3
+        modifiedStorageClass: gp3
+        name: tikv
+        resizedCapacity: 500Gi
+        resizedCount: 3
+  tiproxy: {}

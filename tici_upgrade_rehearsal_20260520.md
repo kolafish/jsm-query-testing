@@ -67,7 +67,7 @@ These are the authoritative upgrade target images for this rehearsal.
 
 Image pull preflight: all four target images were successfully pulled by pods in the current EKS cluster.
 
-## Compatibility Procedure To Rehearse
+## Compatibility Procedure Rehearsed
 
 Authoritative procedure from the new-version compatibility guidance:
 
@@ -79,47 +79,104 @@ Authoritative procedure from the new-version compatibility guidance:
 6. Start TiCI service.
 7. Add FTS indexes.
 
-For the new storage changefeed, use `date-separator=none`. TiCDC storage sink documentation defines `none` as no date separator in the path.
+For the new storage changefeed, use `date-separator=none`. In this cluster, putting only `date-separator=none` in the sink URI was not sufficient: TiCDC accepted the URI but `changefeed query` still showed `date_separator: "day"` and S3 files were written under a `YYYY-MM-DD` path. The working procedure was to create the changefeed with both the sink URI and a config file containing:
 
-Proposed new sink URI for this cluster:
+```toml
+[sink]
+protocol = "canal-json"
+date-separator = "none"
+enable-partition-separator = true
+```
+
+New sink URI for this cluster:
 
 ```text
 s3://atlassian-jsm-tici-178851224597-us-east-2/tici_shared_prefix/cdc?force-path-style=false&protocol=canal-json&enable-tidb-extension=true&output-row-key=true&use-table-id-as-path=true&date-separator=none
 ```
 
-## Proposed Execution Plan
+## Executed Steps
 
-1. Save pre-upgrade evidence: TidbCluster YAML, row counts, TiFlash replica status, current FTS DDL, current `tici` meta table row counts, current changefeed status, and S3 prefix inventory.
-2. Generate and review the exact `ALTER TABLE ... DROP INDEX ...` and `ALTER TABLE ... ADD FULLTEXT INDEX ... WITH PARSER NGRAM` statements for all target FTS indexes.
-3. Drop FTS indexes on the selected target tables.
-4. Stop TiCI service by scaling `tici-demo-s3-tici-meta` and `tici-demo-s3-tici-worker` to `0`.
-5. Drop the `tici` database from TiDB.
-6. Remove the old TiCDC changefeed `tici-replication-task`.
-7. Delete S3 objects under `s3://atlassian-jsm-tici-178851224597-us-east-2/tici_shared_prefix/` after recording the object count and size.
-8. Patch TiDB, TiKV, TiFlash, TiCI meta, and TiCI worker images in the TidbCluster CR to the target images.
-9. Wait for all upgraded pods to become ready and confirm their running images.
-10. Recreate changefeed `tici-replication-task` with `date-separator=none`.
-11. Start TiCI service.
-12. Recreate FTS indexes.
-13. Wait for TiCI metadata and import jobs to settle.
-14. Validate row counts, TiFlash replica availability, TiCI meta rows, FTS smoke queries, and TiKV/TiFlash control queries.
+1. Saved pre-upgrade evidence under `upgrade_rehearsal_20260520/`.
+2. Generated FTS drop/create SQL for all current FTS indexes.
+3. Dropped all `138` FTS indexes from `jsm_assets2.obj_new`, `jsm_assets3.obj_new`, and `jsm_assets4.obj_new`.
+4. Stopped TiCI meta and worker.
+5. Dropped the `tici` database from TiDB.
+6. Removed old changefeed `tici-replication-task`.
+7. Deleted the whole S3 prefix `s3://atlassian-jsm-tici-178851224597-us-east-2/tici_shared_prefix/`.
+8. Patched TiDB, TiKV, TiFlash, TiCI meta, and TiCI worker images to the target images.
+9. Waited for all upgraded pods to become ready and confirmed running images.
+10. Recreated changefeed `tici-replication-task` with sink config `date-separator = "none"`.
+11. Restarted TiCI meta and worker.
+12. Recreated all `138` FTS indexes serially. TiDB does not support multi-schema change for `ADD FULLTEXT INDEX`.
+13. Validated row counts, TiFlash replica availability, TiCI meta rows, TiCI import jobs, changefeed status, S3 path layout, and FTS smoke queries.
 
-## Decisions Needed Before Destructive Steps
+## Execution Results
 
-| Decision | Default I will use if approved |
+| Area | Result |
 |---|---|
-| Whether to upgrade TiDB Operator too | Do not upgrade operator unless the new images or CR fields require it. The target image list does not include operator. |
-| FTS rebuild scope | Rebuild all current FTS indexes in `jsm_assets2.obj_new`, `jsm_assets3.obj_new`, and `jsm_assets4.obj_new` (`138` total). |
-| S3 delete scope | Delete the whole TiCI prefix `s3://atlassian-jsm-tici-178851224597-us-east-2/tici_shared_prefix/`, not just `cdc/`, because the guidance says TiCI S3 prefix. |
-| Changefeed start position | Create the replacement changefeed from current time unless compatibility guidance requires replaying from an earlier TSO. Since FTS indexes are rebuilt after TiCI restart, current-time CDC is usually sufficient for new writes after rebuild. |
-| Customer deliverable | Provide both a human-reviewed runbook and a guarded script with dry-run mode. |
+| Image upgrade | Succeeded. TiDB, TiKV, TiFlash, TiCI meta, and TiCI worker are on target images. |
+| TiDB Operator | Not upgraded. It remained `pingcap/tidb-operator:v1.7.0-alpha.10-31-ga0cc44aea`. |
+| FTS drop | Succeeded for all `138` indexes. |
+| `tici` database reset | Succeeded. New TiCI tables were recreated by TiCI v0.3.0. |
+| Old changefeed removal | Succeeded. |
+| S3 prefix cleanup | Succeeded. Pre-delete prefix had `3425` objects, `195149817075` bytes; post-delete count was `0`. |
+| Changefeed recreate | Succeeded. Final state `normal`; final `config.sink.date_separator` is `none`. |
+| FTS recreate | Succeeded for all `138` indexes. Timed run: `2026-05-20T02:12:45Z` to `2026-05-20T03:49:11Z`. |
+| TiCI import jobs | `138` import jobs all `finished`; `3297` import job tasks all `finish`. |
+| Pod health | All TiDB/TiKV/TiFlash/TiCDC/TiCI pods were Running with `0` restarts after the rehearsal. |
+
+Final component images:
+
+| Component | Running image |
+|---|---|
+| TiDB | `us-docker.pkg.dev/pingcap-testing-account/hotfix/pingcap/tidb/images/tidb-server:v8.5.6-20260519-f7f5d8b-10457` |
+| TiKV | `us-docker.pkg.dev/pingcap-testing-account/hotfix/tikv/tikv/image:v8.5.6-20260519-b7d1a0f-10459` |
+| TiFlash | `us-docker.pkg.dev/pingcap-testing-account/hub/pingcap/tiflash/image:v8.5.6-20260519-317f5f6` |
+| TiCI meta/worker | `us-docker.pkg.dev/pingcap-testing-account/dev/pingcap/tici/image:v0.3.0-496b5a2` |
+| TiCDC | `gcr.io/pingcap-public/dbaas/ticdc:v8.5.6-release.3` |
+| PD | `gcr.io/pingcap-public/dbaas/pd:v8.5.6-20260423-4b9dde5` |
+
+## Validation Results
+
+| Check | Result |
+|---|---|
+| Row counts | Unchanged: `jsm_assets2.obj_new=14,000,000`, `jsm_assets2.obj_relationship_new=139,991,715`, `jsm_assets3.obj_new=10,000,000`, `jsm_assets3.obj_relationship_new=100,005,360`, `jsm_assets4.obj_new=14,000,000`, `jsm_assets4.obj_relationship_new=139,988,146`. |
+| TiFlash replicas | All six target tables have `replica_count=1`, `available=1`, `progress=1`. |
+| SHOW INDEX FTS count | `jsm_assets2.obj_new=7`, `jsm_assets3.obj_new=7`, `jsm_assets4.obj_new=124`. |
+| TiCI meta | `tici.tici_index_meta=138`, `tici.tici_shard_meta=426`. |
+| Changefeed | `tici-replication-task` state `normal`; `config.sink.date_separator=none`. |
+| S3 CDC path | Verified files under `tici_shared_prefix/cdc/<table_id>/<commit_ts>/...`; no date directory for new files. |
+| FTS smoke | `jsm_assets2.text_value_1` matched `7` rows, `jsm_assets3.text_value_1` matched `2` rows, `jsm_assets4.text_value_1` matched `44` rows. |
+| TiCI logs | No `ERROR`, panic, or `Watch handle is finished` in final worker log tail. Meta log had repeated `topology freeze` split warnings during import, but all import jobs finished successfully. |
+
+Note: `information_schema.statistics.index_type` reports these FTS indexes as `BTREE`, but `SHOW INDEX ... WHERE Index_type='FULLTEXT'` reports them correctly as `FULLTEXT`. The validation count above uses `SHOW INDEX`.
+
+## Evidence Files
+
+Key evidence files are under `upgrade_rehearsal_20260520/`:
+
+- `pre_tidbcluster.yaml`
+- `pre_mysql_evidence.tsv`
+- `pre_changefeed_list.json`
+- `pre_s3_tici_prefix_summary.json`
+- `fts_drop.sql`
+- `fts_create.sql`
+- `changefeed_date_none.toml`
+- `post_upgrade_images.txt`
+- `recreate_changefeed_date_none.log`
+- `recreate_fts_timed.log`
+- `post_upgrade_validation.log`
+- `post_upgrade_show_index_fulltext_counts.tsv`
+- `post_upgrade_show_index_fulltext.tsv`
+- `post_upgrade_final_mysql_summary.log`
+- `post_upgrade_fts_smoke_retry.log`
 
 ## Customer-Facing Recommendation
 
 Do not send only a raw script. The destructive parts are DDL, metadata deletion, changefeed removal, and S3 deletion, so the safer package is:
 
 - A runbook that states prerequisites, exact image tags, expected operator deployment shape, backup requirements, commands, validation checks, and rollback boundaries.
-- A guarded helper script that supports `--dry-run`, prints every destructive command, validates namespace/cluster/bucket/prefix/current images, requires an explicit confirmation flag for S3 deletion, and logs all output.
+- A guarded helper script that supports `--dry-run`, prints every destructive command, validates namespace/cluster/bucket/prefix/current images, requires an explicit confirmation flag for S3 deletion, creates the new changefeed with an explicit config file for `date-separator = "none"`, and logs all output.
 - A separate SQL file containing the exact FTS drop/create statements generated from the customer schema, so the customer can review index scope before execution.
 
 ## References

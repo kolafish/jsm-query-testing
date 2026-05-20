@@ -1,0 +1,4 @@
+[sink]
+protocol = "canal-json"
+date-separator = "none"
+enable-partition-separator = true
