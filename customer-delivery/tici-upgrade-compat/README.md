@@ -44,7 +44,7 @@ CHANGEFEED_ID=tici-replication-task
 
 # Use the TiCDC CLI inside the TiCDC pod by default.
 CDC_MODE=pod
-CDC_SERVER=http://127.0.0.1:8300
+CDC_SERVER=http://127.0.0.1:8301
 
 # Optional: comma-separated database list. Empty means all non-system schemas.
 DATABASES=

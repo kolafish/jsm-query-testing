@@ -150,7 +150,7 @@ load_env() {
   CHANGEFEED_ID="${CHANGEFEED_ID:-tici-replication-task}"
 
   CDC_MODE="${CDC_MODE:-pod}"
-  CDC_SERVER="${CDC_SERVER:-http://127.0.0.1:8300}"
+  CDC_SERVER="${CDC_SERVER:-http://127.0.0.1:8301}"
   CDC_CLI_CMD="${CDC_CLI_CMD:-cdc cli}"
   CDC_POD_CLI="${CDC_POD_CLI:-/cdc}"
 
@@ -725,10 +725,13 @@ PY
   fi
 
   log "S3 path sample:"
-  "$AWS_BIN" s3 ls "s3://$S3_BUCKET/$S3_PREFIX/cdc/" \
-    --recursive \
+  "$AWS_BIN" s3api list-objects-v2 \
+    --bucket "$S3_BUCKET" \
+    --prefix "$S3_PREFIX/cdc/" \
+    --max-items 20 \
     --region "$AWS_REGION" \
-    | head -20 \
+    --query 'Contents[].{Key:Key,Size:Size}' \
+    --output table \
     | tee "$WORKDIR/post_s3_path_sample.txt" || true
 
   if [[ -n "$SMOKE_SQL_FILE" ]]; then
