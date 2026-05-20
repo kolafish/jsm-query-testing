@@ -1,56 +1,30 @@
-# TiCI Compatibility Upgrade Helper
+# TiCI Compatibility Reset Helper
 
-This package is the minimal customer-facing helper for upgrading a TiDB Operator
-cluster with existing TiCI FULLTEXT indexes to a TiCI version whose metadata and
-S3 layout are incompatible with the previous release.
+This helper does not upgrade TiDB, TiKV, TiFlash, or TiCI images. It only handles
+the TiCI compatibility reset required when an upgraded TiCI version cannot reuse
+the old FULLTEXT metadata, old changefeed, or old TiCI S3 layout.
 
-The package contains two files:
+## Procedure
 
-- `README.md`: this runbook.
-- `tici_upgrade_compat.sh`: the guarded helper script.
+The script performs these steps:
 
-## What The Script Does
+1. Drop FTS indexes.
+2. Stop TiCI service.
+3. Drop the `tici` database from TiDB.
+4. Remove old changefeed and remove S3 data under the TiCI S3 prefix.
+5. Add a new changefeed without date separator.
+6. Start TiCI service.
+7. Add FTS indexes.
 
-The script follows the compatibility procedure:
+Before dropping FTS indexes, the script generates these files from the current
+schema:
 
-1. Save pre-upgrade evidence.
-2. Generate `fts_drop.sql` and `fts_create.sql` from the current schema.
-3. Drop existing FULLTEXT indexes.
-4. Stop TiCI meta and TiCI worker through the `TidbCluster` CR.
-5. Drop the `tici` database from TiDB.
-6. Remove the old TiCDC changefeed.
-7. Delete the old TiCI S3 prefix.
-8. Optionally patch target component images if target image variables are set.
-9. Create a new changefeed with `date-separator = "none"`.
-10. Start TiCI meta and TiCI worker.
-11. Recreate FULLTEXT indexes.
-12. Wait for TiCI import jobs to finish.
-13. Run validation checks.
+- `fts_drop.sql`
+- `fts_create.sql`
 
-The script embeds the required changefeed config and writes it to the working
-directory at runtime:
+Review both files after `--dry-run` and before `--execute`.
 
-```toml
-[sink]
-protocol = "canal-json"
-date-separator = "none"
-enable-partition-separator = true
-```
-
-Do not create the new changefeed using only a sink URI parameter. In rehearsal,
-putting `date-separator=none` only in the URI was accepted by TiCDC, but
-`changefeed query` still showed `date_separator: "day"`.
-
-## Prerequisites
-
-- The cluster is managed by TiDB Operator and has a `TidbCluster` CR.
-- `kubectl` can access the Kubernetes cluster.
-- `mysql` can connect to TiDB.
-- `aws` can list and delete objects under the TiCI S3 prefix.
-- TiCDC CLI is available either inside the TiCDC pod at `/cdc`, or locally.
-- TiDB data and the TiCI S3 prefix have been backed up before execution.
-
-## Prepare Environment File
+## Required Inputs
 
 Create `customer.env`:
 
@@ -68,55 +42,29 @@ S3_PREFIX=tici_default_prefix
 AWS_REGION=us-east-2
 CHANGEFEED_ID=tici-replication-task
 
-# Default is to run cdc cli inside the TiCDC pod.
+# Use the TiCDC CLI inside the TiCDC pod by default.
 CDC_MODE=pod
 CDC_SERVER=http://127.0.0.1:8300
 
-# Optional: restrict FULLTEXT DDL generation to specific databases.
-# Comma separated. Leave empty to scan all non-system schemas.
+# Optional: comma-separated database list. Empty means all non-system schemas.
 DATABASES=
-
-# Optional image patching. Leave empty if images are upgraded separately.
-TARGET_TIDB_BASE_IMAGE=
-TARGET_TIDB_VERSION=
-TARGET_TIKV_BASE_IMAGE=
-TARGET_TIKV_VERSION=
-TARGET_TIFLASH_BASE_IMAGE=
-TARGET_TIFLASH_VERSION=
-TARGET_TICI_BASE_IMAGE=
-TARGET_TICI_VERSION=
-
-# Optional smoke SQL file. Each statement should be read-only.
-SMOKE_SQL_FILE=
 ```
 
-If `TIDB_HOST=127.0.0.1`, start a port-forward in another terminal before
-running the script:
+If `TIDB_HOST=127.0.0.1`, start TiDB port-forward separately:
 
 ```bash
 kubectl -n tidb-cluster port-forward svc/tici-demo-s3-tidb 4000:4000
 ```
 
-## Dry Run
+## Run
 
-Always run dry-run first:
+Dry-run first:
 
 ```bash
 ./tici_upgrade_compat.sh --env ./customer.env --dry-run
 ```
 
-Review generated files under the working directory:
-
-- `fts_drop.sql`
-- `fts_create.sql`
-- `changefeed-date-none.toml`
-- `pre_tidbcluster.yaml`
-- `pre_fulltext_indexes.tsv`
-- `pre_s3_prefix_summary.txt`
-
-## Execute
-
-Only execute after reviewing generated SQL and confirming backup completion:
+Execute only after backup and SQL review:
 
 ```bash
 ./tici_upgrade_compat.sh \
@@ -125,68 +73,27 @@ Only execute after reviewing generated SQL and confirming backup completion:
   --confirm-delete-s3-prefix tici_default_prefix
 ```
 
-`--confirm-delete-s3-prefix` must exactly match `S3_PREFIX`. The script refuses
-to delete S3 objects if the prefix is empty, `/`, `.`, `*`, or the confirmation
-does not match.
-
-## Resume
-
-If a stage fails after partial completion, fix the issue and resume from a
-specific stage:
-
-```bash
-./tici_upgrade_compat.sh \
-  --env ./customer.env \
-  --execute \
-  --workdir ./tici-upgrade-work-20260520-120000 \
-  --resume-from create-changefeed \
-  --confirm-delete-s3-prefix tici_default_prefix
-```
-
-Supported stages:
-
-```text
-precheck
-generate-fts-ddl
-drop-fts
-stop-tici
-drop-tici-db
-reset-changefeed
-patch-images
-create-changefeed
-start-tici
-recreate-fts
-wait-import
-validate
-```
-
-## Validate Only
-
-Run read-only validation after the upgrade:
+Validate only:
 
 ```bash
 ./tici_upgrade_compat.sh --env ./customer.env --validate-only
 ```
 
-Validation checks include:
+## Important Notes
 
-- `TidbCluster` and pod status.
-- FULLTEXT index count.
-- TiCI metadata and import job status.
-- Changefeed state and `date_separator`.
-- S3 path shape under the TiCI prefix.
-- Optional read-only smoke SQL.
+- This script is destructive: it drops FTS indexes, drops the `tici` database,
+  removes the old changefeed, and deletes the configured TiCI S3 prefix.
+- The script prints each compatibility action as `Step N/7` in the execution log.
+- `--confirm-delete-s3-prefix` must exactly match `S3_PREFIX`; otherwise S3
+  deletion is refused.
+- The new changefeed is created with an embedded config equivalent to:
 
-## Safety Notes
+```toml
+[sink]
+protocol = "canal-json"
+date-separator = "none"
+enable-partition-separator = true
+```
 
-This process is destructive:
-
-- It drops and recreates FULLTEXT indexes.
-- It drops the `tici` metadata database.
-- It removes the old TiCDC changefeed.
-- It deletes the configured TiCI S3 prefix.
-
-The base table data is not dropped by this script, but the operation should
-still be treated as an upgrade maintenance procedure that requires a confirmed
-backup and an approved maintenance window.
-
+- Do not rely on only adding `date-separator=none` to the sink URI. The script
+  also validates that the created changefeed reports `date_separator = none`.

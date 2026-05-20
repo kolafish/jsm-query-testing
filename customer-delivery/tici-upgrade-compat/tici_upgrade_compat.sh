@@ -14,7 +14,6 @@ STAGES=(
   stop-tici
   drop-tici-db
   reset-changefeed
-  patch-images
   create-changefeed
   start-tici
   recreate-fts
@@ -32,10 +31,10 @@ Usage:
 Options:
   --env FILE                         Environment file with cluster parameters.
   --dry-run                          Generate evidence and print destructive actions without executing them.
-  --execute                          Execute the compatibility upgrade.
+  --execute                          Execute the TiCI compatibility reset.
   --validate-only                    Run read-only validation only.
-  --workdir DIR                      Working directory. Default: ./tici-upgrade-work-<timestamp>.
-  --resume-from STAGE                Resume from a stage. See README for supported stages.
+  --workdir DIR                      Working directory. Default: ./tici-compat-reset-work-<timestamp>.
+  --resume-from STAGE                Resume from an internal stage name.
   --confirm-delete-s3-prefix PREFIX  Required for --execute before deleting S3 objects.
   --help                             Show this help.
 
@@ -45,6 +44,12 @@ EOF
 
 log() {
   printf '[%s] %s\n' "$(date -u '+%Y-%m-%dT%H:%M:%SZ')" "$*" >&2
+}
+
+key_step() {
+  log "================================================================"
+  log "Step $1: $2"
+  log "================================================================"
 }
 
 die() {
@@ -154,15 +159,6 @@ load_env() {
   DATABASES="${DATABASES:-}"
   SMOKE_SQL_FILE="${SMOKE_SQL_FILE:-}"
 
-  TARGET_TIDB_BASE_IMAGE="${TARGET_TIDB_BASE_IMAGE:-}"
-  TARGET_TIDB_VERSION="${TARGET_TIDB_VERSION:-}"
-  TARGET_TIKV_BASE_IMAGE="${TARGET_TIKV_BASE_IMAGE:-}"
-  TARGET_TIKV_VERSION="${TARGET_TIKV_VERSION:-}"
-  TARGET_TIFLASH_BASE_IMAGE="${TARGET_TIFLASH_BASE_IMAGE:-}"
-  TARGET_TIFLASH_VERSION="${TARGET_TIFLASH_VERSION:-}"
-  TARGET_TICI_BASE_IMAGE="${TARGET_TICI_BASE_IMAGE:-}"
-  TARGET_TICI_VERSION="${TARGET_TICI_VERSION:-}"
-
   [[ -n "$NAMESPACE" ]] || die "NAMESPACE is required"
   [[ -n "$CLUSTER" ]] || die "CLUSTER is required"
   [[ -n "$S3_BUCKET" ]] || die "S3_BUCKET is required"
@@ -172,7 +168,7 @@ load_env() {
 
 init_workdir() {
   if [[ -z "$WORKDIR" ]]; then
-    WORKDIR="./tici-upgrade-work-$(date -u '+%Y%m%d-%H%M%S')"
+    WORKDIR="./tici-compat-reset-work-$(date -u '+%Y%m%d-%H%M%S')"
   fi
   mkdir -p "$WORKDIR"
   CHANGEFEED_CONFIG="$WORKDIR/changefeed-date-none.toml"
@@ -308,7 +304,7 @@ sink_uri() {
 }
 
 precheck() {
-  log "stage: precheck"
+  log "Preparation: precheck and evidence capture"
   need_cmd "$KUBECTL_BIN"
   need_cmd "$MYSQL_BIN"
   need_cmd "$AWS_BIN"
@@ -331,7 +327,7 @@ precheck() {
 }
 
 generate_fts_ddl() {
-  log "stage: generate-fts-ddl"
+  log "Preparation: generate FTS drop/create SQL"
   export MYSQL_BIN TIDB_HOST TIDB_PORT TIDB_USER TIDB_PASSWORD MYSQL_EXTRA_ARGS DATABASES
   export FTS_DROP_SQL FTS_CREATE_SQL
   "$PYTHON_BIN" - <<'PY'
@@ -464,7 +460,7 @@ PY
 }
 
 drop_fts() {
-  log "stage: drop-fts"
+  key_step "1/7" "Drop FTS indexes."
   [[ -s "$FTS_DROP_SQL" ]] || die "empty or missing $FTS_DROP_SQL; run generate-fts-ddl first"
   mysql_file_execute "$FTS_DROP_SQL"
 }
@@ -492,7 +488,7 @@ wait_sts_replicas() {
 }
 
 stop_tici() {
-  log "stage: stop-tici"
+  key_step "2/7" "Stop TiCI service."
   run_cmd "$KUBECTL_BIN" -n "$NAMESPACE" patch tidbcluster "$CLUSTER" --type merge \
     -p '{"spec":{"tici":{"changefeed":{"enable":false},"meta":{"replicas":0},"worker":{"replicas":0}}}}'
   wait_sts_replicas "$CLUSTER-tici-meta" 0 600
@@ -500,7 +496,7 @@ stop_tici() {
 }
 
 drop_tici_db() {
-  log "stage: drop-tici-db"
+  key_step "3/7" "Drop the tici database from TiDB."
   if [[ "$MODE" == "execute" ]]; then
     mysql_sql "DROP DATABASE IF EXISTS tici;"
   else
@@ -521,7 +517,7 @@ guard_s3_prefix_delete() {
 }
 
 reset_changefeed() {
-  log "stage: reset-changefeed"
+  key_step "4/7" "Remove old changefeed and remove S3 data under the TiCI S3 prefix."
   log "querying existing changefeed"
   local changefeed_exists=0
   if cdc_exec changefeed query "--server=$CDC_SERVER" "--changefeed-id=$CHANGEFEED_ID" \
@@ -544,58 +540,8 @@ reset_changefeed() {
     --region "$AWS_REGION"
 }
 
-patch_images() {
-  log "stage: patch-images"
-  if [[ -z "$TARGET_TIDB_BASE_IMAGE$TARGET_TIDB_VERSION$TARGET_TIKV_BASE_IMAGE$TARGET_TIKV_VERSION$TARGET_TIFLASH_BASE_IMAGE$TARGET_TIFLASH_VERSION$TARGET_TICI_BASE_IMAGE$TARGET_TICI_VERSION" ]]; then
-    log "no target image variables set; skipping image patch"
-    return 0
-  fi
-
-  export TARGET_TIDB_BASE_IMAGE TARGET_TIDB_VERSION
-  export TARGET_TIKV_BASE_IMAGE TARGET_TIKV_VERSION
-  export TARGET_TIFLASH_BASE_IMAGE TARGET_TIFLASH_VERSION
-  export TARGET_TICI_BASE_IMAGE TARGET_TICI_VERSION
-  local patch_file="$WORKDIR/target_image_patch.json"
-  "$PYTHON_BIN" - <<'PY' > "$patch_file"
-import json
-import os
-
-spec = {}
-
-def maybe_component(name, base_env, version_env):
-    base = os.environ.get(base_env, "")
-    version = os.environ.get(version_env, "")
-    if bool(base) != bool(version):
-        raise SystemExit(f"{base_env} and {version_env} must be set together")
-    if base and version:
-        spec[name] = {"baseImage": base, "version": version}
-
-maybe_component("tidb", "TARGET_TIDB_BASE_IMAGE", "TARGET_TIDB_VERSION")
-maybe_component("tikv", "TARGET_TIKV_BASE_IMAGE", "TARGET_TIKV_VERSION")
-maybe_component("tiflash", "TARGET_TIFLASH_BASE_IMAGE", "TARGET_TIFLASH_VERSION")
-
-tici_base = os.environ.get("TARGET_TICI_BASE_IMAGE", "")
-tici_version = os.environ.get("TARGET_TICI_VERSION", "")
-if bool(tici_base) != bool(tici_version):
-    raise SystemExit("TARGET_TICI_BASE_IMAGE and TARGET_TICI_VERSION must be set together")
-if tici_base and tici_version:
-    spec["tici"] = {
-        "meta": {"baseImage": tici_base, "version": tici_version},
-        "worker": {"baseImage": tici_base, "version": tici_version},
-    }
-
-print(json.dumps({"spec": spec}))
-PY
-  run_cmd "$KUBECTL_BIN" -n "$NAMESPACE" patch tidbcluster "$CLUSTER" --type merge --patch-file "$patch_file"
-  if [[ "$MODE" == "execute" ]]; then
-    "$KUBECTL_BIN" -n "$NAMESPACE" rollout status "statefulset/$CLUSTER-tidb" --timeout=30m || true
-    "$KUBECTL_BIN" -n "$NAMESPACE" rollout status "statefulset/$CLUSTER-tikv" --timeout=30m || true
-    "$KUBECTL_BIN" -n "$NAMESPACE" rollout status "statefulset/$CLUSTER-tiflash" --timeout=30m || true
-  fi
-}
-
 create_changefeed() {
-  log "stage: create-changefeed"
+  key_step "5/7" "Add a new changefeed without date separator."
   write_changefeed_config
   local uri
   uri="$(sink_uri)"
@@ -611,7 +557,7 @@ create_changefeed() {
 }
 
 start_tici() {
-  log "stage: start-tici"
+  key_step "6/7" "Start TiCI service."
   local uri
   uri="$(sink_uri)"
   export TICI_META_REPLICAS TICI_WORKER_REPLICAS CHANGEFEED_ID uri
@@ -640,13 +586,13 @@ PY
 }
 
 recreate_fts() {
-  log "stage: recreate-fts"
+  key_step "7/7" "Add FTS indexes."
   [[ -s "$FTS_CREATE_SQL" ]] || die "empty or missing $FTS_CREATE_SQL; run generate-fts-ddl first"
   mysql_file_execute "$FTS_CREATE_SQL"
 }
 
 wait_import() {
-  log "stage: wait-import"
+  log "Post-step check: wait for TiCI import jobs"
   [[ "$MODE" == "execute" ]] || {
     log "dry-run: import wait skipped"
     return 0
@@ -737,7 +683,7 @@ PY
 }
 
 validate() {
-  log "stage: validate"
+  log "Post-step check: validate TiCI compatibility reset"
   "$KUBECTL_BIN" -n "$NAMESPACE" get tidbcluster "$CLUSTER" -o yaml > "$WORKDIR/post_tidbcluster.yaml"
   "$KUBECTL_BIN" -n "$NAMESPACE" get pods -o wide > "$WORKDIR/post_pods.txt"
 
@@ -821,7 +767,6 @@ main() {
         stop-tici) stop_tici ;;
         drop-tici-db) drop_tici_db ;;
         reset-changefeed) reset_changefeed ;;
-        patch-images) patch_images ;;
         create-changefeed) create_changefeed ;;
         start-tici) start_tici ;;
         recreate-fts) recreate_fts ;;
