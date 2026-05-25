@@ -90,6 +90,168 @@ Validate only:
 ./tici_upgrade_compat.sh --env ./customer.env --validate-only
 ```
 
+## Manual Commands
+
+The script is the recommended path. If the same compatibility reset must be
+performed manually, use the commands below. They mirror the script behavior.
+
+Prepare shell variables and generate the FTS drop/create SQL first:
+
+```bash
+source ./customer.env
+WORKDIR=./tici-compat-manual
+mkdir -p "$WORKDIR"
+
+MYSQL_PASSWORD_ARG=()
+if [ -n "${TIDB_PASSWORD:-}" ]; then
+  MYSQL_PASSWORD_ARG=("--password=${TIDB_PASSWORD}")
+fi
+
+SINK_URI="s3://${S3_BUCKET}/${S3_PREFIX}/cdc?force-path-style=false&protocol=canal-json&enable-tidb-extension=true&output-row-key=true&use-table-id-as-path=true&date-separator=none"
+
+# Use the script dry-run to generate $WORKDIR/fts_drop.sql and
+# $WORKDIR/fts_create.sql without executing destructive steps.
+./tici_upgrade_compat.sh --env ./customer.env --dry-run --workdir "$WORKDIR"
+
+# If using MYSQL_MODE=pod, prepare the in-cluster mysql client.
+kubectl -n "$NAMESPACE" run "$MYSQL_CLIENT_POD" \
+  --image="$MYSQL_CLIENT_IMAGE" \
+  --restart=Never \
+  --command -- sleep 86400
+kubectl -n "$NAMESPACE" wait --for=condition=Ready "pod/$MYSQL_CLIENT_POD" --timeout=180s
+```
+
+1. Drop FTS indexes.
+
+```bash
+kubectl -n "$NAMESPACE" exec -i "$MYSQL_CLIENT_POD" -- \
+  mysql -h "$TIDB_HOST" -P "$TIDB_PORT" -u "$TIDB_USER" "${MYSQL_PASSWORD_ARG[@]}" \
+  < "$WORKDIR/fts_drop.sql"
+```
+
+2. Stop TiCI service.
+
+```bash
+kubectl -n "$NAMESPACE" patch tidbcluster "$CLUSTER" --type merge \
+  -p '{"spec":{"tici":{"changefeed":{"enable":false}}}}'
+
+# Stop the operator first so it does not reconcile TiCI meta/worker back up.
+kubectl -n "$TIDB_OPERATOR_NAMESPACE" scale deployment "$TIDB_OPERATOR_DEPLOYMENT" --replicas=0
+kubectl -n "$TIDB_OPERATOR_NAMESPACE" get deployment "$TIDB_OPERATOR_DEPLOYMENT"
+
+kubectl -n "$NAMESPACE" scale statefulset "$CLUSTER-tici-meta" --replicas=0
+kubectl -n "$NAMESPACE" scale statefulset "$CLUSTER-tici-worker" --replicas=0
+kubectl -n "$NAMESPACE" wait --for=delete "pod/$CLUSTER-tici-meta-0" --timeout=600s
+kubectl -n "$NAMESPACE" wait --for=delete "pod/$CLUSTER-tici-worker-0" --timeout=600s
+kubectl -n "$NAMESPACE" get statefulset "$CLUSTER-tici-meta" "$CLUSTER-tici-worker"
+```
+
+3. Drop the `tici` database from TiDB.
+
+```bash
+kubectl -n "$NAMESPACE" exec "$MYSQL_CLIENT_POD" -- \
+  mysql -h "$TIDB_HOST" -P "$TIDB_PORT" -u "$TIDB_USER" "${MYSQL_PASSWORD_ARG[@]}" \
+  -e "DROP DATABASE IF EXISTS tici;"
+```
+
+4. Remove old changefeed and remove S3 data under the TiCI S3 prefix.
+
+```bash
+CDC_POD="$(kubectl -n "$NAMESPACE" get pod \
+  -l "app.kubernetes.io/instance=$CLUSTER,app.kubernetes.io/component=ticdc" \
+  -o jsonpath='{.items[0].metadata.name}')"
+
+kubectl -n "$NAMESPACE" exec "$CDC_POD" -- \
+  /cdc cli changefeed query \
+  --server="$CDC_SERVER" \
+  --changefeed-id="$CHANGEFEED_ID"
+
+kubectl -n "$NAMESPACE" exec "$CDC_POD" -- \
+  /cdc cli changefeed remove \
+  --server="$CDC_SERVER" \
+  --changefeed-id="$CHANGEFEED_ID"
+
+aws s3 rm "s3://${S3_BUCKET}/${S3_PREFIX}/" \
+  --recursive \
+  --region "$AWS_REGION"
+```
+
+5. Add a new changefeed without date separator.
+
+```bash
+cat > "$WORKDIR/changefeed-date-none.toml" <<'EOF'
+[sink]
+protocol = "canal-json"
+date-separator = "none"
+enable-partition-separator = true
+EOF
+
+kubectl -n "$NAMESPACE" cp "$WORKDIR/changefeed-date-none.toml" \
+  "$CDC_POD:/tmp/changefeed-date-none.toml"
+
+kubectl -n "$NAMESPACE" exec "$CDC_POD" -- \
+  /cdc cli changefeed create \
+  --server="$CDC_SERVER" \
+  --changefeed-id="$CHANGEFEED_ID" \
+  --sink-uri="$SINK_URI" \
+  --config=/tmp/changefeed-date-none.toml
+```
+
+6. Start TiCI service.
+
+```bash
+cat > "$WORKDIR/start-tici-patch.json" <<EOF
+{
+  "spec": {
+    "tici": {
+      "changefeed": {
+        "enable": true,
+        "changefeedID": "${CHANGEFEED_ID}",
+        "sinkURI": "${SINK_URI}"
+      },
+      "meta": {"replicas": ${TICI_META_REPLICAS:-1}},
+      "worker": {"replicas": ${TICI_WORKER_REPLICAS:-1}}
+    }
+  }
+}
+EOF
+
+kubectl -n "$NAMESPACE" patch tidbcluster "$CLUSTER" \
+  --type merge \
+  --patch-file "$WORKDIR/start-tici-patch.json"
+
+kubectl -n "$NAMESPACE" scale statefulset "$CLUSTER-tici-meta" \
+  --replicas="${TICI_META_REPLICAS:-1}"
+kubectl -n "$NAMESPACE" scale statefulset "$CLUSTER-tici-worker" \
+  --replicas="${TICI_WORKER_REPLICAS:-1}"
+kubectl -n "$NAMESPACE" wait --for=condition=Ready "pod/$CLUSTER-tici-meta-0" --timeout=900s
+kubectl -n "$NAMESPACE" wait --for=condition=Ready "pod/$CLUSTER-tici-worker-0" --timeout=900s
+
+kubectl -n "$TIDB_OPERATOR_NAMESPACE" scale deployment "$TIDB_OPERATOR_DEPLOYMENT" --replicas=1
+kubectl -n "$TIDB_OPERATOR_NAMESPACE" rollout status deployment/"$TIDB_OPERATOR_DEPLOYMENT" --timeout=300s
+```
+
+7. Add FTS indexes.
+
+```bash
+kubectl -n "$NAMESPACE" exec -i "$MYSQL_CLIENT_POD" -- \
+  mysql -h "$TIDB_HOST" -P "$TIDB_PORT" -u "$TIDB_USER" "${MYSQL_PASSWORD_ARG[@]}" \
+  < "$WORKDIR/fts_create.sql"
+```
+
+Post-check:
+
+```bash
+kubectl -n "$NAMESPACE" exec "$MYSQL_CLIENT_POD" -- \
+  mysql -h "$TIDB_HOST" -P "$TIDB_PORT" -u "$TIDB_USER" "${MYSQL_PASSWORD_ARG[@]}" \
+  -e "SELECT (SELECT COUNT(*) FROM tici.tici_index_meta) AS indexes, (SELECT COUNT(*) FROM tici.tici_shard_meta) AS shards, (SELECT COUNT(*) FROM tici.tici_import_jobs WHERE status='finished') AS finished_jobs, (SELECT COUNT(*) FROM tici.tici_import_jobs_task WHERE status='finish') AS finished_tasks;"
+
+kubectl -n "$NAMESPACE" exec "$CDC_POD" -- \
+  /cdc cli changefeed query \
+  --server="$CDC_SERVER" \
+  --changefeed-id="$CHANGEFEED_ID"
+```
+
 ## Important Notes
 
 - This script is destructive: it drops FTS indexes, drops the `tici` database,
