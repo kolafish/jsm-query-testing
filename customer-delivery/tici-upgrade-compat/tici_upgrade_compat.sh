@@ -166,6 +166,7 @@ load_env() {
 
   TICI_META_REPLICAS="${TICI_META_REPLICAS:-1}"
   TICI_WORKER_REPLICAS="${TICI_WORKER_REPLICAS:-1}"
+  TICI_IMAGE="${TICI_IMAGE:-us-docker.pkg.dev/pingcap-testing-account/dev/pingcap/tici/image:v0.3.0-437cbf0}"
   TIDB_OPERATOR_NAMESPACE="${TIDB_OPERATOR_NAMESPACE:-tidb-admin}"
   TIDB_OPERATOR_DEPLOYMENT="${TIDB_OPERATOR_DEPLOYMENT:-tidb-controller-manager}"
   DATABASES="${DATABASES:-}"
@@ -176,6 +177,7 @@ load_env() {
   [[ -n "$S3_BUCKET" ]] || die "S3_BUCKET is required"
   [[ -n "$S3_PREFIX" ]] || die "S3_PREFIX is required"
   [[ -n "$AWS_REGION" ]] || die "AWS_REGION is required"
+  [[ "$TICI_IMAGE" == *:* ]] || die "TICI_IMAGE must include an explicit tag: $TICI_IMAGE"
   case "$MYSQL_MODE" in
     local|pod) ;;
     *) die "unsupported MYSQL_MODE: $MYSQL_MODE" ;;
@@ -673,7 +675,10 @@ start_tici() {
   key_step "6/7" "Start TiCI service."
   local uri
   uri="$(sink_uri)"
-  export TICI_META_REPLICAS TICI_WORKER_REPLICAS CHANGEFEED_ID uri
+  local tici_base_image tici_version
+  tici_base_image="${TICI_IMAGE%:*}"
+  tici_version="${TICI_IMAGE##*:}"
+  export TICI_META_REPLICAS TICI_WORKER_REPLICAS CHANGEFEED_ID uri tici_base_image tici_version
   local patch_file="$WORKDIR/start_tici_patch.json"
   "$PYTHON_BIN" - <<'PY' > "$patch_file"
 import json
@@ -687,8 +692,16 @@ print(json.dumps({
         "changefeedID": os.environ["CHANGEFEED_ID"],
         "sinkURI": os.environ["uri"],
       },
-      "meta": {"replicas": int(os.environ["TICI_META_REPLICAS"])},
-      "worker": {"replicas": int(os.environ["TICI_WORKER_REPLICAS"])},
+      "meta": {
+        "replicas": int(os.environ["TICI_META_REPLICAS"]),
+        "baseImage": os.environ["tici_base_image"],
+        "version": os.environ["tici_version"],
+      },
+      "worker": {
+        "replicas": int(os.environ["TICI_WORKER_REPLICAS"]),
+        "baseImage": os.environ["tici_base_image"],
+        "version": os.environ["tici_version"],
+      },
     }
   }
 }))

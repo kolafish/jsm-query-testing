@@ -1,8 +1,9 @@
 # TiCI Compatibility Reset Helper
 
-This helper does not upgrade TiDB, TiKV, TiFlash, or TiCI images. It only handles
-the TiCI compatibility reset required when an upgraded TiCI version cannot reuse
-the old FULLTEXT metadata, old changefeed, or old TiCI S3 layout.
+This helper does not upgrade TiDB, TiKV, or TiFlash images. It handles the TiCI
+compatibility reset required when an upgraded TiCI version cannot reuse the old
+FULLTEXT metadata, old changefeed, or old TiCI S3 layout. When TiCI is started
+again, it patches TiCI meta and worker to the configured TiCI image.
 
 ## Procedure
 
@@ -13,7 +14,7 @@ The script performs these steps:
 3. Drop the `tici` database from TiDB.
 4. Remove old changefeed and remove S3 data under the TiCI S3 prefix.
 5. Add a new changefeed without date separator.
-6. Start TiCI service.
+6. Start TiCI service with the configured TiCI image.
 7. Add FTS indexes.
 
 Before dropping FTS indexes, the script generates these files from the current
@@ -56,6 +57,9 @@ CDC_SERVER=http://127.0.0.1:8301
 # TiDB Operator deployment. Defaults shown here match standard TiDB Operator installs.
 TIDB_OPERATOR_NAMESPACE=tidb-admin
 TIDB_OPERATOR_DEPLOYMENT=tidb-controller-manager
+
+# TiCI image used when TiCI meta/worker are started again.
+TICI_IMAGE=us-docker.pkg.dev/pingcap-testing-account/dev/pingcap/tici/image:v0.3.0-437cbf0
 
 # Optional: comma-separated database list. Empty means all non-system schemas.
 DATABASES=
@@ -108,6 +112,9 @@ if [ -n "${TIDB_PASSWORD:-}" ]; then
 fi
 
 SINK_URI="s3://${S3_BUCKET}/${S3_PREFIX}/cdc?force-path-style=false&protocol=canal-json&enable-tidb-extension=true&output-row-key=true&use-table-id-as-path=true&date-separator=none"
+TICI_IMAGE="${TICI_IMAGE:-us-docker.pkg.dev/pingcap-testing-account/dev/pingcap/tici/image:v0.3.0-437cbf0}"
+TICI_BASE_IMAGE="${TICI_IMAGE%:*}"
+TICI_VERSION="${TICI_IMAGE##*:}"
 
 # Use the script dry-run to generate $WORKDIR/fts_drop.sql and
 # $WORKDIR/fts_create.sql without executing destructive steps.
@@ -197,7 +204,7 @@ kubectl -n "$NAMESPACE" exec "$CDC_POD" -- \
   --config=/tmp/changefeed-date-none.toml
 ```
 
-6. Start TiCI service.
+6. Start TiCI service with the configured TiCI image.
 
 ```bash
 cat > "$WORKDIR/start-tici-patch.json" <<EOF
@@ -209,8 +216,16 @@ cat > "$WORKDIR/start-tici-patch.json" <<EOF
         "changefeedID": "${CHANGEFEED_ID}",
         "sinkURI": "${SINK_URI}"
       },
-      "meta": {"replicas": ${TICI_META_REPLICAS:-1}},
-      "worker": {"replicas": ${TICI_WORKER_REPLICAS:-1}}
+      "meta": {
+        "replicas": ${TICI_META_REPLICAS:-1},
+        "baseImage": "${TICI_BASE_IMAGE}",
+        "version": "${TICI_VERSION}"
+      },
+      "worker": {
+        "replicas": ${TICI_WORKER_REPLICAS:-1},
+        "baseImage": "${TICI_BASE_IMAGE}",
+        "version": "${TICI_VERSION}"
+      }
     }
   }
 }
