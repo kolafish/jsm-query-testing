@@ -25,6 +25,12 @@ schema:
 
 Review both files after `--dry-run` and before `--execute`.
 
+If the cluster has no existing FULLTEXT indexes, both files can be empty. In
+that case Step 1 and Step 7 are skipped. If a previous run already dropped FTS
+indexes and then failed, do not start over with a new workdir. Resume from the
+next step with the original workdir so the original non-empty `fts_create.sql`
+is preserved.
+
 ## Required Inputs
 
 Create `customer.env`:
@@ -272,6 +278,9 @@ kubectl -n "$NAMESPACE" exec "$CDC_POD" -- \
 - This script is destructive: it drops FTS indexes, drops the `tici` database,
   removes the old changefeed, and deletes the configured TiCI S3 prefix.
 - The script prints each compatibility action as `Step N/7` in the execution log.
+- Empty `fts_drop.sql` / `fts_create.sql` is allowed only when the current
+  schema has no FULLTEXT indexes. For partial retry after FTS was already
+  dropped, reuse the first run's workdir and `--resume-from` the next step.
 - To stop TiCI, the script temporarily scales the TiDB Operator deployment to
   `0`, scales TiCI meta/worker StatefulSets to `0`, then scales the operator
   back after TiCI is started again.

@@ -531,10 +531,16 @@ with open(drop_path, "w", encoding="utf-8") as f:
     if drops:
         f.write("\n")
 
-with open(create_path, "w", encoding="utf-8") as f:
-    f.write("\n".join(creates))
-    if creates:
-        f.write("\n")
+if creates or not (os.path.exists(create_path) and os.path.getsize(create_path) > 0):
+    with open(create_path, "w", encoding="utf-8") as f:
+        f.write("\n".join(creates))
+        if creates:
+            f.write("\n")
+else:
+    print(
+        f"warn: no current FULLTEXT indexes found; keeping existing non-empty create SQL: {create_path}",
+        file=sys.stderr,
+    )
 
 with open(os.path.join(os.path.dirname(drop_path), "pre_fulltext_indexes.tsv"), "w", encoding="utf-8") as f:
     for row in index_rows:
@@ -549,7 +555,11 @@ PY
 
 drop_fts() {
   key_step "1/7" "Drop FTS indexes."
-  [[ -s "$FTS_DROP_SQL" ]] || die "empty or missing $FTS_DROP_SQL; run generate-fts-ddl first"
+  [[ -f "$FTS_DROP_SQL" ]] || die "missing $FTS_DROP_SQL; run generate-fts-ddl first"
+  if [[ ! -s "$FTS_DROP_SQL" ]]; then
+    log "no FTS indexes found; skip drop"
+    return 0
+  fi
   mysql_file_execute "$FTS_DROP_SQL"
 }
 
@@ -717,7 +727,11 @@ PY
 
 recreate_fts() {
   key_step "7/7" "Add FTS indexes."
-  [[ -s "$FTS_CREATE_SQL" ]] || die "empty or missing $FTS_CREATE_SQL; run generate-fts-ddl first"
+  [[ -f "$FTS_CREATE_SQL" ]] || die "missing $FTS_CREATE_SQL; run generate-fts-ddl first"
+  if [[ ! -s "$FTS_CREATE_SQL" ]]; then
+    log "no FTS create SQL generated; skip recreate"
+    return 0
+  fi
   mysql_file_execute "$FTS_CREATE_SQL"
 }
 
